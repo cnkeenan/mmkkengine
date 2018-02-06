@@ -1,6 +1,3 @@
-#ifndef _LINUX_Window_H
-#define _LINUX_Window_H
-
 #include "Linux.h"
 
 //TODO: better logging
@@ -135,4 +132,3 @@ IWindow* PlatformManager::CreateWindow(
     return Result;
 }
 
-#endif
