@@ -3,6 +3,7 @@
    $Creator: Armand Karambasis $
    ======================================================================== */
 #include <AtomicTypes.h>
+#include <Assert.h>
 #include "Managers/public/PlatformManager.h"
 
 class FCoreEngine
