@@ -3,10 +3,12 @@
 //TODO: better logging
 //TODO: find out what other events we need to handle
 //TODO: actually handle xevents 
+//TODO: add a state variable to check if initialization was successful
+//TODO: handle all possible errors using X error handlers
 
 struct Linux_Window : public IWindow
 {
-    Display      m_Xdisplay;
+    Display*     m_Display; /* access to X Server */
     Window       m_RootWindow;
     Window       m_Window;
     GLXContext   m_RenderingContext;
@@ -21,92 +23,97 @@ struct Linux_Window : public IWindow
 void Linux_Window::Initialize(
             const int Width, const int Height, const char* WindowName)
 {
-    Colormap               colormap;
-    XVisualInfo            *visual_info;
-    XSetWindowAttributes   set_xwindow_attrs;
-    XWindowAttributes      xwindow_attrs;
+    XVisualInfo *vi;
+    GLint attrs[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None};
 
-    GLXContext             glcontext;
-    GLint attrs[] = 
-    {
-        GLX_RGBA         ,
-        GLX_DEPTH_SIZE   ,
-        24               ,
-        GLX_DOUBLEBUFFER ,
-        None
-    };
+    XSetWindowAttributes swa;
+    Colormap cmap;
 
-    m_Xdisplay = XOpenDisplay(NULL);
-    if (m_Xdisplay == NULL) 
+    m_Display = XOpenDisplay(nullptr);
+    if (m_Display == nullptr) 
     {
-        printf("[FATAL] Cannot connect to X Server.\n");                
-        exit(0);
+        std::cout << "[FATAL] Cannot connect to X Server.\n";                
+        exit(-1);
     }
 
+    m_RootWindow = DefaultRootWindow(m_Display);
 
-    visual_info = glXChooseVisual(m_Xdisplay, 0, attrs);
-    if (visual_info == NULL)
+    // TODO: separate into another function to check different combinations
+    // to account for different hardware support
+    vi = glXChooseVisual(m_Display, 0, attrs);
+    if (vi == nullptr)
     {
-        printf("[FATAL] No appropriate visual found.");
-        exit(0);
+        std::cout << "[FATAL] No appropriate visual found.\n";
+        exit(-1);
     }
 
-    m_RootWindow = DefaultRootWindow(m_Xdisplay);
-
-    colormap = XCreateColormap(
-        m_Xisplay           ,
-        m_RootWindow        ,
-        visual_info->visual ,
-        AllocNone
-    );
-    set_xwindow_attrs.colormap = colormap;
-    set_xwindow_attrs.event_mask = ExposureMask | KeyPressMask;
+    cmap = XCreateColormap(m_Display, m_RootWindow, vi->visual, AllocNone);
+    swa.colormap = cmap;
+    swa.event_mask = ExposureMask | KeyPressMask;
 
     m_Window = XCreateWindow(
-        m_Xdisplay,
-        m_RootWindow,
-        0,
-        0,
-        Width,
-        Height,
-        0,
-        visual_info->depth,
-        InputOutput,
-        visual_info->visual,
-        CWColormap | CWEventMask,
-        &set_xwindow_attrs
+        m_Display                ,
+        m_RootWindow             ,
+        0                        , // x position
+        0                        , // y position
+        Width                    ,
+        Height                   ,
+        0                        , // border width
+        vi->depth                , // depth
+        InputOutput              , // window class
+        vi->visual               ,
+        CWColormap | CWEventMask , // attributes set
+        &swa                       // attributes
     );
 
     XMapWindow(m_Display, m_Window);
     XStoreName(m_Display, m_Window, WindowName);
 
-    m_RenderingContext = glXCreateContext(
-        ActualWindow->m_Display ,
-        visual_info             ,
-        NULL                    ,
-        GL_TRUE
-    );
+    m_RenderingContext = glXCreateContext(m_Display, vi, nullptr, GL_TRUE);
     glXMakeCurrent(m_Display, m_Window, m_RenderingContext);
+
+    // Don't think we will need this for 2-d but leaving it just in case
     glEnable(GL_DEPTH_TEST);
 }
 
 bool Linux_Window::ProcessOSWindowMessages()
 {
+    if (m_Display == nullptr || m_Window == 0) 
+    {
+        std::cout << "[WARNING] Not valid Display or Window.\n";
+        return;
+    }
+
     XEvent xevent;
     XWindowAttributes attrs;
+    bool cleared = false;
 
     while(1) {
 
-        XNextEvent(m_Xdisplay, &xevent);
+        XNextEvent(m_Display, &xevent);
 
         switch(xevent.type) 
         {
             case Expose:
-                printf("[INFO] Expose");
+                std::cout << "[INFO] Expose\n";
+
+                XGetWindowAttributes(m_Display, m_Window, &attrs);
+                glViewport(0, 0, attrs.width, attrs.height);
+                
+                if (!cleared)
+                {
+                    glClearColor(1.0, 1.0, 1.0, 1.0);
+                    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                    SwapOpenGLBuffers()
+                    cleared = true;
+                }
+
                 break;
+
             case KeyPress:
-                printf("[INFO] KeyPress");
+                std::cout << "[INFO] KeyPress\n";
                 break;
+
             default:
                 break;
         }
@@ -118,7 +125,7 @@ bool Linux_Window::ProcessOSWindowMessages()
 
 void Linux_Window::SwapOpenGLBuffers()
 {
-    if (m_Display != NULL && m_Window != NULL)
+    if (m_Display != nullptr && m_Window != 0)
     {
         glXSwapBuffers(m_Display, m_Window);
     }
