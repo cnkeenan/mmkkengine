@@ -4,6 +4,7 @@
 #include <PlatformDetection.h>
 #include "CoreEngine.h"
 #include <OpenGL.h>
+#include <stdio.h>
 
 void FCoreEngine::Initialize()
 {
@@ -15,8 +16,17 @@ void FCoreEngine::Tick()
 {
     bool NotRunning = false;
 
+    FHighResolutionTimer MainLoopTimer = PlatformManager::Get()->CreateHighResolutionTimer();
+
+    uint64 StartTimer = MainLoopTimer.StartTimer();
     while(!NotRunning)
     {
+        uint64 EndTimer = MainLoopTimer.EndTimer();
+        double DeltaTime = MainLoopTimer.ElapsedTime(EndTimer, StartTimer);
+        printf("%fms/f\n", DeltaTime*1000.0f);
+        
+        StartTimer = MainLoopTimer.StartTimer();
+        //NOTE(EVERYONE): This is the beginning of the new frame
         NotRunning = m_MainWindow->ProcessOSWindowMessages();
 
         glClear(GL_COLOR_BUFFER_BIT);
