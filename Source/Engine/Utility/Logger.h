@@ -27,24 +27,24 @@ private:
     static int Verbosity;
     
 public:
-    FLog(ELogLevel Level = ELogLevel::INFO);
-    ~FLog();
+    inline FLog(ELogLevel Level = ELogLevel::INFO);
+    inline ~FLog();
 
     
     inline void Format(const char* Format, ...);
 
-    static void InitLogger(FNowTime* NowTime, FChangeConsoleColor* ChangeConsoleColor)
+    static inline void InitLogger(FNowTime* NowTime, FChangeConsoleColor* ChangeConsoleColor)
     {
         FLog::NowTime = NowTime;
         FLog::ChangeConsoleColor = ChangeConsoleColor;
     }
 
-    static void SetVerbosity(int Verbosity)
+    static inline void SetVerbosity(int Verbosity)
     {
         FLog::Verbosity = Verbosity;
     }
 
-    static char* ToString(ELogLevel Level)
+    static inline char* ToString(ELogLevel Level)
     {
         switch(Level)
         {

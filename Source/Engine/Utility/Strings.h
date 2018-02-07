@@ -9,7 +9,7 @@
   @return : Returns the offset in the String pointer to the first found string sequence,
   or nullptr if the string cannot be found.
  */
-const char* LocateString(const char* String, const char* StringToFind)
+inline const char* LocateString(const char* String, const char* StringToFind)
 {    
     ptr_size StackSize = 0;
 
