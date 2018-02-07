@@ -4,12 +4,22 @@
 #include <PlatformDetection.h>
 #include "CoreEngine.h"
 #include <OpenGL.h>
-#include <stdio.h>
+#include <Libs.h>
+#include <Strings.h>
+#include <Logger.h>
 
 void FCoreEngine::Initialize()
 {
-    m_MainWindow = PlatformManager::Get()->CreateWindow(1280, 720, "Marty-O");
-    PlatformManager::Get()->InitializeOpenGLContext(m_MainWindow);
+    PlatformManager* Platform = PlatformManager::Get(); 
+    FLog::InitLogger(Platform->GetCurrentTime, Platform->ChangeConsoleColor);
+    m_MainWindow = Platform->CreateWindow(1280, 720, "Marty-O");
+    Platform->InitializeOpenGLContext(m_MainWindow);
+
+    LOG(INFO, "INFO");
+    LOG(DEBUG, "DEBUG");
+    LOG(WARNING, "WARNING");
+    LOG(ERROR, "ERROR");
+    
 }
 
 void FCoreEngine::Tick()
@@ -23,14 +33,14 @@ void FCoreEngine::Tick()
     {
         uint64 EndTimer = MainLoopTimer.EndTimer();
         double DeltaTime = MainLoopTimer.ElapsedTime(EndTimer, StartTimer);
-        printf("%fms/f\n", DeltaTime*1000.0f);
+        LOG(INFO, "%fms/f", DeltaTime*1000.0f);
         
         StartTimer = MainLoopTimer.StartTimer();
         //NOTE(EVERYONE): This is the beginning of the new frame
         NotRunning = m_MainWindow->ProcessOSWindowMessages();
 
-        glClear(GL_COLOR_BUFFER_BIT);
-        glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+        //glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);        
 
         m_MainWindow->SwapOpenGLBuffers();
     }

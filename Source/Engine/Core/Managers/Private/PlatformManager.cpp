@@ -2,6 +2,7 @@
 #include "Win32/Win32_Window.cpp"
 #include "Win32/Win32_OpenGL.cpp"
 #include "Win32/Win32_Timer.cpp"
+#include "Win32/Win32_Console.cpp"
 #elif OS_MAC
 #elif OS_LINUX
 #include "Linux/Linux_Window.cpp"

@@ -8,6 +8,15 @@
 
 #endif
 
+enum class EConsoleColor
+{
+    RED,
+    GREEN,
+    BLUE,
+    BLACK,
+    WHITE
+};
+
 class PlatformManager : public IPlatformManager
 {
 private:
@@ -28,6 +37,9 @@ public:
     void DestroyWindow(IWindow* Window);
     void InitializeOpenGLContext(IWindow* Window);
 
+    static void ChangeConsoleColor(EConsoleColor BackgroundColor, EConsoleColor ForegroundColor);
+    static char* GetCurrentTime(char* Buffer);
+    
     virtual FHighResolutionTimer CreateHighResolutionTimer() final;
 };
 
