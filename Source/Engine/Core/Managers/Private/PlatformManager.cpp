@@ -6,6 +6,7 @@
 #elif OS_LINUX
 #include "Linux/Linux_Window.cpp"
 #include "Linux/Linux_OpenGL.cpp"
+#include "Linux/Linux_Timer.cpp"
 #endif
 
 PlatformManager* PlatformManager::s_PlatformManager = nullptr;
@@ -16,5 +17,4 @@ void PlatformManager::DestroyWindow(IWindow* Window)
     if(Window)    
         delete Window;    
 }
-
 

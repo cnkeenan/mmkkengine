@@ -1,3 +1,7 @@
+#if defined(OS_LINUX)
+#define OPENGL_H
+#endif
+
 #if !defined(OPENGL_H)
 /* ========================================================================
    $Creator: Armand Karambasis $

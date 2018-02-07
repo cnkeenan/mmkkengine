@@ -17,7 +17,7 @@ struct Linux_Window : public IWindow
                     const int Width, const int Height, const char* WindowName);
     virtual bool ProcessOSWindowMessages() final;
     virtual void SwapOpenGLBuffers() final;
-}
+};
 
 
 void Linux_Window::Initialize(
@@ -32,7 +32,6 @@ void Linux_Window::Initialize(
     m_Display = XOpenDisplay(nullptr);
     if (m_Display == nullptr) 
     {
-        std::cout << "[FATAL] Cannot connect to X Server.\n";                
         exit(-1);
     }
 
@@ -72,8 +71,6 @@ void Linux_Window::Initialize(
     m_RenderingContext = glXCreateContext(m_Display, vi, nullptr, GL_TRUE);
     glXMakeCurrent(m_Display, m_Window, m_RenderingContext);
 
-    // Don't think we will need this for 2-d but leaving it just in case
-    glEnable(GL_DEPTH_TEST);
 }
 
 bool Linux_Window::ProcessOSWindowMessages()
@@ -81,12 +78,11 @@ bool Linux_Window::ProcessOSWindowMessages()
     if (m_Display == nullptr || m_Window == 0) 
     {
         std::cout << "[WARNING] Not valid Display or Window.\n";
-        return;
+        return false;
     }
 
     XEvent xevent;
     XWindowAttributes attrs;
-    bool cleared = false;
 
     while(1) {
 
@@ -99,15 +95,6 @@ bool Linux_Window::ProcessOSWindowMessages()
 
                 XGetWindowAttributes(m_Display, m_Window, &attrs);
                 glViewport(0, 0, attrs.width, attrs.height);
-                
-                if (!cleared)
-                {
-                    glClearColor(1.0, 1.0, 1.0, 1.0);
-                    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                    SwapOpenGLBuffers()
-                    cleared = true;
-                }
-
                 break;
 
             case KeyPress:

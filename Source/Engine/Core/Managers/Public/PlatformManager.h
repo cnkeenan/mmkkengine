@@ -15,7 +15,6 @@ private:
     static PlatformManager* s_PlatformManager;
     
 public:
-
     static PlatformManager* Get()
     {
         if(!s_PlatformManager)
@@ -27,8 +26,8 @@ public:
     IWindow* CreateWindow(const int Width, const int Height, const char* WindowName);
     void DestroyWindow(IWindow* Window);
     void InitializeOpenGLContext(IWindow* Window);
-
     virtual FHighResolutionTimer CreateHighResolutionTimer() final;
+
 };
 
 #define PLATFORMMANAGER_H

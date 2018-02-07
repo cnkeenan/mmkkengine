@@ -3,7 +3,11 @@
    ======================================================================== */
 #include <PlatformDetection.h>
 #include "CoreEngine.h"
+#ifdef OS_LINUX
+#include <GL/glu.h>
+#else
 #include <OpenGL.h>
+#endif
 #include <stdio.h>
 
 void FCoreEngine::Initialize()
@@ -51,4 +55,4 @@ int main(int ArgumentCount, char** Arguments)
     return 0;
 }
 
-#include "Managers/private/PlatformManager.cpp"
+#include "Managers/Private/PlatformManager.cpp"
