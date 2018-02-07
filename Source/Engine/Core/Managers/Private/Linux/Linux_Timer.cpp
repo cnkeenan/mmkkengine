@@ -3,13 +3,14 @@
 static uint64 Linux_Clock()
 {
     struct timespec now;
-    clock_gettime(CLOCK_MONOTONIC_RAW, &now);
-    return now.tv_sec + now.tv_nsec;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+    uint64 Result = now.tv_sec + now.tv_nsec;
+    return Result;
 }
 
 static double Linux_GetElapsedTime(uint64 EndCounter, uint64 StartCounter)
 {
-    return EndCounter - StartCounter / CLOCK_PRECISION;
+    return (EndCounter - StartCounter) / CLOCK_PRECISION;
 }
 
 FHighResolutionTimer PlatformManager::CreateHighResolutionTimer() 
