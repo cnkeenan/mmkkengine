@@ -4,7 +4,7 @@
    ======================================================================== */
 #include <AtomicTypes.h>
 #include <Assert.h>
-#include "Managers/public/PlatformManager.h"
+#include "Managers/Public/PlatformManager.h"
 
 class FCoreEngine
 {
