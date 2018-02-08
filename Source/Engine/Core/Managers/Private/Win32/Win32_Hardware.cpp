@@ -1,13 +1,9 @@
-#if !defined(ITASKMANAGER_H)
 /* ========================================================================
    $Creator: Armand Karambasis $
    ======================================================================== */
-
-class ITaskManager
+uint32 PlatformManager::GetNumberOfProcessors()
 {
-protected:
-public:
-};
-
-#define ITASKMANAGER_H
-#endif
+    DWORD Result = 0;
+    GetLogicalProcessorInformation(nullptr, &Result);
+    return Result;
+}

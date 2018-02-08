@@ -3,7 +3,7 @@
 set Debug= -Od -DDEBUG_BUILD
 set Release= -Ox
 
-set Common= -nologo -FC -Z7 -Oi %Debug% -DDEV_BUILD
+set Common= -nologo -FC -Z7 -Oi -EHsc- %Debug% -DDEV_BUILD
 
 set Interfaces=-I..\Source\Engine\Interfaces
 set Utility=-I..\Source\Engine\Utility

@@ -2,7 +2,7 @@
 
 class Input
 {
-  public:
+public:
     virtual ~Input() {}
     virtual void execute() = 0;
 };

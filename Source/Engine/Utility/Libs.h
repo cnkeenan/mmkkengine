@@ -4,6 +4,7 @@
    ======================================================================== */
 #include <string.h>
 #include <stdio.h>
+#include <vector>
 
 #define LIBS_H
 #endif

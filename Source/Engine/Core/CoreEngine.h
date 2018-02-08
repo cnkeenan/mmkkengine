@@ -4,7 +4,9 @@
    ======================================================================== */
 #include <AtomicTypes.h>
 #include <Assert.h>
+#include <Libs.h>
 #include "Managers/Public/PlatformManager.h"
+#include "Managers/public/TaskManager.h"
 
 class FCoreEngine
 {
@@ -15,6 +17,11 @@ public:
     void Initialize();
     void Tick();
     void Destroy();
+
+    int Foo()
+    {
+        return 2;
+    }
 };
 
 #define COREENGINE_H

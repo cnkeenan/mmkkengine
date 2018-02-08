@@ -105,13 +105,13 @@ inline FLog::~FLog()
         switch(Level)
         {
             case ELogLevel::ERROR:
-            {
+            {                
                 BackgroundColor = EConsoleColor::RED;
                 ForegroundColor = EConsoleColor::WHITE;
             } break;
 
             case ELogLevel::WARNING:
-            {
+            {                
                 BackgroundColor = EConsoleColor::BLACK;
                 ForegroundColor = EConsoleColor::RED;
             } break;
