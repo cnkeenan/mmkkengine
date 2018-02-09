@@ -1,13 +1,13 @@
-#if !defined(ISTATEMANAGER_H)
+#if !defined(EVENTS_H)
 /* ========================================================================
    $Creator: Armand Karambasis $
    ======================================================================== */
 
-class IStateManager
+class FEvent
 {
 protected:
 public:
 };
 
-#define ISTATEMANAGER_H
+#define EVENTS_H
 #endif

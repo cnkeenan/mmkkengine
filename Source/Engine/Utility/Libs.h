@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <vector>
+#include <deque>
 
 #define LIBS_H
 #endif

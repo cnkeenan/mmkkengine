@@ -19,7 +19,7 @@ private:
     static PlatformManager* s_PlatformManager;
     
 public:
-    static PlatformManager* Get()
+    static inline PlatformManager* Get()
     {
         if(!s_PlatformManager)
             s_PlatformManager = new PlatformManager;
