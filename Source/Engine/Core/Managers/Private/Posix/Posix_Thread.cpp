@@ -27,6 +27,15 @@ class Posix_Thread : public FThread<T>
 template <class T>
 Posix_Thread<T>::Posix_Thread(T* Object, FMethod Method) : FThread<T>(Object, Method)
 {
+    /**
+     * Provided definition in order to implement the interface.
+     * The thread is already in the ready queue when calling
+     * pthread_create if initialization was successful.
+     */
+}
+
+template <class T>
+void Posix_Thread<T>::Start() {
     int res;
 
     if (m_ValidThreadInit) 
@@ -73,15 +82,7 @@ Posix_Thread<T>::Posix_Thread(T* Object, FMethod Method) : FThread<T>(Object, Me
         }
     }
 
-}
 
-template <class T>
-void Posix_Thread<T>::Start() {
-    /**
-     * Provided definition in order to implement the interface.
-     * The thread is already in the ready queue when calling
-     * pthread_create if initialization was successful.
-     */
 }
 
 template <class T>
