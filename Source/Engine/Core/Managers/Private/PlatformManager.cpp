@@ -4,7 +4,9 @@
 #include "Win32/Win32_Timer.cpp"
 #include "Win32/Win32_Console.cpp"
 #include "Win32/Win32_Thread.cpp"
+#include "Win32/Win32_Mutex.cpp"
 #include "Win32/Win32_Hardware.cpp"
+#include "Win32/Win32_Semaphore.cpp"
 #elif OS_MAC
 #elif OS_LINUX
 #include "Linux/Linux_Window.cpp"
@@ -59,3 +61,14 @@ void PlatformManager::DestroyThread(FThread<T>* Thread)
         delete Thread;
 }
 
+void PlatformManager::DestroyMutex(IMutex* Mutex)
+{
+    if(Mutex)
+        delete Mutex;
+}
+
+void PlatformManager::DestroySemaphore(ISemaphore* Semaphore)
+{
+    if(Semaphore)
+        delete Semaphore;
+}

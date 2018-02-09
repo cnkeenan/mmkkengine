@@ -1,3 +1,5 @@
+#if !defined(SCHEDULER_H)
+
 class FScheduler
 {
 private:
@@ -10,3 +12,6 @@ public:
     double Tick();
     inline void SetFrequency(double Frequency) { m_Frequency = Frequency; };
 };
+
+#define SCHEDULER_H
+#endif

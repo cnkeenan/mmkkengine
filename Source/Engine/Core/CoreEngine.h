@@ -3,6 +3,7 @@
    $Creator: Armand Karambasis $
    ======================================================================== */
 #include <AtomicTypes.h>
+#include <Macro.h>
 #include <Assert.h>
 #include <Libs.h>
 #include <Events.h>
@@ -16,7 +17,7 @@ class FCoreEngine
 private:
     IWindow* m_MainWindow;
     FScheduler m_Scheduler;
-    //TODO(JJ): Move this into environment manager
+    //TODO(EVERYONE): Move this into environment manager
     uint32 m_FPS;
     
     
@@ -25,10 +26,6 @@ public:
     void Tick();
     void Destroy();
 
-    int Foo()
-    {
-        return 2;
-    }
 };
 
 #define COREENGINE_H
