@@ -34,6 +34,7 @@ public:
     virtual bool ProcessOSWindowMessages() = 0;
 
     virtual void SwapOpenGLBuffers() = 0;
+    virtual ~IWindow(){} //TODO: windows should define a destructor
 };
 
 #define IPLATFORMMANAGER_H
