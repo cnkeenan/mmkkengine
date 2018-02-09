@@ -61,6 +61,8 @@ void MacOS_Window::Initialize(const int Width, const int Height, const char* Win
     // Show window and run event loop.
     [m_Window orderFrontRegardless];
     [NSApp run];
+    
+    
 
     //[pool drain];
 }
