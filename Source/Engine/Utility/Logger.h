@@ -44,7 +44,7 @@ public:
         FLog::Verbosity = Verbosity;
     }
 
-    static inline char* ToString(ELogLevel Level)
+    static inline const char* ToString(ELogLevel Level) 
     {
         switch(Level)
         {
@@ -136,7 +136,7 @@ inline FLog::~FLog()
 }
 
 #define LOG(level, format, ...) \
-    FLog(ELogLevel::##level).Format(format, __VA_ARGS__)
+    //FLog(ELogLevel:: ## level).Format(format, __VA_ARGS__)
 
 
 

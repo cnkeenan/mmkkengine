@@ -34,6 +34,8 @@ public:
     virtual bool ProcessOSWindowMessages() = 0;
 
     virtual void SwapOpenGLBuffers() = 0;
+
+    virtual ~IWindow() {}
 };
 
 #define IPLATFORMMANAGER_H

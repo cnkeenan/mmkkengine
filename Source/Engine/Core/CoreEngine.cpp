@@ -50,7 +50,7 @@ void FCoreEngine::Destroy()
     PlatformManager::Get()->DestroyWindow(m_MainWindow);
     m_MainWindow = nullptr;
 }
-
+#if 0
 int main(int ArgumentCount, char** Arguments)
 {
     FCoreEngine Engine;
@@ -59,6 +59,14 @@ int main(int ArgumentCount, char** Arguments)
     Engine.Destroy();
     return 0;
 }
+#else
+int main(int ArgumentCount, char** Arguments)
+{
+    IWindow* window = PlatformManager::Get()->CreateWindow(1280, 720, "FUUUUUUUUCK YEEEAHHH");
+    while(window);
+    return 0;
+}
+#endif
 
 #include "Managers/Private/PlatformManager.cpp"
 #include "Managers/Private/TaskManager.cpp"

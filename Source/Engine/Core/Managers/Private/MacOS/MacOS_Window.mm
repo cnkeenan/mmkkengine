@@ -5,27 +5,22 @@
  *  Creates a OSX/Cocoa application and window without Interface Builder or XCode.
  *
  * Compile with:
- *  gcc MacOS_Window.m -o  -framework Cocoa
+ *  gcc MacOS_Window.m -o a -framework Cocoa
  */
 
-#import "MacOS.h"
-#import "Cocoa/Cocoa.h"
+#include "MacOS.h"
+#include <AtomicTypes.h>
+#include "../../Public/PlatformManager.h"
+#import <Cocoa/Cocoa.h>
 
-
-@implementation MacOS_Window : public IWindow
+struct MacOS_Window : public IWindow 
 {
-    //Display      m_Xdisplay;
-    // Window       m_RootWindow;
-    // Window       m_Window;
-    //GLXContext   m_RenderingContext;
+    NSWindow* m_Window;
+    NSWindowController* m_WindowController;
 
-    virtual void Initialize(
-                    const int Width, const int Height, const char* WindowName) final;
+    virtual void Initialize(const int Width, const int Height, const char* WindowName) final;
     virtual bool ProcessOSWindowMessages() final;
     virtual void SwapOpenGLBuffers() final;
-    virtual ~MacOS_Window() {}
-    // virtual FHighResolutionTimer CreateHighResolutionTimer() final;
-
 };
 
 void MacOS_Window::Initialize(const int Width, const int Height, const char* WindowName)
@@ -33,7 +28,7 @@ void MacOS_Window::Initialize(const int Width, const int Height, const char* Win
     // Autorelease Pool:
     // Objects declared in this scope will be automatically
     // released at the end of it, when the pool is "drained".
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+    //NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 
     // Create a shared app instance.
     // This will initialize the global variable
@@ -48,28 +43,28 @@ void MacOS_Window::Initialize(const int Width, const int Height, const char* Win
     NSUInteger windowStyle = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable;
 
     // Window bounds (x, y, width, height).
-    NSRect windowRect = NSMakeRect(100, 100, Width, Height);
-    NSWindow * window = [[NSWindow alloc] initWithContentRect:windowRect
+    NSRect windowRect = NSMakeRect(0, 0, Width, Height);
+    m_Window = [[NSWindow alloc] initWithContentRect:windowRect
                                           styleMask:windowStyle
                                           backing:NSBackingStoreBuffered
                                           defer:NO];
-    [window autorelease];
+    [m_Window autorelease];
 
     // Window controller:
-    NSWindowController * windowController = [[NSWindowController alloc] initWithWindow:window];
-    [windowController autorelease];
+    m_WindowController = [[NSWindowController alloc] initWithWindow:m_Window];
+    [m_WindowController autorelease];
 
-
-
+    [m_Window setTitle:[NSString stringWithUTF8String:WindowName]];
     // TODO: Create app delegate to handle system events.
     // TODO: Create menus (especially Quit!)
 
     // Show window and run event loop.
-    [window orderFrontRegardless];
+    [m_Window orderFrontRegardless];
     [NSApp run];
 
-    [pool drain];
+    //[pool drain];
 }
+
 
 bool MacOS_Window::ProcessOSWindowMessages()
 {
@@ -80,14 +75,16 @@ void MacOS_Window::SwapOpenGLBuffers()
 {
 
 }
-
-IWindow* PlatformManager::CreateWindow(
-        const int Width, const int Height, const char* WindowName)
+IWindow* PlatformManager::CreateWindow(const int Width, const int Height, const char* WindowName)
 {
     IWindow* Result = new MacOS_Window;
     Result->Initialize(Width, Height, WindowName);
     return Result;
 }
+
+
+    
+
 
 
 
