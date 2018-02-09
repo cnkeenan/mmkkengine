@@ -9,7 +9,13 @@
 #elif OS_LINUX
 #include "Linux/Linux_Window.cpp"
 #include "Linux/Linux_OpenGL.cpp"
-#include "Linux/Linux_Timer.cpp"
+#endif
+
+#if POSIX
+#include "Posix/Posix_Console.cpp"
+#include "Posix/Posix_Timer.cpp"
+#include "Posix/Posix_Thread.cpp"
+#include "Posix/Posix_Hardware.cpp"
 #endif
 
 PlatformManager* PlatformManager::s_PlatformManager = nullptr;
