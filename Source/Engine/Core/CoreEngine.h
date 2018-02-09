@@ -7,9 +7,9 @@
 #include <Libs.h>
 #include <Events.h>
 #include "Managers/Public/PlatformManager.h"
-#include "Managers/public/TaskManager.h"
-#include "Managers/public/StateManager.h"
-#include "Framework/public/Scheduler.h"
+#include "Managers/Public/TaskManager.h"
+#include "Managers/Public/StateManager.h"
+#include "Framework/Public/Scheduler.h"
 
 class FCoreEngine
 {
