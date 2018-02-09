@@ -1,5 +1,5 @@
 OS=$(shell uname)
-CCFLAGS=-Wall -pedantic
+CCFLAGS=-Wall -pedantic -pthread
 CXX=g++
 INCLUDES=-I../../../Source/Engine/Interfaces/\
 		 -I../../../Source/Engine/Utility
