@@ -27,7 +27,7 @@ bool Posix_Mutex::Lock() {
 }
 
 void Posix_Mutex::Unlock() {
-    if(pthread_mutex_unlock(&m_CriticalSection)) {
+    if(pthread_mutex_unlock(&m_CriticalSection) != 0) {
         ASSERT(false);
     }
 }
