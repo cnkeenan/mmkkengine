@@ -37,6 +37,7 @@ public:
     
     void Observe(IObserver* Observer, FSubject* Subject);
     virtual void OnEvent(FSubject* Subject, const FEvent* Event) final;
+
     void Dispatch();
 };
 

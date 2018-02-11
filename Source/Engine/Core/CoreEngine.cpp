@@ -17,13 +17,7 @@ void FCoreEngine::Initialize()
     TaskManager::Get();
     FLog::InitLogger(Platform->GetCurrentTime, Platform->ChangeConsoleColor);
     m_MainWindow = Platform->CreateWindow(1280, 720, "Marty-O");
-    Platform->InitializeOpenGLContext(m_MainWindow);
-
-    FEvent* Event = new TestEvent(EEventType::TEST);
-    FEventDispatcher EventDispatcher(Event);
-
-    EventDispatcher.Dispatch(bool, TestEvent, FCoreEngine, this, TestEventMethod);
-    
+    Platform->InitializeOpenGLContext(m_MainWindow);    
 }
 
 void FCoreEngine::Tick()
@@ -61,8 +55,7 @@ void FCoreEngine::Destroy()
 
 bool FCoreEngine::TestEventMethod(TestEvent* Event)
 {
-    LOG(INFO, "Event");
-
+    LOG(INFO, "Event");    
     return false;
 }
 
