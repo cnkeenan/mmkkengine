@@ -1,23 +1,11 @@
 #if OS_WINDOWS
-#include "Win32/Win32_Window.cpp"
-#include "Win32/Win32_OpenGL.cpp"
-#include "Win32/Win32_Timer.cpp"
-#include "Win32/Win32_Console.cpp"
-#include "Win32/Win32_Thread.cpp"
-#include "Win32/Win32_Mutex.cpp"
-#include "Win32/Win32_Hardware.cpp"
-#include "Win32/Win32_Semaphore.cpp"
+#include <Platform/Win32.h>
 #elif OS_MAC
 #elif OS_LINUX
-#include "Linux/Linux_Window.cpp"
-#include "Linux/Linux_OpenGL.cpp"
+#include <Platform/Linux.h>
 #endif
-
 #if POSIX
-#include "Posix/Posix_Console.cpp"
-#include "Posix/Posix_Timer.cpp"
-#include "Posix/Posix_Thread.cpp"
-#include "Posix/Posix_Hardware.cpp"
+#include <Platform/Posix.h>
 #endif
 
 PlatformManager* PlatformManager::s_PlatformManager = nullptr;
