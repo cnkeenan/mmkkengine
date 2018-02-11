@@ -18,11 +18,6 @@ void FCoreEngine::Initialize()
     FLog::InitLogger(Platform->GetCurrentTime, Platform->ChangeConsoleColor);
     m_MainWindow = Platform->CreateWindow(1280, 720, "Marty-O");
     Platform->InitializeOpenGLContext(m_MainWindow);
-
-    // FEvent* Event = new TestEvent(EEventType::TEST);
-    // FEventDispatcher EventDispatcher(Event);
-
-    // EventDispatcher.Dispatch(TestEvent, FCoreEngine, this, TestEventMethod);
     
 }
 
