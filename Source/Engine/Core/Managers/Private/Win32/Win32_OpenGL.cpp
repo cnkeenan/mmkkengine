@@ -8,7 +8,7 @@ void* Win32_GetGLFunction(const char *name)
        (p == (void*)0x1) || (p == (void*)0x2) || (p == (void*)0x3) ||
        (p == (void*)-1) )
     {
-        HMODULE module = LoadLibraryA("opengl32.dll");
+        HMODULE module = LoadLibrary("opengl32.dll");
         p = (void *)GetProcAddress(module, name);
     }
 
@@ -33,13 +33,18 @@ void PlatformManager::InitializeOpenGLContext(IWindow* Window)
                         &PixelFormatDescriptor[1]);
     SetPixelFormat(ActualWindow->m_DeviceContext, SuggestedPixelFormatIndex, &PixelFormatDescriptor[1]);
 
+    wglGetProcAddress = (fp_wglGetProcAddress_*)GetProcAddress(LoadLibrary("opengl32.dll"), "wglGetProcAddress");
+    wglCreateContext = (fp_wglCreateContext_*)Win32_GetGLFunction("wglCreateContext");
+    wglMakeCurrent = (fp_wglMakeCurrent_*)Win32_GetGLFunction("wglMakeCurrent");
+    wglDeleteContext = (fp_wglDeleteContext_*)Win32_GetGLFunction("wglDeleteContext");
+    
     ActualWindow->m_RenderingContext = wglCreateContext(ActualWindow->m_DeviceContext);
     if(wglMakeCurrent(ActualWindow->m_DeviceContext, ActualWindow->m_RenderingContext))
     {
 
         LoadOpenGL_1_0(Win32_GetGLFunction);
          
-        wglCreateContextAttribsARB = (fp_wglCreateContextAttribsARB*)Win32_GetGLFunction("wglCreateContextAttribsARB");
+        wglCreateContextAttribsARB = (fp_wglCreateContextAttribsARB_*)Win32_GetGLFunction("wglCreateContextAttribsARB");
         if(wglCreateContextAttribsARB)
         {
             //NOTE(EVERYONE): Modern version of opengl

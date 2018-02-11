@@ -2,10 +2,20 @@
 #include <Managers/ITaskManager.h>
 #include "Thread.h"
 
+//TODO(JJ): Move this to interface
+class ITask
+{
+public:
+    virtual void Execute() const = 0;
+};
+
 class TaskManager : public ITaskManager
 {
 private:
     std::vector<FThread<TaskManager>*> m_Threads;
+    std::deque<const ITask*> m_Tasks;
+    ISemaphore* m_Semaphore;
+    IMutex* m_Mutex;
 
     static TaskManager* s_TaskManager;
 
@@ -20,6 +30,11 @@ public:
     }
 
     int ThreadProcedure();
+
+    bool ProcessTask();
+    void SubmitTask(const ITask* Task);
+    void CompleteAllSubmittedTasks();
+    
     ~TaskManager();
 };
 

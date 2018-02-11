@@ -48,3 +48,8 @@ FThread<T>* PlatformManager::CreateThread(T* Object, int (T::* Method)(void))
     FThread<T>* Result = new Win32_Thread<T>(Object, Method);
     return Result;
 }
+
+uint32 PlatformManager::GetCallingThreadID()
+{
+    return GetCurrentThreadId();
+}

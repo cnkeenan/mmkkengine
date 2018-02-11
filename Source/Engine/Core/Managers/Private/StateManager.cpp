@@ -1,3 +1,6 @@
+StateManager* StateManager::s_SceneStateManager = nullptr;
+StateManager* StateManager::s_ObjectStateManager = nullptr;
+
 void StateManager::Observe(IObserver* Observer, FSubject* Subject)
 {
     Subject->AddObserver(this);

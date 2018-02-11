@@ -60,8 +60,7 @@ public:
     virtual void Initialize(const int Width, const int Height, const char* WindowName) = 0;
     
     //NOTE(EVERYONE): Returns true if a quit message has been sent, false otherwise          
-    virtual bool ProcessOSWindowMessages() = 0;
-
+    virtual void ProcessOSWindowMessages() = 0;
     virtual void SwapOpenGLBuffers() = 0;
     virtual ~IWindow(){} //TODO: windows should define a destructor
 };

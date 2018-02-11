@@ -3,6 +3,14 @@
    ======================================================================== */
 #include "Win32.h"
 
+#define RAW_X_AXIS 48
+#define RAW_Y_AXIS 49
+#define RAW_Z_AXIS 50
+#define RAW_X_ROTATION 51
+#define RAW_Y_ROTATION 52
+#define RAW_Z_ROTATION 53
+#define RAW_HAT 57
+
 struct Win32_Window : public IWindow
 {
     HWND m_Window;
@@ -10,7 +18,7 @@ struct Win32_Window : public IWindow
     HGLRC m_RenderingContext;
 
     virtual void Initialize(const int Width, const int Height, const char* WindowName) final;
-    virtual bool ProcessOSWindowMessages() final;
+    virtual void ProcessOSWindowMessages() final;
     virtual void SwapOpenGLBuffers() final;
 };
 
@@ -103,10 +111,8 @@ void Win32_Window::Initialize(const int Width, const int Height, const char* Win
     }
 }
 
-bool Win32_Window::ProcessOSWindowMessages()
-{
-    bool Result = false;
-    
+void Win32_Window::ProcessOSWindowMessages()
+{        
     MSG Message;
     while(PeekMessage(&Message, 0, 0, 0, PM_REMOVE))
     {
@@ -121,7 +127,8 @@ bool Win32_Window::ProcessOSWindowMessages()
                 GetRawInputData((HRAWINPUT)Message.lParam, RID_INPUT, nullptr, &BufferSize,
                                 sizeof(RAWINPUTHEADER));
 
-                RAWINPUT* RawInput = (RAWINPUT*)HeapAlloc(Heap, 0, BufferSize);
+                RAWINPUT* RawInput = new RAWINPUT[BufferSize];
+                //(RAWINPUT*)HeapAlloc(Heap, HEAP_ZERO_MEMORY, BufferSize);
 
                 ASSERT(RawInput);
 
@@ -151,12 +158,147 @@ bool Win32_Window::ProcessOSWindowMessages()
                     //NOTE(EVERYONE): Joystick and gamepad since we don't check for any other device
                     case RIM_TYPEHID:
                     {
-                        //TODO(JJ): Will support joysticks later. Its a bit of a pain
+                        //TODO(JJ): Error checking and logging
+                        GetRawInputDeviceInfo(RawInput->header.hDevice, RIDI_PREPARSEDDATA,
+                                              nullptr, &BufferSize);
+                        _HIDP_PREPARSED_DATA* PreparsedData = (_HIDP_PREPARSED_DATA*)operator new(BufferSize);                        
+                        GetRawInputDeviceInfo(RawInput->header.hDevice, RIDI_PREPARSEDDATA,
+                                              PreparsedData, &BufferSize);
+
+                        HIDP_CAPS HIDCapabilities;
+                        HidP_GetCaps(PreparsedData, &HIDCapabilities);
+
+                        USHORT CapabilitiesSize = HIDCapabilities.NumberInputButtonCaps;
+                        
+                        HIDP_BUTTON_CAPS* ButtonCapabilities = new HIDP_BUTTON_CAPS[CapabilitiesSize];                        
+
+                        HidP_GetButtonCaps(HidP_Input, ButtonCapabilities, &CapabilitiesSize,
+                                           PreparsedData);
+
+                        USHORT NumberOfButtons = ButtonCapabilities->Range.UsageMax -
+                            ButtonCapabilities->Range.UsageMin+1;
+
+                        CapabilitiesSize = HIDCapabilities.NumberInputValueCaps;
+                        HIDP_VALUE_CAPS* ValueCapabilities = new HIDP_VALUE_CAPS[CapabilitiesSize];
+                        
+                        HidP_GetValueCaps(HidP_Input, ValueCapabilities, &CapabilitiesSize,
+                                          PreparsedData);
+
+                        ULONG UsageLength = NumberOfButtons;
+                        USAGE* Usage = new USAGE[UsageLength];                        
+                        HidP_GetUsages(HidP_Input, ButtonCapabilities->UsagePage, 0, Usage,
+                                       &UsageLength, PreparsedData, (PCHAR)RawInput->data.hid.bRawData,
+                                       RawInput->data.hid.dwSizeHid);
+
+                        //NOTE(EVERYONE): Joystick buttons (aka gamepad)
+                        for(ULONG ButtonIndex = 0; ButtonIndex < UsageLength; ButtonIndex++)
+                        {
+                            switch(Usage[ButtonIndex])
+                            {
+                                case 1:
+                                {
+                                    LOG(INFO, "Square");
+                                } break;
+
+                                case 2:
+                                {
+                                } break;
+
+                                case 3:
+                                {
+                                } break;
+
+                                case 4:
+                                {
+                                } break;
+
+                                case 5:
+                                {
+                                } break;
+
+                                case 6:
+                                {
+                                } break;
+
+                                case 7:
+                                {
+                                } break;
+
+                                case 8:
+                                {
+                                } break;
+
+                                case 9:
+                                {
+                                } break;
+
+                                case 10:
+                                {
+                                } break;
+
+                                case 11:
+                                {
+                                } break;
+
+                                case 12:
+                                {
+                                } break;                                
+                            }
+                        }
+
+                        
+                        //NOTE(EVERYONE): Joysticks
+                        for(ULONG ValueIndex = 0; ValueIndex < HIDCapabilities.NumberInputValueCaps;
+                            ValueIndex++)
+                        {
+                            ULONG Value;
+                            HidP_GetUsageValue(HidP_Input, ValueCapabilities[ValueIndex].UsagePage, 0,
+                                               ValueCapabilities[ValueIndex].Range.UsageMin, &Value,
+                                               PreparsedData, (PCHAR)RawInput->data.hid.bRawData,
+                                               RawInput->data.hid.dwSizeHid);
+
+                            switch(ValueCapabilities[ValueIndex].Range.UsageMin)
+                            {
+                                case RAW_X_AXIS:
+                                {
+                                } break;
+
+                                case RAW_Y_AXIS:
+                                {
+                                } break;
+
+                                case RAW_Z_AXIS:
+                                {
+                                } break;
+
+                                case RAW_X_ROTATION:
+                                {
+                                } break;
+
+                                case RAW_Y_ROTATION:
+                                {
+                                } break;
+
+                                case RAW_Z_ROTATION:
+                                {
+                                } break;
+
+                                case RAW_HAT:
+                                {
+                                } break;
+                            }
+                        }
+
+                        delete[] Usage;
+                        delete[] ValueCapabilities;
+                        delete[] ButtonCapabilities;
+                        operator delete(PreparsedData);
+
+                        
                     } break;
                 }
 
-                
-                HeapFree(Heap, 0, RawInput);                
+                delete[] RawInput;                
             } break;
 
             case WM_MOUSEMOVE:
@@ -165,7 +307,7 @@ bool Win32_Window::ProcessOSWindowMessages()
             
             case WM_QUIT:
             {
-                Result = true;
+                EnvironmentManager::Get()->ExecutionState(EExecutionState::EXIT);
             } break;
 
             default:
@@ -175,8 +317,6 @@ bool Win32_Window::ProcessOSWindowMessages()
             } break;
         }
     }
-
-    return Result;
 }
 
 void Win32_Window::SwapOpenGLBuffers()
