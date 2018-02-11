@@ -19,7 +19,7 @@ struct MacOS_Window : public IWindow
     NSWindowController* m_WindowController;
 
     virtual void Initialize(const int Width, const int Height, const char* WindowName) final;
-    virtual bool ProcessOSWindowMessages() final;
+    virtual void ProcessOSWindowMessages() final;
     virtual void SwapOpenGLBuffers() final;
 };
 
@@ -68,9 +68,9 @@ void MacOS_Window::Initialize(const int Width, const int Height, const char* Win
 }
 
 
-bool MacOS_Window::ProcessOSWindowMessages()
+void MacOS_Window::ProcessOSWindowMessages()
 {
-    return false;
+   
 }
 
 void MacOS_Window::SwapOpenGLBuffers()

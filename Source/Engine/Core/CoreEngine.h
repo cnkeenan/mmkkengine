@@ -11,12 +11,9 @@
 #include "Managers/Public/EnvironmentManager.h"
 #include "Managers/Public/PlatformManager.h"
 #include "Managers/Public/TaskManager.h"
-<<<<<<< HEAD
-=======
 #include "Managers/Public/StateManager.h"
 #include "Managers/Public/ServiceManager.h"
 #include "Framework/Public/Scheduler.h"
->>>>>>> c755412639446542787e3dcf2cfe3a5a52faeded
 
 class FCoreEngine
 {

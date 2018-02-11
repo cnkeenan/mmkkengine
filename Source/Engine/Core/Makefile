@@ -3,6 +3,7 @@ CCFLAGS=-Wall -pedantic -pthread
 CXX=g++
 INCLUDES=-I../../../Source/Engine/Interfaces/\
 		 -I../../../Source/Engine/Utility
+OBJC=Managers/Private/MacOS/MacOS_Window.mm
 
 TARGET=CoreEngine.cpp
 EXE=ProjectMario
@@ -12,6 +13,7 @@ ifeq ($(OS),Linux)
 endif
 ifeq ($(OS),Darwin)
 	CCFLAGS +=-framework Cocoa 
+	CXX=clang++
 endif	
 
 all:
@@ -19,4 +21,8 @@ all:
 	rm -rf out
 	mkdir out
 	$(CXX) $(CCFLAGS) $(INCLUDES) $(TARGET) -o out/$(EXE)
+
+mac:
+	$(CXX) $(CCFLAGS) $(INCLUDES) $(OBJC) -c
+	$(CXX) $(CCFLAGS) $(INCLUDES) $(TARGET) -o out/$(EXE) MacOS_Window.o
 	

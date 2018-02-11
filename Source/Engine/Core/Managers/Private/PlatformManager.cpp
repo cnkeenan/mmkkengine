@@ -9,10 +9,6 @@
 #include "Win32/Win32_Semaphore.cpp"
 #elif OS_MAC
 #include "MacOS/MacOS_OpenGL.cpp"
-#include "MacOS/MacOS_Timer.cpp"
-#include "MacOS/MacOS_Console.cpp"
-#include "MacOS/MacOS_Thread.cpp"
-#include "MacOS/MacOS_Hardware.cpp"
 #elif OS_LINUX
 #include "Linux/Linux_Window.cpp"
 #include "Linux/Linux_OpenGL.cpp"
