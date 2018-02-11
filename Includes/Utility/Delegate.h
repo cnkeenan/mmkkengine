@@ -13,24 +13,24 @@ private:
     
 public:
 
-    FDelegate(void* Object, Method Method) : m_Object(Object), m_Method(Method)
+    inline FDelegate(void* Object, Method Method) : m_Object(Object), m_Method(Method)
     {
     }
 
     template <typename T, ReturnType (T::*TMethod)(Params...)>
-    static FDelegate Bind(T* Object)
+    static inline FDelegate Bind(T* Object)
     {
         return FDelegate(Object, &Function<T, TMethod>);
     }
 
-    ReturnType operator()(Params... arg) const
+    inline ReturnType operator()(Params... arg) const
     {
         return (*m_Method)(m_Object, arg...);
     }
 
 private:
     template <typename T, ReturnType(T::*TMethod)(Params...)>
-    static ReturnType Function(void* Object, Params... arg)
+    static inline ReturnType Function(void* Object, Params... arg)
     {
         T* ObjectType = (T*)(Object);
         return (ObjectType->*TMethod)(arg...);

@@ -14,15 +14,16 @@ enum class EEventType
     MOUSE_MOVED
 };
 
-#define DispatchEvent(event_type, object_name, object, method) \
-    Dispatch_<event_type>(FDelegate<bool, event_type*>::Bind<object_name, &object_name::method>(object))
-
 class FEventDispatcher
 {
 private:
     class FEvent* m_Event;
 public:
 
+    
+#define   DispatchEvent(event_type, object_name, object, method)               \
+    Dispatch_<event_type>(FDelegate<bool, event_type*>::Bind<object_name, &object_name::method>(object))
+    
     inline FEventDispatcher(FEvent* Event) : m_Event(Event) {}
 
     template <typename T>
