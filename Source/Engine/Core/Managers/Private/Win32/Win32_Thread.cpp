@@ -1,7 +1,7 @@
 /* ========================================================================
    $Creator: Armand Karambasis $
    ======================================================================== */
-#include "../../public/Thread.h"
+#include "../../Public/Thread.h"
 
 template <class T>
 class Win32_Thread : public FThread<T>

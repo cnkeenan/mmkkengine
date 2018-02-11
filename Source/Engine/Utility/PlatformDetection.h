@@ -29,11 +29,13 @@
 #if defined(__APPLE__) && defined(__MACH__)
 #undef OS_MAC
 #define OS_MAC 1
+#define POSIX 1
 #endif
 
 #if defined(__linux__)
 #undef OS_LINUX
 #define OS_LINUX 1
+#define POSIX 1
 #endif
 
 #define PLATFORMDETECTION_H

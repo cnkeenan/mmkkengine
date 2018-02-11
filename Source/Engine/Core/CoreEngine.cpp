@@ -13,30 +13,26 @@
 
 void FCoreEngine::Initialize()
 {
+    m_FPS = 60;
     PlatformManager* Platform = PlatformManager::Get();    
     FLog::InitLogger(Platform->GetCurrentTime, Platform->ChangeConsoleColor);
     m_MainWindow = Platform->CreateWindow(1280, 720, "Marty-O");
-    Platform->InitializeOpenGLContext(m_MainWindow);
-
-    
+    Platform->InitializeOpenGLContext(m_MainWindow);     
 }
 
 void FCoreEngine::Tick()
 {
     bool NotRunning = false;
 
-    FHighResolutionTimer MainLoopTimer = PlatformManager::Get()->CreateHighResolutionTimer();
+    m_Scheduler.Init(1.0/(double)m_FPS);
 
-    uint64 StartTimer = MainLoopTimer.StartTimer();
     while(!NotRunning)
-    {
-        uint64 EndTimer = MainLoopTimer.EndTimer();
-        double DeltaTime = MainLoopTimer.ElapsedTime(EndTimer, StartTimer);
-        LOG(INFO, "%fms/f", DeltaTime*1000.0f);
-        
-        StartTimer = MainLoopTimer.StartTimer();
-        //NOTE(EVERYONE): This is the beginning of the new frame
+    {                        
         NotRunning = m_MainWindow->ProcessOSWindowMessages();
+
+        double DeltaTime = m_Scheduler.Tick();
+        //NOTE(EVERYONE): This is the beginning of the new frame
+        LOG(INFO, "%fms/f", DeltaTime*1000.0f);        
 
         glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);        
@@ -70,3 +66,5 @@ int main(int ArgumentCount, char** Arguments)
 
 #include "Managers/Private/PlatformManager.cpp"
 #include "Managers/Private/TaskManager.cpp"
+#include "Managers/Private/StateManager.cpp"
+#include "Framework/Private/Scheduler.cpp"

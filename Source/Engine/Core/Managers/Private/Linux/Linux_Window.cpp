@@ -19,7 +19,6 @@ struct Linux_Window : public IWindow
     virtual void SwapOpenGLBuffers() final;
 };
 
-
 void Linux_Window::Initialize(
             const int Width, const int Height, const char* WindowName)
 {

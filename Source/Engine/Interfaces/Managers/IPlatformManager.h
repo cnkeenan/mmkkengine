@@ -21,6 +21,35 @@ class IPlatformManager
 public:
 
     virtual FHighResolutionTimer CreateHighResolutionTimer() = 0;
+    virtual class IMutex* CreateMutex() = 0;
+    virtual void DestroyMutex(IMutex* Mutex) = 0;
+
+    //NOTE(EVERYONE): Doubt we will use a semaphore in the systems
+    //but just in case you can create one in the interface
+    virtual class ISemaphore* CreateSemaphore(int InitialCount) = 0;
+    virtual void DestroySemaphore(ISemaphore* Semaphore) = 0;
+};
+
+class IMutex
+{
+protected:
+public:
+
+    virtual bool Lock() = 0;
+    virtual void Unlock() = 0;
+    virtual ~IMutex() {}
+};
+
+class ISemaphore
+{
+protected:
+public:
+
+    //NOTE(EVERYONE): Increments the semaphore count by 1
+    virtual void Post() = 0;
+    //NOTE(EVERYONE): Decrements the semaphore count by 1
+    virtual void Wait() = 0;
+    virtual ~ISemaphore() {}
 };
 
 class IWindow
@@ -34,8 +63,7 @@ public:
     virtual bool ProcessOSWindowMessages() = 0;
 
     virtual void SwapOpenGLBuffers() = 0;
-
-    virtual ~IWindow() {}
+    virtual ~IWindow(){} //TODO: windows should define a destructor
 };
 
 #define IPLATFORMMANAGER_H

@@ -11,7 +11,7 @@ private:
 
     TaskManager();
 public:
-    static TaskManager* Get()
+    static inline TaskManager* Get()
     {
         if(!s_TaskManager)
             s_TaskManager = new TaskManager;
