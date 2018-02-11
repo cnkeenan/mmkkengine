@@ -7,9 +7,12 @@
 #include <Assert.h>
 #include <Libs.h>
 #include <Events.h>
+#include <Logger.h>
+#include "Managers/Public/EnvironmentManager.h"
 #include "Managers/Public/PlatformManager.h"
 #include "Managers/Public/TaskManager.h"
 #include "Managers/Public/StateManager.h"
+#include "Managers/Public/ServiceManager.h"
 #include "Framework/Public/Scheduler.h"
 
 class FCoreEngine
@@ -26,6 +29,8 @@ public:
     void Tick();
     void Destroy();
 
+    bool TestEventMethod(TestEvent* Event);
+    
 };
 
 #define COREENGINE_H

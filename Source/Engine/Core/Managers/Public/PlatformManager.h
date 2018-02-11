@@ -1,14 +1,5 @@
 #if !defined(PLATFORMMANAGER_H)
 #include <Managers/IPlatformManager.h>
- 
-enum class EConsoleColor
-{
-    RED,
-    GREEN,
-    BLUE,
-    BLACK,
-    WHITE
-};
 
 template <typename T>
 class FThread;
@@ -33,7 +24,8 @@ public:
     void InitializeOpenGLContext(IWindow* Window);
     uint32 GetNumberOfProcessors();
 
-    
+    //NOTE(EVERYONE): Returns the thread id of the thread that called this funciton
+    uint32 GetCallingThreadID();
     
     template <typename T>
     FThread<T>* CreateThread(T* Object, int (T::* Method)(void)); 

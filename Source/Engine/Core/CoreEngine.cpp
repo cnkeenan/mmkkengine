@@ -4,7 +4,6 @@
 #include <PlatformDetection.h>
 #include "CoreEngine.h"
 #include <Strings.h>
-#include <Logger.h>
 #if OS_LINUX
 #include <GL/glu.h>
 #else
@@ -14,30 +13,43 @@
 void FCoreEngine::Initialize()
 {
     m_FPS = 60;
-    PlatformManager* Platform = PlatformManager::Get();    
+    PlatformManager* Platform = PlatformManager::Get();
+    TaskManager::Get();
     FLog::InitLogger(Platform->GetCurrentTime, Platform->ChangeConsoleColor);
     m_MainWindow = Platform->CreateWindow(1280, 720, "Marty-O");
-    Platform->InitializeOpenGLContext(m_MainWindow);     
+    Platform->InitializeOpenGLContext(m_MainWindow);
+
+    FEvent* Event = new TestEvent(EEventType::TEST);
+    FEventDispatcher EventDispatcher(Event);
+
+    EventDispatcher.Dispatch(bool, TestEvent, FCoreEngine, this, TestEventMethod);
+    
 }
 
 void FCoreEngine::Tick()
-{
-    bool NotRunning = false;
-
+{    
     m_Scheduler.Init(1.0/(double)m_FPS);
 
-    while(!NotRunning)
+    EnvironmentManager* Environment = EnvironmentManager::Get();
+    
+    while(Environment->ExecutionState() == EExecutionState::RUN)
     {                        
-        NotRunning = m_MainWindow->ProcessOSWindowMessages();
+        m_MainWindow->ProcessOSWindowMessages();
 
         double DeltaTime = m_Scheduler.Tick();
         //NOTE(EVERYONE): This is the beginning of the new frame
-        LOG(INFO, "%fms/f", DeltaTime*1000.0f);        
+        //LOG(INFO, "%fms/f", DeltaTime*1000.0f);        
 
+        //NOTE(EVERYONE): We'll let the main thread start working on tasks while it waits for the
+        //frame's current tasks to finish execution
+        TaskManager::Get()->CompleteAllSubmittedTasks();
+
+        //NOTE(EVERYONE): State manager distribution here
+        
         glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);        
 
-        m_MainWindow->SwapOpenGLBuffers();
+        m_MainWindow->SwapOpenGLBuffers();        
     }
 }
 
@@ -47,16 +59,31 @@ void FCoreEngine::Destroy()
     m_MainWindow = nullptr;
 }
 
+bool FCoreEngine::TestEventMethod(TestEvent* Event)
+{
+    LOG(INFO, "Event");
+
+    return false;
+}
+
 int main(int ArgumentCount, char** Arguments)
 {
-    FCoreEngine Engine;
+    FCoreEngine Engine;    
     Engine.Initialize();
     Engine.Tick();
     Engine.Destroy();
+    delete ServiceManager::Get();
+    delete StateManager::GetObjectStateManager();
+    delete StateManager::GetSceneStateManager();    
+    delete EnvironmentManager::Get();
+    delete TaskManager::Get();
+    delete PlatformManager::Get();
     return 0;
 }
 
+#include "Managers/Private/EnvironmentManager.cpp"
 #include "Managers/Private/PlatformManager.cpp"
 #include "Managers/Private/TaskManager.cpp"
 #include "Managers/Private/StateManager.cpp"
+#include "Managers/Private/ServiceManager.cpp"
 #include "Framework/Private/Scheduler.cpp"

@@ -12,6 +12,15 @@ enum class ELogLevel
     DEBUG,
     INFO,
 };
+ 
+enum class EConsoleColor
+{
+    RED,
+    GREEN,
+    BLUE,
+    BLACK,
+    WHITE
+};
 
 typedef char* FNowTime(char* Result);
 typedef void FChangeConsoleColor(EConsoleColor BackgroundColor, EConsoleColor ForegroundColor);

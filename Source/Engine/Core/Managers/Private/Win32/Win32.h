@@ -3,10 +3,12 @@
    $Creator: Armand Karambasis $
    ======================================================================== */
 #pragma comment(lib, "user32.lib")
-#pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "gdi32.lib")
+#pragma comment(lib, "hid.lib")
 
+#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include <hidsdi.h>
 
 #define WGL_CONTEXT_MAJOR_VERSION_ARB             0x2091
 #define WGL_CONTEXT_MINOR_VERSION_ARB             0x2092
@@ -20,9 +22,26 @@
 #define ERROR_INVALID_VERSION_ARB                 0x2095
 #define ERROR_INVALID_PROFILE_ARB                 0x2096
 
-typedef HGLRC fp_wglCreateContextAttribsARB(HDC DeviceContext, HGLRC ShareContext,
+typedef HGLRC fp_wglCreateContextAttribsARB_(HDC DeviceContext, HGLRC ShareContext,
                                             const int *AttribList);
-static fp_wglCreateContextAttribsARB* wglCreateContextAttribsARB;
-    
+FUNCTION_SIGNATURE(wglCreateContextAttribsARB_);
+#define wglCreateContextAttribsARB wglCreateContextAttribsARB_ 
+
+typedef PROC fp_wglGetProcAddress_(LPCSTR lpszProc);
+FUNCTION_SIGNATURE(wglGetProcAddress_);
+#define wglGetProcAddress wglGetProcAddress_
+
+typedef HGLRC fp_wglCreateContext_(HDC hdc);
+FUNCTION_SIGNATURE(wglCreateContext_);
+#define wglCreateContext wglCreateContext_
+
+typedef BOOL fp_wglDeleteContext_(HGLRC hglrc);
+FUNCTION_SIGNATURE(wglDeleteContext_);
+#define wglDeleteContext wglDeleteContext_
+
+typedef BOOL fp_wglMakeCurrent_(HDC hdc, HGLRC hglrc);
+FUNCTION_SIGNATURE(wglMakeCurrent_);
+#define wglMakeCurrent wglMakeCurrent_
+
 #define WIN32_H
 #endif
