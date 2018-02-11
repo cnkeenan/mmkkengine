@@ -43,5 +43,14 @@ typedef BOOL fp_wglMakeCurrent_(HDC hdc, HGLRC hglrc);
 FUNCTION_SIGNATURE(wglMakeCurrent_);
 #define wglMakeCurrent wglMakeCurrent_
 
+#include "Win32/Win32_Window.cpp"
+#include "Win32/Win32_OpenGL.cpp"
+#include "Win32/Win32_Timer.cpp"
+#include "Win32/Win32_Console.cpp"
+#include "Win32/Win32_Thread.cpp"
+#include "Win32/Win32_Mutex.cpp"
+#include "Win32/Win32_Hardware.cpp"
+#include "Win32/Win32_Semaphore.cpp"
+
 #define WIN32_H
 #endif

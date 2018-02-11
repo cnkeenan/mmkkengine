@@ -1,5 +1,5 @@
 #if !defined(TASKMANAGER_H)
-#include <Managers/ITaskManager.h>
+#include <Interfaces/Managers/ITaskManager.h>
 #include "Thread.h"
 
 //TODO(JJ): Move this to interface

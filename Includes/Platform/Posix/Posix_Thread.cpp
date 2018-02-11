@@ -1,6 +1,4 @@
-#include "../../Public/Thread.h"
-#include "Posix.h"
-
+#include <Engine/Managers/Thread.h>
 
 //TODO:
 //

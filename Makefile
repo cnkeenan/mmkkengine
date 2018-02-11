@@ -1,10 +1,9 @@
 OS=$(shell uname)
 CCFLAGS=-Wall -pedantic -pthread
 CXX=g++
-INCLUDES=-I../../../Source/Engine/Interfaces/\
-		 -I../../../Source/Engine/Utility
+INCLUDES=-IIncludes/
 
-TARGET=CoreEngine.cpp
+TARGET=Source/Engine/CoreEngine.cpp
 EXE=ProjectMario
 
 ifeq ($(OS),Linux)
@@ -16,7 +15,7 @@ endif
 
 all:
 	@echo -e '\033[0;34m[Platform Detected] $(OS)\033[0m'
-	rm -rf out
-	mkdir out
-	$(CXX) $(CCFLAGS) $(INCLUDES) $(TARGET) -o out/$(EXE)
+	rm -rf Bin 
+	mkdir Bin
+	$(CXX) $(CCFLAGS) $(INCLUDES) $(TARGET) -o Bin/$(EXE)
 	
