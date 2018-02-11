@@ -17,7 +17,8 @@ void FCoreEngine::Initialize()
     TaskManager::Get();
     FLog::InitLogger(Platform->GetCurrentTime, Platform->ChangeConsoleColor);
     m_MainWindow = Platform->CreateWindow(1280, 720, "Marty-O");
-    Platform->InitializeOpenGLContext(m_MainWindow);    
+    Platform->InitializeOpenGLContext(m_MainWindow);
+    
 }
 
 void FCoreEngine::Tick()
