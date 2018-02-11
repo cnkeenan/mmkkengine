@@ -1,6 +1,7 @@
 OS=$(shell uname)
 CCFLAGS=-Wall -pedantic -pthread
 CXX=g++
+OBJC=Managers/Private/MacOS/MacOS_Window.mm
 INCLUDES=-IIncludes/
 
 TARGET=Source/Engine/CoreEngine.cpp
@@ -11,6 +12,7 @@ ifeq ($(OS),Linux)
 endif
 ifeq ($(OS),Darwin)
 	CCFLAGS +=-framework Cocoa 
+	CXX=clang++
 endif	
 
 all:
