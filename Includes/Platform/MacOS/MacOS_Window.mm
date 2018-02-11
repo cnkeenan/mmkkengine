@@ -88,7 +88,7 @@ void MacOS_Window::Initialize(const int Width, const int Height, const char* Win
 {
     self = [super init];
     if (self != nil)
-        window = initWindow;
+        m_window = initWindow;
     return self;
 }
 
