@@ -145,8 +145,7 @@ inline FLog::~FLog()
 }
 
 #define LOG(level, format, ...) \
-    FLog(ELogLevel::level).Format(format, __VA_ARGS__)
-
+    FLog(ELogLevel::level).Format(format, ##__VA_ARGS__)
 
 
 #define LOGGER_H
