@@ -31,8 +31,8 @@ FHighResolutionTimer PlatformManager::CreateHighResolutionTimer()
 #undef GetCurrentTime
 char* PlatformManager::GetCurrentTime(char* Result)
 {
-    const std::string res = "UNIMPLEMENTED";
-    const char* cstr = res.c_str();
+    //const std::string res = "UNIMPLEMENTED";
+    const char* cstr = "UNIMPLEMENTED";
     return (char*)cstr; 
 }
 

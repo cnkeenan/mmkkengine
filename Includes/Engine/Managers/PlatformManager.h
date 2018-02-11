@@ -12,29 +12,29 @@ private:
 public:
     static inline PlatformManager* Get()
     {
-        if(!s_PlatformManager)
+        if (!s_PlatformManager)
             s_PlatformManager = new PlatformManager;
 
         return s_PlatformManager;
     }
 
-    IWindow* CreateWindow(const int Width, const int Height, const char* WindowName);
-    void DestroyWindow(IWindow* Window);
-    
-    void InitializeOpenGLContext(IWindow* Window);
+    IWindow *CreateWindow(const int Width, const int Height, const char *WindowName);
+    void DestroyWindow(IWindow *Window);
+
+    void InitializeOpenGLContext(IWindow *Window);
     uint32 GetNumberOfProcessors();
 
     //NOTE(EVERYONE): Returns the thread id of the thread that called this funciton
     uint32 GetCallingThreadID();
     
     template <typename T>
-    FThread<T>* CreateThread(T* Object, int (T::* Method)(void)); 
+    FThread<T> *CreateThread(T *Object, int (T::*Method)(void));
 
     template <typename T>
-    void DestroyThread(FThread<T>* Thread);
-    
+    void DestroyThread(FThread<T> *Thread);
+
     static void ChangeConsoleColor(EConsoleColor BackgroundColor, EConsoleColor ForegroundColor);
-    static char* GetCurrentTime(char* Buffer);
+    static char *GetCurrentTime(char *Buffer);
 
 public:
     virtual FHighResolutionTimer CreateHighResolutionTimer() final;
