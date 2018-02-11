@@ -10,6 +10,7 @@
 
 #include "MacOS.h"
 #include <AtomicTypes.h>
+#include <Logger.h>
 #include "../../Public/PlatformManager.h"
 #import <Cocoa/Cocoa.h>
 
@@ -70,7 +71,20 @@ void MacOS_Window::Initialize(const int Width, const int Height, const char* Win
 
 void MacOS_Window::ProcessOSWindowMessages()
 {
-   
+   NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny 
+                            untilDate:nil 
+                            inMode:NSDefaultRunLoopMode 
+                            dequeue:YES];
+    switch([(NSEvent *)event type])
+    {
+        case NSEventTypeKeyDown:
+            NSLog (@"Hello, World!");
+            break;
+        default:
+            [NSApp sendEvent:event];
+            break;
+    }
+    [event release];
 }
 
 void MacOS_Window::SwapOpenGLBuffers()

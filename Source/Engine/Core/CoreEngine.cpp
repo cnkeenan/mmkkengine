@@ -19,10 +19,10 @@ void FCoreEngine::Initialize()
     m_MainWindow = Platform->CreateWindow(1280, 720, "Marty-O");
     Platform->InitializeOpenGLContext(m_MainWindow);
 
-    FEvent* Event = new TestEvent(EEventType::TEST);
-    FEventDispatcher EventDispatcher(Event);
+    // FEvent* Event = new TestEvent(EEventType::TEST);
+    // FEventDispatcher EventDispatcher(Event);
 
-    EventDispatcher.Dispatch(bool, TestEvent, FCoreEngine, this, TestEventMethod);
+    // EventDispatcher.Dispatch(TestEvent, FCoreEngine, this, TestEventMethod);
     
 }
 
@@ -61,7 +61,7 @@ void FCoreEngine::Destroy()
 
 bool FCoreEngine::TestEventMethod(TestEvent* Event)
 {
-    LOG(INFO, "Event");
+    //LOG(INFO, "Event");
 
     return false;
 }
