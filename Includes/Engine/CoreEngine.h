@@ -2,18 +2,18 @@
 /* ========================================================================
    $Creator: Armand Karambasis $
    ======================================================================== */
-#include <AtomicTypes.h>
-#include <Macro.h>
-#include <Assert.h>
-#include <Libs.h>
-#include <Events.h>
-#include <Logger.h>
-#include "Managers/Public/EnvironmentManager.h"
-#include "Managers/Public/PlatformManager.h"
-#include "Managers/Public/TaskManager.h"
-#include "Managers/Public/StateManager.h"
-#include "Managers/Public/ServiceManager.h"
-#include "Framework/Public/Scheduler.h"
+#include <Utility/AtomicTypes.h>
+#include <Utility/Macro.h>
+#include <Utility/Assert.h>
+#include <Utility/Libs.h>
+#include <Utility/Events.h>
+#include <Utility/Logger.h>
+#include <Engine/Managers/EnvironmentManager.h>
+#include <Engine/Managers/PlatformManager.h>
+#include <Engine/Managers/TaskManager.h>
+#include <Engine/Managers/StateManager.h>
+#include <Engine/Managers/ServiceManager.h>
+#include <Engine/Framework/Scheduler.h>
 
 class FCoreEngine
 {

@@ -1,7 +1,7 @@
 #if !defined(STATEMANAGER_H)
 
-#include <Managers/IStateManager.h>
-#include <Observer/IObserver.h>
+#include <Interfaces/Managers/IStateManager.h>
+#include <Interfaces/Observer/IObserver.h>
 
 struct FSubjectObserverList
 {

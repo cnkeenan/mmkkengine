@@ -1,5 +1,5 @@
 #if !defined(SERVICEMANAGER_H)
-#include <Managers/IServiceManager.h>
+#include <Interfaces/Managers/IServiceManager.h>
 
 class ServiceManager : public IServiceManager
 {

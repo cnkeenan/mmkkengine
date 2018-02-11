@@ -1,5 +1,5 @@
 #if !defined(ENVIRONMENTMANAGER_H)
-#include <Managers/IEnvironmentManager.h>
+#include <Interfaces/Managers/IEnvironmentManager.h>
 
 //TODO(EVERYONE): Handle more execution status's like pause, next scene etc.
 enum class EExecutionState

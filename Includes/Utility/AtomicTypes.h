@@ -2,7 +2,7 @@
 /* ========================================================================
    $Creator: Armand Karambasis $
    ======================================================================== */
-#ifdef OS_LINUX
+#if OS_LINUX
 #include <stddef.h>
 #endif
 #include <stdint.h>

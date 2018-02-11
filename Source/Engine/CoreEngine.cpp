@@ -1,13 +1,13 @@
 /* ========================================================================
    $Creator: Armand Karambasis $
    ======================================================================== */
-#include <PlatformDetection.h>
-#include "CoreEngine.h"
-#include <Strings.h>
+#include <Utility/PlatformDetection.h>
+#include <Utility/Strings.h>
+#include <Engine/CoreEngine.h>
 #if OS_LINUX
 #include <GL/glu.h>
 #else
-#include <OpenGL.h>
+#include <Utility/OpenGL.h>
 #endif
 
 void FCoreEngine::Initialize()
@@ -81,9 +81,9 @@ int main(int ArgumentCount, char** Arguments)
     return 0;
 }
 
-#include "Managers/Private/EnvironmentManager.cpp"
-#include "Managers/Private/PlatformManager.cpp"
-#include "Managers/Private/TaskManager.cpp"
-#include "Managers/Private/StateManager.cpp"
-#include "Managers/Private/ServiceManager.cpp"
-#include "Framework/Private/Scheduler.cpp"
+#include "Managers/EnvironmentManager.cpp"
+#include "Managers/PlatformManager.cpp"
+#include "Managers/TaskManager.cpp"
+#include "Managers/StateManager.cpp"
+#include "Managers/ServiceManager.cpp"
+#include "Framework/Scheduler.cpp"
