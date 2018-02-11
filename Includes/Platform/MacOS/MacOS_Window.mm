@@ -11,6 +11,7 @@
 #include <Utility/AtomicTypes.h>
 #include <Utility/Logger.h>
 #include <Engine/Managers/PlatformManager.h>
+#include <Engine/Managers/EnvironmentManager.h>
 #import <Cocoa/Cocoa.h>
 
 struct MacOS_Window : public IWindow 
@@ -22,6 +23,8 @@ struct MacOS_Window : public IWindow
     virtual void ProcessOSWindowMessages() final;
     virtual void SwapOpenGLBuffers() final;
 };
+
+
 
 void MacOS_Window::Initialize(const int Width, const int Height, const char* WindowName)
 {
@@ -56,6 +59,8 @@ void MacOS_Window::Initialize(const int Width, const int Height, const char* Win
 
     [m_Window setTitle:[NSString stringWithUTF8String:WindowName]];
     // TODO: Create app delegate to handle system events.
+
+    
     // TODO: Create menus (especially Quit!)
 
     // Show window and run event loop.
@@ -67,35 +72,74 @@ void MacOS_Window::Initialize(const int Width, const int Height, const char* Win
     //[pool drain];
 }
 
+@interface WindowDelegate : NSObject 
+{
+    NSWindow* m_window;
+}
+
+- (instancetype)initWithWindow:(NSWindow* )initWindow;
+
+@end
+
+
+@implementation WindowDelegate
+
+- (instancetype)initWithWindow:(NSWindow* )initWindow 
+{
+    self = [super init];
+    if (self != nil)
+        window = initWindow;
+    return self;
+}
+
+-(BOOL)windowShouldClose:(id)sender
+{
+    EnvironmentManager::Get()->ExecutionState(EExecutionState::EXIT);
+    return NO;
+}
+
+@end 
 
 void MacOS_Window::ProcessOSWindowMessages()
 {
-   NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny 
+    NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny 
                             untilDate:nil 
                             inMode:NSDefaultRunLoopMode 
                             dequeue:YES];
+
+                
     switch([(NSEvent *)event type])
     {
         case NSEventTypeKeyDown:
             NSLog (@"Hello, World!");
             break;
+        
+        
         default:
             [NSApp sendEvent:event];
             break;
     }
+
+    
     [event release];
+
+
+    
 }
 
 void MacOS_Window::SwapOpenGLBuffers()
 {
 
 }
+
 IWindow* PlatformManager::CreateWindow(const int Width, const int Height, const char* WindowName)
 {
     IWindow* Result = new MacOS_Window;
     Result->Initialize(Width, Height, WindowName);
     return Result;
 }
+
+
 
 
     
