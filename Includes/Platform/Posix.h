@@ -3,6 +3,7 @@
 
 #include <unistd.h>
 #include <pthread.h>
+#include <semaphore.h>
 #include <time.h>
 #if OS_MAC
 #include <errno.h>
