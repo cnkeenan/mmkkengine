@@ -1,5 +1,5 @@
 OS=$(shell uname)
-CCFLAGS=-Wall -pedantic -pthread
+CCFLAGS=-Wall -std=c++11 -pedantic -pthread
 CXX=g++
 OBJC=
 ADD_OBJ=
@@ -12,8 +12,8 @@ ifeq ($(OS),Linux)
 endif
 
 ifeq ($(OS),Darwin)
-	CCFLAGS +=-framework Cocoa 
-	OBJC+=clang++ -IIncludes Includes/Platform/MacOS/MacOS_Window.mm -c
+	CCFLAGS +=-framework Cocoa -framework OpenGL
+	OBJC+=clang++ -std=c++11 -IIncludes Includes/Platform/MacOS/MacOS_Window.mm -c
 	ADD_OBJ=MacOS_Window.o
 	CXX=clang++
 endif	

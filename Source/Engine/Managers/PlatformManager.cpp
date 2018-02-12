@@ -1,7 +1,7 @@
 #if OS_WINDOWS
 #include <Platform/Win32.h>
 #elif OS_MAC
-#include "MacOS/MacOS_OpenGL.cpp"
+#include <Platform/MacOS.h>
 #elif OS_LINUX
 #include <Platform/Linux.h>
 #endif
