@@ -2,12 +2,12 @@
 /* ========================================================================
    $Creator: Armand Karambasis $
    ======================================================================== */
+#include <Utility/PlatformDetection.h>
 #include <Utility/AtomicTypes.h>
 #include <Utility/Macro.h>
 #include <Utility/Assert.h>
-#include <Utility/Libs.h>
 #include <Utility/Events.h>
-#include <Utility/Logger.h>
+#include <Utility/Strings.h>
 #include <Engine/Managers/EnvironmentManager.h>
 #include <Engine/Managers/PlatformManager.h>
 #include <Engine/Managers/TaskManager.h>

@@ -3,23 +3,22 @@
    $Creator: Armand Karambasis $
    ======================================================================== */
 #include "Libs.h"
-#include <stdarg.h>
 
 enum class ELogLevel
 {
-    ERROR =0,
-    WARNING=1,    
-    DEBUG=2,
-    INFO=3,
+    FAILURE,
+    WARNING,    
+    DEBUG,
+    INFO,
 };
  
 enum class EConsoleColor
 {
-    RED=0,
-    GREEN=1,
-    BLUE=2,
-    BLACK=3,
-    WHITE=4
+    RED,
+    GREEN,
+    BLUE,
+    BLACK,
+    WHITE
 };
 
 typedef char* FNowTime(char* Result);
@@ -57,9 +56,9 @@ public:
     {
         switch(Level)
         {
-            case ELogLevel::ERROR:
+            case ELogLevel::FAILURE:
             {
-                return "ERROR";
+                return "FAILURE";
             } break;
 
             case ELogLevel::WARNING:
@@ -98,7 +97,7 @@ inline FLog::FLog(ELogLevel Level)
 }
 
 inline void FLog::Format(const char* Format,
-                          ...)
+                         ...)
 {    
     va_list Arguments;
     va_start(Arguments, Format);
@@ -115,7 +114,7 @@ inline FLog::~FLog()
         
         switch(Level)
         {
-            case ELogLevel::ERROR:
+            case ELogLevel::FAILURE:
             {                
                 BackgroundColor = EConsoleColor::RED;
                 ForegroundColor = EConsoleColor::WHITE;
@@ -139,6 +138,7 @@ inline FLog::~FLog()
                 ForegroundColor = EConsoleColor::WHITE;
             } break;
         }
+
         ChangeConsoleColor(BackgroundColor, ForegroundColor);
         char Buffer[128];
         fprintf(stderr, "- %s %s: \t%s\n", NowTime(Buffer), ToString(Level), Logger);
@@ -146,9 +146,7 @@ inline FLog::~FLog()
     }
 }
 
-#define LOG(level, format, ...) \
-    FLog(ELogLevel::level).Format(format, ##__VA_ARGS__)
-
+#define LOG(level, format, ...) FLog(ELogLevel::level).Format(format, ##__VA_ARGS__) 
 
 #define LOGGER_H
 #endif

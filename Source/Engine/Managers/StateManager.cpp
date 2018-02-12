@@ -12,9 +12,9 @@ void StateManager::Observe(IObserver* Observer, FSubject* Subject)
             for(auto& ListObserver : SubjectObserver.Observers)
             {
                 //NOTE(EVERYONE): Make sure we do not allow duplicate observers in the change-controller
-                ASSERT(ListObserver != Observer);
+                ASSERT(ListObserver != Observer, "Duplicate observers");                                
             }
-            
+
             SubjectObserver.Observers.push_back(Observer);
             Found = true;            
         }
@@ -22,6 +22,8 @@ void StateManager::Observe(IObserver* Observer, FSubject* Subject)
 
     if(!Found)
     {
+
+        
         FSubjectObserverList SubjectObserverList;
         SubjectObserverList.Subject = Subject;
         SubjectObserverList.Observers.push_back(Observer);
@@ -31,6 +33,7 @@ void StateManager::Observe(IObserver* Observer, FSubject* Subject)
 
 void StateManager::OnEvent(FSubject* Subject, const FEvent* Event)
 {
+    
     for(auto& SubjectObserver : m_SubjectObserverList)
     {
         if(Subject == SubjectObserver.Subject)
@@ -43,6 +46,7 @@ void StateManager::OnEvent(FSubject* Subject, const FEvent* Event)
 
 void StateManager::Dispatch()
 {
+                
     for(auto& SubjectObserver : m_SubjectObserverList)
     {
         FSubject* Subject = SubjectObserver.Subject;

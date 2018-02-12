@@ -1,13 +1,9 @@
 /* ========================================================================
    $Creator: Armand Karambasis $
    ======================================================================== */
-#include <Utility/PlatformDetection.h>
-#include <Utility/Strings.h>
 #include <Engine/CoreEngine.h>
 #if OS_LINUX
 #include <GL/glu.h>
-#elif OS_MAC
-#include <OpenGL/gl.h>
 #else
 #include <Utility/OpenGL.h>
 #endif
@@ -19,7 +15,7 @@ void FCoreEngine::Initialize()
     TaskManager::Get();
     FLog::InitLogger(Platform->GetCurrentTime, Platform->ChangeConsoleColor);
     m_MainWindow = Platform->CreateWindow(1280, 720, "Marty-O");
-    Platform->InitializeOpenGLContext(m_MainWindow);    
+    Platform->InitializeOpenGLContext(m_MainWindow);
 }
 
 void FCoreEngine::Tick()
@@ -27,7 +23,7 @@ void FCoreEngine::Tick()
     m_Scheduler.Init(1.0/(double)m_FPS);
 
     EnvironmentManager* Environment = EnvironmentManager::Get();
-    
+
     while(Environment->ExecutionState() == EExecutionState::RUN)
     {                        
         m_MainWindow->ProcessOSWindowMessages();
@@ -45,7 +41,8 @@ void FCoreEngine::Tick()
         glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);        
 
-        m_MainWindow->SwapOpenGLBuffers();        
+        m_MainWindow->SwapOpenGLBuffers();
+
     }
 }
 
@@ -53,12 +50,6 @@ void FCoreEngine::Destroy()
 {
     PlatformManager::Get()->DestroyWindow(m_MainWindow);
     m_MainWindow = nullptr;
-}
-
-bool FCoreEngine::TestEventMethod(TestEvent* Event)
-{
-    LOG(INFO, "Event");    
-    return false;
 }
 
 int main(int ArgumentCount, char** Arguments)

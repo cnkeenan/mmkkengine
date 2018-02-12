@@ -39,7 +39,7 @@ FThread<T>::~FThread()
 {}
 
 void PlatformManager::DestroyWindow(IWindow* Window)
-{
+{    
     if(Window)    
         delete Window;    
 }

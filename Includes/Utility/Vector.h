@@ -5,23 +5,23 @@
 #include <initializer_list>
 
 template <typename T, int N>
-struct TVec
+struct TVector
 {
     T Data[N] = {};
 
-    inline TVec() {}
+    inline TVector() {}
     
-    inline TVec(const std::initializer_list<T>& List)
+    inline TVector(const std::initializer_list<T>& List)
     {
         int Counter = 0;
         for(auto& i : List)
         {
             Data[Counter++] = i;
-            ASSERT(Counter != N);
+            ASSERT(Counter != N, "Size of list should not be larger than the vector");
         }
     }
 
-    inline TVec(const TVec<T, N>& Vec)
+    inline TVector(const TVector<T, N>& Vec)
     {
         for(auto i = 0; i < N; i++)
         {
@@ -29,7 +29,7 @@ struct TVec
         }
     }
 
-    inline TVec& operator=(const TVec<T, N>& Vec)
+    inline TVector& operator=(const TVector<T, N>& Vec)
     {
         for(auto i = 0; i < N; i++)
         {
@@ -40,7 +40,7 @@ struct TVec
 };
 
 template <typename T>
-struct TVec<T, 2>
+struct TVector<T, 2>
 {
     union
     {
@@ -62,10 +62,10 @@ struct TVec<T, 2>
         };
     };
 
-    inline TVec<T, 2>() {}
-    inline TVec<T, 2>(const T X, const T Y) : x(X), y(Y) {}
-    inline TVec<T, 2>(const TVec<T, 2>& Vec) : x(Vec.x), y(Vec.y) {}
-    inline TVec<T, 2>& operator=(const TVec<T, 2>& Vec)
+    inline TVector<T, 2>() {}
+    inline TVector<T, 2>(const T X, const T Y) : x(X), y(Y) {}
+    inline TVector<T, 2>(const TVector<T, 2>& Vec) : x(Vec.x), y(Vec.y) {}
+    inline TVector<T, 2>& operator=(const TVector<T, 2>& Vec)
     {
         x = Vec.x; y = Vec.y;
         return *this;
@@ -73,7 +73,7 @@ struct TVec<T, 2>
 };
 
 template <typename T>
-struct TVec<T, 3>
+struct TVector<T, 3>
 {
     union
     {
@@ -95,10 +95,10 @@ struct TVec<T, 3>
         };
     };
 
-    inline TVec<T, 3>() {}
-    inline TVec<T, 3>(const T X, const T Y, const T Z) : x(X), y(Y), z(Z) {}
-    inline TVec<T, 3>(const TVec<T, 3>& Vec) : x(Vec.x), y(Vec.y), z(Vec.z) {}
-    inline TVec<T, 3>& operator=(const TVec<T, 3>& Vec)
+    inline TVector<T, 3>() {}
+    inline TVector<T, 3>(const T X, const T Y, const T Z) : x(X), y(Y), z(Z) {}
+    inline TVector<T, 3>(const TVector<T, 3>& Vec) : x(Vec.x), y(Vec.y), z(Vec.z) {}
+    inline TVector<T, 3>& operator=(const TVector<T, 3>& Vec)
     {
         x = Vec.x; y = Vec.y; z = Vec.z;
         return *this;
@@ -106,7 +106,7 @@ struct TVec<T, 3>
 };
 
 template <typename T>
-struct TVec<T, 4>
+struct TVector<T, 4>
 {
     union
     {
@@ -128,10 +128,10 @@ struct TVec<T, 4>
         };
     };
 
-    inline TVec<T, 4>() {}
-    inline TVec<T, 4>(const T X, const T Y, const T Z, const T W) : x(X), y(Y), z(Z), w(W) {}
-    inline TVec<T, 4>(const TVec<T, 4>& Vec) : x(Vec.x), y(Vec.y), z(Vec.z), w(Vec.w) {}
-    inline TVec<T, 4>& operator=(const TVec<T, 4>& Vec)
+    inline TVector<T, 4>() {}
+    inline TVector<T, 4>(const T X, const T Y, const T Z, const T W) : x(X), y(Y), z(Z), w(W) {}
+    inline TVector<T, 4>(const TVector<T, 4>& Vec) : x(Vec.x), y(Vec.y), z(Vec.z), w(Vec.w) {}
+    inline TVector<T, 4>& operator=(const TVector<T, 4>& Vec)
     {
         x = Vec.x; y = Vec.y; z = Vec.z; w = Vec.w;
         return *this;
@@ -139,9 +139,9 @@ struct TVec<T, 4>
 };
 
 template <typename T, int N>
-inline TVec<T, N> Add(const TVec<T, N>& Left, const T Right)
+inline TVector<T, N> Add(const TVector<T, N>& Left, const T Right)
 {
-    TVec<T, N> Result;
+    TVector<T, N> Result;
     for(auto i = 0; i < N; i++)
     {
         Result.Data[i] = Left.Data[i] + Right;
@@ -150,15 +150,15 @@ inline TVec<T, N> Add(const TVec<T, N>& Left, const T Right)
 }
 
 template <typename T, int N>
-inline TVec<T, N> Add(const T Left, const TVec<T, N>& Right)
+inline TVector<T, N> Add(const T Left, const TVector<T, N>& Right)
 {
     return Add(Right, Left);
 }
 
 template <typename T, int N>
-inline TVec<T, N> Add(const TVec<T, N>& Left, const TVec<T, N>& Right)
+inline TVector<T, N> Add(const TVector<T, N>& Left, const TVector<T, N>& Right)
 {
-    TVec<T, N> Result;
+    TVector<T, N> Result;
     for(auto i = 0; i < N; i++)
     {
         Result.Data[i] = Left.Data[i] + Right.Data[i];
@@ -167,9 +167,9 @@ inline TVec<T, N> Add(const TVec<T, N>& Left, const TVec<T, N>& Right)
 }
 
 template <typename T, int N>
-inline TVec<T, N> Sub(const TVec<T, N>& Left, const T Right)
+inline TVector<T, N> Sub(const TVector<T, N>& Left, const T Right)
 {
-    TVec<T, N> Result;
+    TVector<T, N> Result;
     for(auto i = 0; i < N; i++)
     {
         Result.Data[i] = Left.Data[i] - Right;
@@ -178,9 +178,9 @@ inline TVec<T, N> Sub(const TVec<T, N>& Left, const T Right)
 }
 
 template <typename T, int N>
-inline TVec<T, N> Sub(const TVec<T, N>& Left, const TVec<T, N>& Right)
+inline TVector<T, N> Sub(const TVector<T, N>& Left, const TVector<T, N>& Right)
 {
-    TVec<T, N> Result;
+    TVector<T, N> Result;
     for(auto i = 0; i < N; i++)
     {
         Result.Data[i] = Left.Data[i] - Right.Data[i];
@@ -189,9 +189,9 @@ inline TVec<T, N> Sub(const TVec<T, N>& Left, const TVec<T, N>& Right)
 }
 
 template <typename T, int N>
-inline TVec<T, N> Mul(const TVec<T, N>& Left, const T Right)
+inline TVector<T, N> Mul(const TVector<T, N>& Left, const T Right)
 {
-    TVec<T, N> Result;
+    TVector<T, N> Result;
     for(auto i = 0; i < N; i++)
     {
         Result.Data[i] = Left.Data[i] * Right;
@@ -200,15 +200,15 @@ inline TVec<T, N> Mul(const TVec<T, N>& Left, const T Right)
 }
 
 template <typename T, int N>
-inline TVec<T, N> Mul(const T Left, const TVec<T, N>& Right)
+inline TVector<T, N> Mul(const T Left, const TVector<T, N>& Right)
 {
     return Mul(Right, Left);
 }
 
 template <typename T, int N>
-inline TVec<T, N> Mul(const TVec<T, N>& Left, const TVec<T, N>& Right)
+inline TVector<T, N> Mul(const TVector<T, N>& Left, const TVector<T, N>& Right)
 {
-    TVec<T, N> Result;
+    TVector<T, N> Result;
     for(auto i = 0; i < N; i++)
     {
         Result.Data[i] = Left.Data[i] * Right.Data[i];
@@ -217,9 +217,9 @@ inline TVec<T, N> Mul(const TVec<T, N>& Left, const TVec<T, N>& Right)
 }
 
 template <typename T, int N>
-inline TVec<T, N> Div(const TVec<T, N>& Left, const T Right)
+inline TVector<T, N> Div(const TVector<T, N>& Left, const T Right)
 {
-    TVec<T, N> Result;
+    TVector<T, N> Result;
     for(auto i = 0; i < N; i++)
     {
         Result.Data[i] = Left.Data[i] / Right;
@@ -228,9 +228,9 @@ inline TVec<T, N> Div(const TVec<T, N>& Left, const T Right)
 }
 
 template <typename T, int N>
-inline TVec<T, N> Div(const TVec<T, N>& Left, const TVec<T, N>& Right)
+inline TVector<T, N> Div(const TVector<T, N>& Left, const TVector<T, N>& Right)
 {
-    TVec<T, N> Result;
+    TVector<T, N> Result;
     for(auto i = 0; i < N; i++)
     {
         Result.Data[i] = Left.Data[i] / Right.Data[i];
@@ -239,7 +239,7 @@ inline TVec<T, N> Div(const TVec<T, N>& Left, const TVec<T, N>& Right)
 }
 
 template <typename T, int N>
-inline bool Equal(const TVec<T, N>& Left, const TVec<T, N>& Right)
+inline bool Equal(const TVector<T, N>& Left, const TVector<T, N>& Right)
 {    
     for(auto i = 0; i < N; i++)
     {
@@ -250,15 +250,15 @@ inline bool Equal(const TVec<T, N>& Left, const TVec<T, N>& Right)
 }
 
 template <typename T, int N>
-inline bool NotEqual(const TVec<T, N>& Left, const TVec<T, N>& Right)
+inline bool NotEqual(const TVector<T, N>& Left, const TVector<T, N>& Right)
 {
     return !Equal(Left, Right);
 }
 
 template <typename T, int N>
-inline TVec<T, N> Negate(const TVec<T, N>& Vec)
+inline TVector<T, N> Negate(const TVector<T, N>& Vec)
 {
-    TVec<T, N> Result;
+    TVector<T, N> Result;
     for(auto i = 0; i < N; i++)
     {
         Result.Data[i] = -Vec.Data[i];
@@ -267,97 +267,97 @@ inline TVec<T, N> Negate(const TVec<T, N>& Vec)
 }
 
 template <typename T, int N>
-inline TVec<T, N> operator+(const TVec<T, N>& Left, const T Right)
+inline TVector<T, N> operator+(const TVector<T, N>& Left, const T Right)
 {
     return Add(Left, Right);
 }
 
 template <typename T, int N>
-inline TVec<T, N> operator+(const T Left, const TVec<T, N>& Right)
+inline TVector<T, N> operator+(const T Left, const TVector<T, N>& Right)
 {
     return Add(Left, Right);
 }
 
 template <typename T, int N>
-inline TVec<T, N> operator+(const TVec<T, N>& Left, const TVec<T, N>& Right)
+inline TVector<T, N> operator+(const TVector<T, N>& Left, const TVector<T, N>& Right)
 {
     return Add(Left, Right);
 }
 
 template <typename T, int N>
-inline TVec<T, N> operator-(const TVec<T, N>& Left, const T Right)
+inline TVector<T, N> operator-(const TVector<T, N>& Left, const T Right)
 {
     return Sub(Left, Right);
 }
 
 template <typename T, int N>
-inline TVec<T, N> operator-(const T Left, const TVec<T, N>& Right)
+inline TVector<T, N> operator-(const T Left, const TVector<T, N>& Right)
 {
     return Sub(Left, Right);
 }
 
 template <typename T, int N>
-inline TVec<T, N> operator-(const TVec<T, N>& Left, const TVec<T, N>& Right)
+inline TVector<T, N> operator-(const TVector<T, N>& Left, const TVector<T, N>& Right)
 {
     return Sub(Left, Right);
 }
 
 template <typename T, int N>
-inline TVec<T, N> operator*(const TVec<T, N>& Left, const T Right)
+inline TVector<T, N> operator*(const TVector<T, N>& Left, const T Right)
 {
     return Mul(Left, Right);
 }
 
 template <typename T, int N>
-inline TVec<T, N> operator*(const T Left, const TVec<T, N>& Right)
+inline TVector<T, N> operator*(const T Left, const TVector<T, N>& Right)
 {
     return Mul(Left, Right);
 }
 
 template <typename T, int N>
-inline TVec<T, N> operator*(const TVec<T, N>& Left, const TVec<T, N>& Right)
+inline TVector<T, N> operator*(const TVector<T, N>& Left, const TVector<T, N>& Right)
 {
     return Mul(Left, Right);
 }
 
 template <typename T, int N>
-inline TVec<T, N> operator/(const TVec<T, N>& Left, const T Right)
+inline TVector<T, N> operator/(const TVector<T, N>& Left, const T Right)
 {
     return Div(Left, Right);
 }
 
 template <typename T, int N>
-inline TVec<T, N> operator/(const T Left, const TVec<T, N>& Right)
+inline TVector<T, N> operator/(const T Left, const TVector<T, N>& Right)
 {
     return Div(Left, Right);
 }
 
 template <typename T, int N>
-inline TVec<T, N> operator/(const TVec<T, N>& Left, const TVec<T, N>& Right)
+inline TVector<T, N> operator/(const TVector<T, N>& Left, const TVector<T, N>& Right)
 {
     return Div(Left, Right);
 }
 
 template <typename T, int N>
-inline bool operator==(const TVec<T, N>& Left, const TVec<T, N>& Right)
+inline bool operator==(const TVector<T, N>& Left, const TVector<T, N>& Right)
 {
     return Equal(Left, Right);
 }
 
 template <typename T, int N>
-inline bool operator!=(const TVec<T, N>& Left ,const TVec<T, N>& Right)
+inline bool operator!=(const TVector<T, N>& Left ,const TVector<T, N>& Right)
 {
     return NotEqual(Left, Right);
 }
 
 template <typename T, int N>
-inline TVec<T, N> operator-(const TVec<T, N>& Vec)
+inline TVector<T, N> operator-(const TVector<T, N>& Vec)
 {
     return Negate(Vec);
 }
 
 template <typename T, int N>
-inline TVec<T, N>& operator+=(TVec<T, N>& Vec, const T Right)
+inline TVector<T, N>& operator+=(TVector<T, N>& Vec, const T Right)
 {
     for(auto i = 0; i < N; i++)
     {
@@ -367,7 +367,7 @@ inline TVec<T, N>& operator+=(TVec<T, N>& Vec, const T Right)
 }
 
 template <typename T, int N>
-inline TVec<T, N>& operator+=(TVec<T, N>& Left, const TVec<T, N>& Right)
+inline TVector<T, N>& operator+=(TVector<T, N>& Left, const TVector<T, N>& Right)
 {
     for(auto i = 0; i < N; i++)
     {
@@ -377,7 +377,7 @@ inline TVec<T, N>& operator+=(TVec<T, N>& Left, const TVec<T, N>& Right)
 }
 
 template <typename T, int N>
-inline TVec<T, N>& operator-=(TVec<T, N>& Vec, const T Right)
+inline TVector<T, N>& operator-=(TVector<T, N>& Vec, const T Right)
 {
     for(auto i = 0; i < N; i++)
     {
@@ -387,7 +387,7 @@ inline TVec<T, N>& operator-=(TVec<T, N>& Vec, const T Right)
 }
 
 template <typename T, int N>
-inline TVec<T, N>& operator-=(TVec<T, N>& Left, const TVec<T, N>& Right)
+inline TVector<T, N>& operator-=(TVector<T, N>& Left, const TVector<T, N>& Right)
 {
     for(auto i = 0; i < N; i++)
     {
@@ -397,7 +397,7 @@ inline TVec<T, N>& operator-=(TVec<T, N>& Left, const TVec<T, N>& Right)
 }
 
 template <typename T, int N>
-inline TVec<T, N>& operator*=(TVec<T, N>& Vec, const T Right)
+inline TVector<T, N>& operator*=(TVector<T, N>& Vec, const T Right)
 {
     for(auto i = 0; i < N; i++)
     {
@@ -407,7 +407,7 @@ inline TVec<T, N>& operator*=(TVec<T, N>& Vec, const T Right)
 }
 
 template <typename T, int N>
-inline TVec<T, N>& operator*=(TVec<T, N>& Left, const TVec<T, N>& Right)
+inline TVector<T, N>& operator*=(TVector<T, N>& Left, const TVector<T, N>& Right)
 {
     for(auto i = 0; i < N; i++)
     {
@@ -417,7 +417,7 @@ inline TVec<T, N>& operator*=(TVec<T, N>& Left, const TVec<T, N>& Right)
 }
 
 template <typename T, int N>
-inline TVec<T, N>& operator/=(TVec<T, N>& Vec, const T Right)
+inline TVector<T, N>& operator/=(TVector<T, N>& Vec, const T Right)
 {
     for(auto i = 0; i < N; i++)
     {
@@ -427,7 +427,7 @@ inline TVec<T, N>& operator/=(TVec<T, N>& Vec, const T Right)
 }
 
 template <typename T, int N>
-inline TVec<T, N>& operator/=(TVec<T, N>& Left, const TVec<T, N>& Right)
+inline TVector<T, N>& operator/=(TVector<T, N>& Left, const TVector<T, N>& Right)
 {
     for(auto i = 0; i < N; i++)
     {
@@ -437,7 +437,7 @@ inline TVec<T, N>& operator/=(TVec<T, N>& Left, const TVec<T, N>& Right)
 }
 
 template <typename T, int N>
-inline T SqrMag(const TVec<T, N>& Vec)
+inline T SqrMag(const TVector<T, N>& Vec)
 {
     T Result = 0.0f;
     for(auto i = 0; i < N; i++)
@@ -448,26 +448,26 @@ inline T SqrMag(const TVec<T, N>& Vec)
 }
 
 template <typename T, int N>
-inline T Mag(const TVec<T, N>& Vec)
+inline T Mag(const TVector<T, N>& Vec)
 {
     return sqrt(SqrMag(Vec));
 }
 
 template <typename T, int N>
-inline bool IsUnit(const TVec<T, N>& Vec)
+inline bool IsUnit(const TVector<T, N>& Vec)
 {
     return (SqrMag(Vec) == 1) ? true : false;    
 }
 
 template <typename T, int N>
-inline TVec<T, N> Norm(const TVec<T, N>& Vec)
+inline TVector<T, N> Norm(const TVector<T, N>& Vec)
 {
     const T Length = Mag(Vec);
     return Div(Vec, Length);
 }
 
 template <typename T, int N>
-inline T Dot(const TVec<T, N>& Left, const TVec<T, N>& Right)
+inline T Dot(const TVector<T, N>& Left, const TVector<T, N>& Right)
 {
     T Result = 0;
     for(auto i = 0; i < N; i++)
@@ -478,7 +478,7 @@ inline T Dot(const TVec<T, N>& Left, const TVec<T, N>& Right)
 }
 
 template <typename T, int N>
-inline T Angle(const TVec<T, N>& Left, const TVec<T, N>& Right)
+inline T Angle(const TVector<T, N>& Left, const TVector<T, N>& Right)
 {
     const T DotProduct = Dot(Left, Right);
     const T Mag1 = Mag(Left);
@@ -487,7 +487,7 @@ inline T Angle(const TVec<T, N>& Left, const TVec<T, N>& Right)
 }
 
 template <typename T, int N>
-inline TVec<T, N> Projection(const TVec<T, N>& P, const TVec<T, N>& Q)
+inline TVector<T, N> Projection(const TVector<T, N>& P, const TVector<T, N>& Q)
 {
     const T DotProduct = Dot(P, Q);
     const T LengthSqr = SqrMag(Q);
@@ -495,13 +495,13 @@ inline TVec<T, N> Projection(const TVec<T, N>& P, const TVec<T, N>& Q)
 }
 
 template <typename T, int N>
-inline TVec<T, N> Perpendicular(const TVec<T, N>& P, const TVec<T, N>& Q)
+inline TVector<T, N> Perpendicular(const TVector<T, N>& P, const TVector<T, N>& Q)
 {
     return Sub(P, Projection(P, Q));
 }
 
 template <typename T>
-inline TVec<T, 3> Cross(const TVec<T, 3>& Left, const TVec<T, 3>& Right)
+inline TVector<T, 3> Cross(const TVector<T, 3>& Left, const TVector<T, 3>& Right)
 {
     const T Lx = Left.x;
     const T Ly = Left.y;
@@ -510,20 +510,20 @@ inline TVec<T, 3> Cross(const TVec<T, 3>& Left, const TVec<T, 3>& Right)
     const T Ry = Right.y;
     const T Rz = Right.z;
     
-    return TVec<T, 3>(Ly*Rz-Lz*Ry, Lz*Rx-Lx*Rz, Lx*Ry-Ly*Rx);
+    return TVector<T, 3>(Ly*Rz-Lz*Ry, Lz*Rx-Lx*Rz, Lx*Ry-Ly*Rx);
 }
 
-typedef TVec<int, 2> vec2i;
-typedef TVec<int, 3> vec3i;
-typedef TVec<int, 4> vec4i;
+typedef TVector<int, 2> FVector2i;
+typedef TVector<int, 3> FVector3i;
+typedef TVector<int, 4> FVector4i;
 
-typedef TVec<float, 2> vec2f;
-typedef TVec<float, 3> vec3f;
-typedef TVec<float, 4> vec4f;
+typedef TVector<float, 2> FVector2f;
+typedef TVector<float, 3> FVector3f;
+typedef TVector<float, 4> FVector4f;
 
-typedef TVec<double, 2> vec2d;
-typedef TVec<double, 3> vec3d;
-typedef TVec<double, 4> vec4d;
+typedef TVector<double, 2> FVector2d;
+typedef TVector<double, 3> FVector3d;
+typedef TVector<double, 4> FVector4d;
 
 #define VEC_H
 #endif

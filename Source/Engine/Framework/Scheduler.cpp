@@ -4,7 +4,7 @@ void FScheduler::Init(double Frequency)
     m_Frequency = Frequency;
     m_Lag = 0.0;
     m_StartTimer = m_MasterClock.StartTimer();
-    m_DistributionOrder = EDistributeOrder::ASCENDING;
+    m_DistributionOrder = EDistributeOrder::ASCENDING;    
 }
 
 double FScheduler::Tick()

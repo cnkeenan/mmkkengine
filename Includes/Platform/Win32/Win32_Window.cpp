@@ -125,10 +125,7 @@ void Win32_Window::ProcessOSWindowMessages()
                 GetRawInputData((HRAWINPUT)Message.lParam, RID_INPUT, nullptr, &BufferSize,
                                 sizeof(RAWINPUTHEADER));
 
-                RAWINPUT* RawInput = new RAWINPUT[BufferSize];
-                //(RAWINPUT*)HeapAlloc(Heap, HEAP_ZERO_MEMORY, BufferSize);
-
-                ASSERT(RawInput);
+                RAWINPUT* RawInput = new RAWINPUT[BufferSize];                
 
                 GetRawInputData((HRAWINPUT)Message.lParam, RID_INPUT, RawInput, &BufferSize,
                                 sizeof(RAWINPUTHEADER));

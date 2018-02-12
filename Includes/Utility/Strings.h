@@ -14,8 +14,7 @@ inline const char* LocateString(const char* String, const char* StringToFind)
     ptr_size StackSize = 0;
 
     //IMPORTANT: Do not include the null terminated value
-    ptr_size LengthOfString = strlen(StringToFind);
-    ASSERT(LengthOfString < 1024);
+    ptr_size LengthOfString = strlen(StringToFind);    
 
     char* At = (char*)String;
     while(*At)

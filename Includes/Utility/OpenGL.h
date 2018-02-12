@@ -1233,12 +1233,12 @@ FUNCTION_SIGNATURE(glSamplerParameterIuiv);
 typedef void* FOpenGLFunctionLoader(const char* FunctionString);
 
 
-#define LOAD_GL_FUNCTION(x) \
-    do { \
-    x = (fp_##x*)FunctionLoader(#x); \
-    if(!(x)) \
-        ASSERT(!""); \
-    } \
+#define LOAD_GL_FUNCTION(x)                             \
+    do                                                  \
+    {                                                   \
+        x = (fp_##x*)FunctionLoader(#x);                \
+        ASSERT(x, "Failed to load function pointer");   \
+    }                                                   \
     while(0)
 
 //TODO(EVERYONE): Move this to renderer and remove the inline

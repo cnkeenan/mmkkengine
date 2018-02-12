@@ -5,7 +5,6 @@ TaskManager::TaskManager()
     PlatformManager* Platform = PlatformManager::Get();
     m_Threads.resize(Platform->GetNumberOfProcessors()-1);
 
-
     m_Semaphore = Platform->CreateSemaphore(0);
     m_Mutex = Platform->CreateMutex();
     for(auto& Thread : m_Threads)
