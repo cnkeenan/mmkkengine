@@ -13,7 +13,7 @@ struct Linux_Window : public IWindow
 
     virtual void Initialize(
                     const int Width, const int Height, const char* WindowName);
-    virtual bool ProcessOSWindowMessages() final;
+    virtual void ProcessOSWindowMessages() final;
     virtual void SwapOpenGLBuffers() final;
 };
 
@@ -70,12 +70,12 @@ void Linux_Window::Initialize(
 
 }
 
-bool Linux_Window::ProcessOSWindowMessages()
+void Linux_Window::ProcessOSWindowMessages()
 {
     if (m_Display == nullptr || m_Window == 0) 
     {
         std::cout << "[WARNING] Not valid Display or Window.\n";
-        return false;
+        EnvironmentManager::Get()->ExecutionState(EExecutionState::EXIT);
     }
 
     XEvent xevent;
@@ -103,8 +103,6 @@ bool Linux_Window::ProcessOSWindowMessages()
         }
 
     }
-
-    return false;
 }
 
 void Linux_Window::SwapOpenGLBuffers()

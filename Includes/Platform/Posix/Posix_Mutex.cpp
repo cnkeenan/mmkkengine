@@ -11,8 +11,10 @@ public:
     ~Posix_Mutex();
 };
 
-bool Posix_Mutex::Lock()
-{
+Posix_Mutex::Posix_Mutex() {}
+Posix_Mutex::~Posix_Mutex() {}
+
+bool Posix_Mutex::Lock() {
     int response = pthread_mutex_trylock(&m_CriticalSection);
     if(response == 0)
     {

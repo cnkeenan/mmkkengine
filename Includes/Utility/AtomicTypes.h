@@ -2,9 +2,8 @@
 /* ========================================================================
    $Creator: Armand Karambasis $
    ======================================================================== */
-#if OS_LINUX
+
 #include <stddef.h>
-#endif
 #include <stdint.h>
 
 typedef uint8_t uint8;

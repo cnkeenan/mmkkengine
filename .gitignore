@@ -1,5 +1,7 @@
 .vscode/*
+.DS_Store
 *.swp
+Bin/
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
