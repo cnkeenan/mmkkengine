@@ -6,6 +6,8 @@
 #include <Engine/CoreEngine.h>
 #if OS_LINUX
 #include <GL/glu.h>
+#elif OS_MAC
+#include <OpenGL/gl.h>
 #else
 #include <Utility/OpenGL.h>
 #endif

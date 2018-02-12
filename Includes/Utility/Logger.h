@@ -7,19 +7,19 @@
 
 enum class ELogLevel
 {
-    ERROR,
-    WARNING,    
-    DEBUG,
-    INFO,
+    ERROR =0,
+    WARNING=1,    
+    DEBUG=2,
+    INFO=3,
 };
  
 enum class EConsoleColor
 {
-    RED,
-    GREEN,
-    BLUE,
-    BLACK,
-    WHITE
+    RED=0,
+    GREEN=1,
+    BLUE=2,
+    BLACK=3,
+    WHITE=4
 };
 
 typedef char* FNowTime(char* Result);
@@ -86,9 +86,11 @@ public:
 public:    
 };
 
+#if !OS_MAC
 FNowTime* FLog::NowTime = nullptr;
 FChangeConsoleColor* FLog::ChangeConsoleColor = nullptr;
 int FLog::Verbosity = (int)ELogLevel::INFO;
+#endif
 
 inline FLog::FLog(ELogLevel Level)
 {

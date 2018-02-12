@@ -9,10 +9,14 @@
  */
 
 #include <Utility/AtomicTypes.h>
-#include <Utility/Logger.h>
+#include <Utility/PlatformDetection.h>
+#import <Utility/Logger.h>
 #include <Engine/Managers/PlatformManager.h>
 #include <Engine/Managers/EnvironmentManager.h>
 #import <Cocoa/Cocoa.h>
+FNowTime* FLog::NowTime = nullptr;
+FChangeConsoleColor* FLog::ChangeConsoleColor = nullptr;
+int FLog::Verbosity = (int)ELogLevel::INFO;
 
 struct MacOS_Window : public IWindow 
 {
