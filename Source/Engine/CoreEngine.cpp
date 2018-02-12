@@ -17,8 +17,7 @@ void FCoreEngine::Initialize()
     TaskManager::Get();
     FLog::InitLogger(Platform->GetCurrentTime, Platform->ChangeConsoleColor);
     m_MainWindow = Platform->CreateWindow(1280, 720, "Marty-O");
-    Platform->InitializeOpenGLContext(m_MainWindow);
-    
+    Platform->InitializeOpenGLContext(m_MainWindow);    
 }
 
 void FCoreEngine::Tick()
@@ -33,7 +32,7 @@ void FCoreEngine::Tick()
 
         double DeltaTime = m_Scheduler.Tick();
         //NOTE(EVERYONE): This is the beginning of the new frame
-        //LOG(INFO, "%fms/f", DeltaTime*1000.0f);        
+        LOG(INFO, "%fms/f", DeltaTime*1000.0f);        
 
         //NOTE(EVERYONE): We'll let the main thread start working on tasks while it waits for the
         //frame's current tasks to finish execution

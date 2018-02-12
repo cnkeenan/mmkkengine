@@ -11,23 +11,29 @@ public:
     ~Posix_Mutex();
 };
 
-bool Posix_Mutex::Lock() {
+bool Posix_Mutex::Lock()
+{
     int response = pthread_mutex_trylock(&m_CriticalSection);
-    if(response == 0) {
+    if(response == 0)
+    {
         return true;
     }
-    else if(response == EBUSY) {
+    else if(response == EBUSY)
+    {
         return false;
     }
-    else {
+    else
+    {
         ASSERT(false);
         return false;
     }
 
 }
 
-void Posix_Mutex::Unlock() {
-    if(pthread_mutex_unlock(&m_CriticalSection) != 0) {
+void Posix_Mutex::Unlock()
+{
+    if(pthread_mutex_unlock(&m_CriticalSection) != 0)
+    {
         ASSERT(false);
     }
 }
