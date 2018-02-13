@@ -12,7 +12,7 @@ ifeq ($(OS),Linux)
 endif
 
 ifeq ($(OS),Darwin)
-	CCFLAGS +=-framework Cocoa -framework OpenGL
+	CCFLAGS +=-framework Cocoa -framework OpenGL -framework Foundation
 	OBJC+=clang++ -std=c++11 -IIncludes Includes/Platform/MacOS/MacOS_Window.mm -c
 	ADD_OBJ=MacOS_Window.o
 	CXX=clang++
