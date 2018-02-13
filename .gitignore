@@ -2,11 +2,6 @@
 .DS_Store
 *.swp
 Bin/
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-Bin/
 *.o
 o.obj
 *.lib
