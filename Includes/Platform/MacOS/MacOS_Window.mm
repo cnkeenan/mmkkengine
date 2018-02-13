@@ -14,7 +14,8 @@
 #include <Engine/Managers/PlatformManager.h>
 #include <Engine/Managers/EnvironmentManager.h>
 #import <Cocoa/Cocoa.h>
-#import "AppDelegate.h"
+#include "AppDelegate.h"
+
 
 FNowTime* FLog::NowTime = nullptr;
 FChangeConsoleColor* FLog::ChangeConsoleColor = nullptr;
@@ -49,119 +50,51 @@ struct MacOS_Window : public IWindow
 
 void MacOS_Window::Initialize(const int Width, const int Height, const char* WindowName)
 {
-    // Autorelease Pool:
-    // Objects declared in this scope will be automatically
-    // released at the end of it, when the pool is "drained".
-    //NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-
-    // Create a shared app instance.
-    // This will initialize the global variable
-    // 'NSApp' with the application instance.
-    // [NSApplication sharedApplication];
-
-    // //
-    // // Create a window:
-    // //
-
-    // // Style flags:
-    // NSUInteger windowStyle = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable;
-
-    // // Window bounds (x, y, width, height).
-    // NSRect windowRect = NSMakeRect(0, 0, Width, Height);
-    // m_Window = [[NSWindow alloc] initWithContentRect:windowRect
-    //                                       styleMask:windowStyle
-    //                                       backing:NSBackingStoreBuffered
-    //                                       defer:NO];
-    // [m_Window autorelease];
-
-    // // Window controller:
-    // m_WindowController = [[NSWindowController alloc] initWithWindow:m_Window];
-    // [m_WindowController autorelease];
-
-    // [m_Window setTitle:[NSString stringWithUTF8String:WindowName]];
-    // // TODO: Create app delegate to handle system events.
-
     
-    // // TODO: Create menus (especially Quit!)
-
-    // // Show window and run event loop.
-    // [m_Window orderFrontRegardless];
-    // [NSApp run];
-
-    //[pool drain];
-    
-
-
     NSApplication* application = [NSApplication sharedApplication];
-    AppDelegate* appDelegate = [[AppDelegate alloc ] init];
+    AppDelegate* appDelegate = [[[AppDelegate alloc ] init] autorelease];
 
     NSRect frame = NSMakeRect(0, 0, Width, Height);
         NSWindow* window = [[NSWindow alloc] initWithContentRect:frame
                                              styleMask:NSWindowStyleMaskClosable | NSWindowStyleMaskTitled | NSWindowStyleMaskResizable
                                                 backing:NSBackingStoreBuffered
                                                   defer:NO];
-        [window makeKeyAndOrderFront:NSApp];
+        
     
     [window setTitle:[NSString stringWithUTF8String:WindowName]];
-    
+    [window makeKeyAndOrderFront: nil];
+    [window setBackgroundColor:[NSColor blueColor]];
+    // NSLog(@"Test");
     [application setDelegate:appDelegate];
     [application run];
-    
+
+
 }
 
-// @interface WindowDelegate : NSObject 
-// {
-//     NSWindow* m_window;
-// }
 
-// - (instancetype)initWithWindow:(NSWindow* )initWindow;
-
-// @end
-
-
-// @implementation WindowDelegate
-
-// - (instancetype)initWithWindow:(NSWindow* )initWindow 
-// {
-//     self = [super init];
-//     if (self != nil)
-//         m_window = initWindow;
-//     return self;
-// }
-
-// -(BOOL)windowShouldClose:(id)sender
-// {
-//     EnvironmentManager::Get()->ExecutionState(EExecutionState::EXIT);
-//     return NO;
-// }
-
-// @end 
 
 void MacOS_Window::ProcessOSWindowMessages()
 {
-    NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny 
-                            untilDate:nil 
-                            inMode:NSDefaultRunLoopMode 
-                            dequeue:YES];
-
-                
-    switch([(NSEvent *)event type])
-    {
-        case NSEventTypeKeyDown:
-            NSLog (@"Hello, World!");
-            break;
-        
-        
-        default:
-            [NSApp sendEvent:event];
-            break;
+    bool quit = true;
+    
+    while (!quit) {
+        NSLog(@"Entered Loop");
+        NSEvent* event = [NSApp nextEventMatchingMask:NSEventMaskAny 
+                                    untilDate:nil 
+                                    inMode:NSDefaultRunLoopMode 
+                                    dequeue:YES];
+        switch([(NSEvent* )event type])
+        {
+            case NSEventTypeLeftMouseDown:
+                NSLog(@"NSEventTypeLeftMouseDown");
+                quit = true;
+                break;
+            default:
+                [NSApplication sendEvent:event];
+                break;
+        }
+        [event release];
     }
-
-    
-    [event release];
-
-
-    
 }
 
 void MacOS_Window::SwapOpenGLBuffers()
