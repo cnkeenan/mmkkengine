@@ -7,3 +7,9 @@ Bin/
 !.vscode/launch.json
 !.vscode/extensions.json
 Bin/
+*.o
+o.obj
+*.lib
+*.so
+*.dll
+*.exe
