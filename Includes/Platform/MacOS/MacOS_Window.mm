@@ -14,9 +14,26 @@
 #include <Engine/Managers/PlatformManager.h>
 #include <Engine/Managers/EnvironmentManager.h>
 #import <Cocoa/Cocoa.h>
+#import "AppDelegate.h"
+
 FNowTime* FLog::NowTime = nullptr;
 FChangeConsoleColor* FLog::ChangeConsoleColor = nullptr;
 int FLog::Verbosity = (int)ELogLevel::INFO;
+
+
+@implementation AppDelegate : NSObject
+
+- (void)applicationWillFinishLaunching:(NSNotification *)notification
+{
+    [window makeKeyAndOrderFront:self];
+}
+
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
+{
+    return YES;
+}
+
+@end
 
 struct MacOS_Window : public IWindow 
 {
@@ -40,69 +57,85 @@ void MacOS_Window::Initialize(const int Width, const int Height, const char* Win
     // Create a shared app instance.
     // This will initialize the global variable
     // 'NSApp' with the application instance.
-    [NSApplication sharedApplication];
+    // [NSApplication sharedApplication];
 
-    //
-    // Create a window:
-    //
+    // //
+    // // Create a window:
+    // //
 
-    // Style flags:
-    NSUInteger windowStyle = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable;
+    // // Style flags:
+    // NSUInteger windowStyle = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable;
 
-    // Window bounds (x, y, width, height).
-    NSRect windowRect = NSMakeRect(0, 0, Width, Height);
-    m_Window = [[NSWindow alloc] initWithContentRect:windowRect
-                                          styleMask:windowStyle
-                                          backing:NSBackingStoreBuffered
-                                          defer:NO];
-    [m_Window autorelease];
+    // // Window bounds (x, y, width, height).
+    // NSRect windowRect = NSMakeRect(0, 0, Width, Height);
+    // m_Window = [[NSWindow alloc] initWithContentRect:windowRect
+    //                                       styleMask:windowStyle
+    //                                       backing:NSBackingStoreBuffered
+    //                                       defer:NO];
+    // [m_Window autorelease];
 
-    // Window controller:
-    m_WindowController = [[NSWindowController alloc] initWithWindow:m_Window];
-    [m_WindowController autorelease];
+    // // Window controller:
+    // m_WindowController = [[NSWindowController alloc] initWithWindow:m_Window];
+    // [m_WindowController autorelease];
 
-    [m_Window setTitle:[NSString stringWithUTF8String:WindowName]];
-    // TODO: Create app delegate to handle system events.
+    // [m_Window setTitle:[NSString stringWithUTF8String:WindowName]];
+    // // TODO: Create app delegate to handle system events.
 
     
-    // TODO: Create menus (especially Quit!)
+    // // TODO: Create menus (especially Quit!)
 
-    // Show window and run event loop.
-    [m_Window orderFrontRegardless];
-    [NSApp run];
-    
-    
+    // // Show window and run event loop.
+    // [m_Window orderFrontRegardless];
+    // [NSApp run];
 
     //[pool drain];
+    
+
+
+    NSApplication* application = [NSApplication sharedApplication];
+    AppDelegate* appDelegate = [[AppDelegate alloc ] init];
+
+    NSRect frame = NSMakeRect(0, 0, Width, Height);
+        NSWindow* window = [[NSWindow alloc] initWithContentRect:frame
+                                             styleMask:NSWindowStyleMaskClosable | NSWindowStyleMaskTitled | NSWindowStyleMaskResizable
+                                                backing:NSBackingStoreBuffered
+                                                  defer:NO];
+        [window makeKeyAndOrderFront:NSApp];
+    
+    [window setTitle:[NSString stringWithUTF8String:WindowName]];
+    
+    [application setDelegate:appDelegate];
+    [application run];
+    
 }
 
-@interface WindowDelegate : NSObject 
-{
-    NSWindow* m_window;
-}
+// @interface WindowDelegate : NSObject 
+// {
+//     NSWindow* m_window;
+// }
 
-- (instancetype)initWithWindow:(NSWindow* )initWindow;
+// - (instancetype)initWithWindow:(NSWindow* )initWindow;
 
-@end
+// @end
 
 
-@implementation WindowDelegate
+// @implementation WindowDelegate
 
-- (instancetype)initWithWindow:(NSWindow* )initWindow 
-{
-    self = [super init];
-    if (self != nil)
-        m_window = initWindow;
-    return self;
-}
+// - (instancetype)initWithWindow:(NSWindow* )initWindow 
+// {
+//     self = [super init];
+//     if (self != nil)
+//         m_window = initWindow;
+//     return self;
+// }
 
--(BOOL)windowShouldClose:(id)sender
-{
-    EnvironmentManager::Get()->ExecutionState(EExecutionState::EXIT);
-    return NO;
-}
+// -(BOOL)windowShouldClose:(id)sender
+// {
+//     EnvironmentManager::Get()->ExecutionState(EExecutionState::EXIT);
+//     return NO;
+// }
 
-@end 
+// @end 
 
 void MacOS_Window::ProcessOSWindowMessages()
 {
