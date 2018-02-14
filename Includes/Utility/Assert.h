@@ -10,8 +10,8 @@
     {                                           \
         if(!(x))                                \
         {                                       \
-            LOG(FAILURE, y);                    \
-            *(int*)0 = 0;                       \
+            LOG(FAILURE, RESERVED_CHANNEL, y);  \
+            INVALID_CODE_PATH;                  \
         }                                       \
     } while(0)
 #else

@@ -20,6 +20,14 @@
 FNowTime* FLog::NowTime = nullptr;
 FChangeConsoleColor* FLog::ChangeConsoleColor = nullptr;
 int FLog::Verbosity = (int)ELogLevel::INFO;
+uint64 FLog::s_Channels = 0xFFFFFFFFFFFFFFFF;
+FLog::FLogFile FLog::s_ChannelFiles[NUMBER_OF_CHANNELS] = {};
+FILE* FLog::s_LogDump = nullptr;
+const char* FLog::RESERVED_CHANNEL_PATH =  "../Data/Log/Reserved_Log/Reserved.log";
+const char* FLog::ENGINE_CHANNEL_PATH = "../Data/Log/Engine_Log/Engine.log";
+const char* FLog::PLATFORM_CHANNEL_PATH = "../Data/Log/Platform_Log/Platform.log";
+const char* FLog::DUMP_PATH = "../Data/Log/Dump.log";        
+IMutex* FLog::s_Mutex = nullptr;
 
 struct MacOS_Window : public IWindow 
 {
@@ -94,7 +102,7 @@ void MacOS_Window::Initialize(const int Width, const int Height, const char* Win
                                    NSMidY(screenRect) - NSMidY(viewRect),
                                    viewRect.size.width,
                                    viewRect.size.height);
-    
+  
     NSWindow* window = [[NSWindow alloc] initWithContentRect:windowRect
                                                     styleMask:windowStyle
                                                       backing:NSBackingStoreBuffered

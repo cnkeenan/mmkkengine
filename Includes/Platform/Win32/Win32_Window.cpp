@@ -135,12 +135,12 @@ void Win32_Window::ProcessOSWindowMessages()
                     case RIM_TYPEKEYBOARD:
                     {
                         RAWKEYBOARD* Keyboard = &RawInput->data.keyboard;
-                        LOG(INFO, "Make Code: %d", (int)Keyboard->MakeCode);
-                        LOG(INFO, "Flags: %d", (int)Keyboard->Flags);
-                        LOG(INFO, "Reserved: %d", (int)Keyboard->Reserved);
-                        LOG(INFO, "VKey: %d", (int)Keyboard->VKey);
-                        LOG(INFO, "Message: %d", Keyboard->Message);
-                        LOG(INFO, "Extra Information: %l", Keyboard->ExtraInformation);
+                        LOG(INFO, PLATFORM_CHANNEL, "Make Code: %d", (int)Keyboard->MakeCode);
+                        LOG(INFO, PLATFORM_CHANNEL, "Flags: %d", (int)Keyboard->Flags);
+                        LOG(INFO, PLATFORM_CHANNEL, "Reserved: %d", (int)Keyboard->Reserved);
+                        LOG(INFO, PLATFORM_CHANNEL, "VKey: %d", (int)Keyboard->VKey);
+                        LOG(INFO, PLATFORM_CHANNEL, "Message: %d", Keyboard->Message);
+                        LOG(INFO, PLATFORM_CHANNEL, "Extra Information: %l", Keyboard->ExtraInformation);
                         
                         
                     } break;
@@ -192,7 +192,7 @@ void Win32_Window::ProcessOSWindowMessages()
                             {
                                 case 1:
                                 {
-                                    LOG(INFO, "Square");
+                                    LOG(INFO, PLATFORM_CHANNEL, "Square");
                                 } break;
 
                                 case 2:

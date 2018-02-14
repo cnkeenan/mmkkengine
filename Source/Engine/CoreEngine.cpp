@@ -13,7 +13,7 @@ void FCoreEngine::Initialize()
     m_FPS = 60;
     PlatformManager* Platform = PlatformManager::Get();
     TaskManager::Get();
-    FLog::InitLogger(Platform->GetCurrentTime, Platform->ChangeConsoleColor);
+    FLog::InitLogger(Platform->GetCurrentTime, Platform->ChangeConsoleColor, Platform->CreateMutex());    
     m_MainWindow = Platform->CreateWindow(1280, 720, "Marty-O");
     Platform->InitializeOpenGLContext(m_MainWindow);
 }
@@ -24,13 +24,14 @@ void FCoreEngine::Tick()
 
     EnvironmentManager* Environment = EnvironmentManager::Get();
 
+    FHighResolutionTimer Timer = PlatformManager::Get()->CreateHighResolutionTimer();
+    
     while(Environment->ExecutionState() == EExecutionState::RUN)
     {                        
         m_MainWindow->ProcessOSWindowMessages();
 
         double DeltaTime = m_Scheduler.Tick();
-        //NOTE(EVERYONE): This is the beginning of the new frame
-        LOG(INFO, "%fms/f", DeltaTime*1000.0f);        
+        //NOTE(EVERYONE): This is the beginning of the new frame        
 
         //NOTE(EVERYONE): We'll let the main thread start working on tasks while it waits for the
         //frame's current tasks to finish execution
@@ -48,8 +49,10 @@ void FCoreEngine::Tick()
 
 void FCoreEngine::Destroy()
 {
+    LOG(INFO, ENGINE_CHANNEL, "Hi");
     PlatformManager::Get()->DestroyWindow(m_MainWindow);
-    m_MainWindow = nullptr;
+    m_MainWindow = nullptr;            
+    FLog::DestroyLogger(FDelegate<void, IMutex*>::Bind<PlatformManager, &PlatformManager::DestroyMutex>(PlatformManager::Get()));
 }
 
 int main(int ArgumentCount, char** Arguments)

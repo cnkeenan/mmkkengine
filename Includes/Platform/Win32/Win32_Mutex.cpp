@@ -9,7 +9,8 @@ private:
 public:
     Win32_Mutex();
 
-    virtual bool Lock() final;
+    virtual bool TryLock() final;
+    virtual void Lock() final;
     virtual void Unlock() final;
     
     ~Win32_Mutex();
@@ -20,10 +21,15 @@ Win32_Mutex::Win32_Mutex()
     InitializeCriticalSection(&m_CriticalSection);
 }
 
-bool Win32_Mutex::Lock()
+bool Win32_Mutex::TryLock()
 {
     bool Result = TryEnterCriticalSection(&m_CriticalSection);
     return Result;
+}
+
+void Win32_Mutex::Lock()
+{
+    EnterCriticalSection(&m_CriticalSection);
 }
 
 void Win32_Mutex::Unlock()

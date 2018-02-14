@@ -92,14 +92,14 @@ void Linux_Window::Initialize(
     m_Display = XOpenDisplay(NULL);
     if (!m_Display)
     {
-        LOG(FAILURE, "Failed to open X Display\n");
+        LOG(FAILURE, PLATFORM_CHANNEL, "Failed to open X Display\n");
     }
 
     if (!glXQueryVersion(m_Display, &glx_major, &glx_minor) ||
             ((glx_major == 1) && (glx_minor < 3)) ||
             (glx_major < 1))
     {
-        LOG(FAILURE, "Invalid GLX Version");
+        LOG(FAILURE, PLATFORM_CHANNEL, "Invalid GLX Version");
         exit(1);
     }
 
@@ -113,7 +113,7 @@ void Linux_Window::Initialize(
 
     if (!fbc)
     {
-        LOG(FAILURE, "Failed to retreive framebuffer config");
+        LOG(FAILURE, PLATFORM_CHANNEL, "Failed to retreive framebuffer config");
         exit(1);
     }
 
@@ -186,7 +186,7 @@ void Linux_Window::Initialize(
 
     if (!m_Window)
     {
-        LOG(FAILURE, "Failed to create window.");
+        LOG(FAILURE, PLATFORM_CHANNEL, "Failed to create window.");
         exit(1);
     }
 
@@ -224,10 +224,11 @@ void Linux_Window::Initialize(
     }
     else
     {
+        //NOTE(Ray): I (JJ) change this to target 3.3
         int context_attrs[] =
         {
             GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
-            GLX_CONTEXT_MINOR_VERSION_ARB, 0,
+            GLX_CONTEXT_MINOR_VERSION_ARB, 3,
             None
         };
         m_RenderingContext = glXCreateContextAttribsARB(
@@ -242,7 +243,7 @@ void Linux_Window::Initialize(
 
         if (!ctxErrorOccurred && m_RenderingContext)
         {
-            LOG(INFO, "Creating GL 3.0 Context");
+            LOG(INFO, PLATFORM_CHANNEL, "Creating GL 3.3 Context");
         }
         else
         {
@@ -268,17 +269,17 @@ void Linux_Window::Initialize(
 
     if (ctxErrorOccurred || !m_RenderingContext)
     {
-        LOG(FAILURE, "Failed to create OpenGL Context");
+        LOG(FAILURE, PLATFORM_CHANNEL, "Failed to create OpenGL Context");
         exit(1);
     }
 
     if (!glXIsDirect(m_Display, m_RenderingContext))
     {
-        LOG(INFO, "Indirect GLX Rendering Context obtained");
+        LOG(INFO, PLATFORM_CHANNEL, "Indirect GLX Rendering Context obtained");
     }
     else
     {
-        LOG(INFO, "Direct GLX Rendering Context obtained");
+        LOG(INFO, PLATFORM_CHANNEL, "Direct GLX Rendering Context obtained");
     }
 
     glXMakeCurrent(m_Display, m_Window, m_RenderingContext);
