@@ -1,13 +1,14 @@
-//TODO: better logging
-//TODO: find out what other events we need to handle
-//TODO: actually handle xevents 
-//TODO: add a state variable to check if initialization was successful
-//TODO: handle all possible errors using X error handlers
+#define GLX_CONTEXT_MAJOR_VERSION_ARB 0x2091
+#define GLX_CONTEXT_MINOR_VERSION_ARB 0x2092
+
+typedef GLXContext(*glXCreateContextAttribsARBProc)
+    (Display*, GLXFBConfig, GLXContext, Bool, const int*);
+
+static bool ctxErrorOccurred = False;
 
 struct Linux_Window : public IWindow
 {
     Display*     m_Display; /* access to X Server */
-    Window       m_RootWindow;
     Window       m_Window;
     GLXContext   m_RenderingContext;
 
@@ -17,92 +18,304 @@ struct Linux_Window : public IWindow
     virtual void SwapOpenGLBuffers() final;
 };
 
+
+static int ctxErrorHandler(Display *dpy, XErrorEvent *ev)
+{
+    ctxErrorOccurred = True;
+    return 0;
+}
+
+static bool isExtensionSupported(const char* extList, const char* extension)
+{
+    const char *start;
+    const char *where, *terminator;
+
+    where = strchr(extension, ' ');
+
+    if (where || *extension == '\0')
+    {
+        return False;
+    }
+
+    for (start=extList;;)
+    {
+        where = strstr(start, extension);
+        if (!where)
+        {
+            break;
+        }
+
+        terminator = where + strlen(extension);
+
+        if (where == start || *(where - 1) == ' ')
+        {
+            if (*terminator == ' ' || *terminator == '\0')
+            {
+                return True;
+            }
+        }
+        start = terminator;
+    }
+
+    return False;
+}
+
+
+
 void Linux_Window::Initialize(
             const int Width, const int Height, const char* WindowName)
 {
-    XVisualInfo *vi;
-    GLint attrs[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None};
-
     XSetWindowAttributes swa;
     Colormap cmap;
-
-    m_Display = XOpenDisplay(nullptr);
-    if (m_Display == nullptr) 
+    int i;
+    int glx_major;
+    int glx_minor;
+    int fbcount;
+    int best_fbc, worst_fbc;
+    int best_num_samp, worst_num_samp;
+    int visual_attrs[] =
     {
-        exit(-1);
+       GLX_X_RENDERABLE  , True           ,
+       GLX_DRAWABLE_TYPE , GLX_WINDOW_BIT ,
+       GLX_RENDER_TYPE   , GLX_RGBA_BIT   ,
+       GLX_X_VISUAL_TYPE , GLX_TRUE_COLOR ,
+       GLX_RED_SIZE      , 8              ,
+       GLX_GREEN_SIZE    , 8              ,
+       GLX_BLUE_SIZE     , 8              ,
+       GLX_ALPHA_SIZE    , 8              ,
+       GLX_DEPTH_SIZE    , 24             ,
+       GLX_STENCIL_SIZE  , 8              ,
+       GLX_DOUBLEBUFFER  , True           ,
+       None
+    };
+
+    m_Display = XOpenDisplay(NULL);
+    if (!m_Display)
+    {
+        LOG(FAILURE, "Failed to open X Display\n");
     }
 
-    m_RootWindow = DefaultRootWindow(m_Display);
-
-    // TODO: separate into another function to check different combinations
-    // to account for different hardware support
-    vi = glXChooseVisual(m_Display, 0, attrs);
-    if (vi == nullptr)
+    if (!glXQueryVersion(m_Display, &glx_major, &glx_minor) ||
+            ((glx_major == 1) && (glx_minor < 3)) ||
+            (glx_major < 1))
     {
-        std::cout << "[FATAL] No appropriate visual found.\n";
-        exit(-1);
+        LOG(FAILURE, "Invalid GLX Version");
+        exit(1);
     }
 
-    cmap = XCreateColormap(m_Display, m_RootWindow, vi->visual, AllocNone);
-    swa.colormap = cmap;
-    swa.event_mask = ExposureMask | KeyPressMask;
 
-    m_Window = XCreateWindow(
+    GLXFBConfig* fbc = glXChooseFBConfig(
         m_Display                ,
-        m_RootWindow             ,
-        0                        , // x position
-        0                        , // y position
-        Width                    ,
-        Height                   ,
-        0                        , // border width
-        vi->depth                , // depth
-        InputOutput              , // window class
-        vi->visual               ,
-        CWColormap | CWEventMask , // attributes set
-        &swa                       // attributes
+        DefaultScreen(m_Display) ,
+        visual_attrs             ,
+        &fbcount
     );
 
-    XMapWindow(m_Display, m_Window);
-    XStoreName(m_Display, m_Window, WindowName);
+    if (!fbc)
+    {
+        LOG(FAILURE, "Failed to retreive framebuffer config");
+        exit(1);
+    }
 
-    m_RenderingContext = glXCreateContext(m_Display, vi, nullptr, GL_TRUE);
+    for (i = 0; i < fbcount; ++i)
+    {
+        XVisualInfo *vi = glXGetVisualFromFBConfig(m_Display, fbc[i]);
+        if (vi)
+        {
+            int samp_buf, samples;
+
+            glXGetFBConfigAttrib(
+                m_Display          ,
+                fbc[i]             ,
+                GLX_SAMPLE_BUFFERS ,
+                &samp_buf
+            );
+
+            glXGetFBConfigAttrib(
+                m_Display         ,
+                fbc[i]            ,
+                GLX_SAMPLES       ,
+                &samples
+            );
+
+            if (best_fbc < 0 || samp_buf && samples > best_num_samp)
+            {
+                best_fbc = i;
+                best_num_samp = samples;
+            }
+
+            if (worst_fbc < 0 || !samp_buf || samples < worst_num_samp)
+            {
+                worst_fbc = i;
+                worst_num_samp = samples;
+            }
+        }
+        XFree(vi);
+    }
+
+    GLXFBConfig bestFbc = fbc[best_fbc];
+    XFree(fbc);
+
+    XVisualInfo *vi = glXGetVisualFromFBConfig(m_Display, bestFbc);
+    cmap = XCreateColormap(
+            m_Display                          ,
+            RootWindow(m_Display , vi->screen) ,
+            vi->visual                         ,
+            AllocNone
+    );
+
+    swa.colormap = cmap;
+    swa.background_pixmap = None;
+    swa.border_pixel = 0;
+    swa.event_mask =  StructureNotifyMask | ExposureMask | KeyPressMask;
+
+    m_Window = XCreateWindow(
+        m_Display                               ,
+        RootWindow(m_Display, vi->screen)       ,
+        0                                       , // x position
+        0                                       , // y position
+        Width                                   ,
+        Height                                  ,
+        0                                       , // border width
+        vi->depth                               , // depth
+        InputOutput                             , // window class
+        vi->visual                              ,
+        CWColormap | CWEventMask                , // attributes set
+        &swa                                      // attributes
+    );
+
+    if (!m_Window)
+    {
+        LOG(FAILURE, "Failed to create window.");
+        exit(1);
+    }
+
+    XFree(vi);
+    XStoreName(m_Display, m_Window, WindowName);
+    XMapWindow(m_Display, m_Window);
+
+    const char *glxExts = glXQueryExtensionsString(
+        m_Display,
+        DefaultScreen(m_Display)
+    );
+
+    glXCreateContextAttribsARBProc glXCreateContextAttribsARB = 0;
+    glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc) 
+        glXGetProcAddressARB((const GLubyte *) "glXCreateContextAttribsARB");
+
+    m_RenderingContext = 0;
+
+    ctxErrorOccurred = False;
+
+    int (*oldHandler) (Display*, XErrorEvent*) = XSetErrorHandler(&ctxErrorHandler);
+
+    if (!isExtensionSupported(glxExts, "GLX_ARB_create_context") ||
+            !glXCreateContextAttribsARB)
+    {
+        LOG(INFO, "glXCreateContextAttribsARB() not found.");
+        m_RenderingContext = glXCreateNewContext(
+            m_Display     ,
+            bestFbc       ,
+            GLX_RGBA_TYPE ,
+            0             ,
+            True
+        );
+         
+    }
+    else
+    {
+        int context_attrs[] =
+        {
+            GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
+            GLX_CONTEXT_MINOR_VERSION_ARB, 0,
+            None
+        };
+        m_RenderingContext = glXCreateContextAttribsARB(
+            m_Display     ,
+            bestFbc       ,
+            0             ,
+            True          ,
+            context_attrs
+        );
+
+        XSync(m_Display, False);
+
+        if (!ctxErrorOccurred && m_RenderingContext)
+        {
+            LOG(INFO, "Creating GL 3.0 Context");
+        }
+        else
+        {
+            context_attrs[1] = 1;
+            context_attrs[3] = 0;
+            ctxErrorOccurred = False;
+
+            LOG(INFO, "Failed to create GL 3.0 Context");
+
+            m_RenderingContext = glXCreateContextAttribsARB(
+                m_Display     ,
+                bestFbc       ,
+                0             ,
+                True          ,
+                context_attrs
+            );
+            
+        }
+    }
+
+    XSync(m_Display, False);
+    XSetErrorHandler(oldHandler);
+
+    if (ctxErrorOccurred || !m_RenderingContext)
+    {
+        LOG(FAILURE, "Failed to create OpenGL Context");
+        exit(1);
+    }
+
+    if (!glXIsDirect(m_Display, m_RenderingContext))
+    {
+        LOG(INFO, "Indirect GLX Rendering Context obtained");
+    }
+    else
+    {
+        LOG(INFO, "Direct GLX Rendering Context obtained");
+    }
+
     glXMakeCurrent(m_Display, m_Window, m_RenderingContext);
 
 }
 
 void Linux_Window::ProcessOSWindowMessages()
 {
+    //TODO: fix this implementation
     if (m_Display == nullptr || m_Window == 0) 
     {
-        std::cout << "[WARNING] Not valid Display or Window.\n";
+        LOG(FAILURE, "Not valid display or window");
         EnvironmentManager::Get()->ExecutionState(EExecutionState::EXIT);
     }
 
     XEvent xevent;
     XWindowAttributes attrs;
 
-    while(1) {
 
-        XNextEvent(m_Display, &xevent);
+    XPeekEvent(m_Display, &xevent);
 
-        switch(xevent.type) 
-        {
-            case Expose:
-                std::cout << "[INFO] Expose\n";
+    switch(xevent.type) 
+    {
+        case Expose:
+            LOG(INFO, "Expose event");
+            XGetWindowAttributes(m_Display, m_Window, &attrs);
+            glViewport(0, 0, attrs.width, attrs.height);
+            break;
 
-                XGetWindowAttributes(m_Display, m_Window, &attrs);
-                glViewport(0, 0, attrs.width, attrs.height);
-                break;
+        case KeyPress:
+            LOG(INFO, "Key press event");
+            break;
 
-            case KeyPress:
-                std::cout << "[INFO] KeyPress\n";
-                break;
-
-            default:
-                break;
-        }
-
+        default:
+            break;
     }
+
 }
 
 void Linux_Window::SwapOpenGLBuffers()
