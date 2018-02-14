@@ -29,11 +29,42 @@ int FLog::Verbosity = (int)ELogLevel::INFO;
     [window makeKeyAndOrderFront:self];
 }
 
-- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
+// - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
+// {
+//     return YES;
+// }
+
+@end
+
+@implementation WindowDelegate : NSObject
+
+- (void)windowDidBecomeKey:(NSNotification *)notification 
 {
-    EnvironmentManager::Get()->ExecutionState(EExecutionState::EXIT);
-    return YES;
+    NSLog(@"Window: become key");
 }
+
+- (void)windowDidBecomeMain:(NSNotification *)notification
+{
+    NSLog(@"Window: become main");
+}
+- (void)windowDidResignKey:(NSNotification *)notification
+{
+    NSLog(@"Window: resign key");
+}
+- (void)windowDidResignMain:(NSNotification *)notification
+{
+    NSLog(@"Window: resign main");
+}
+
+-(void)windowWillClose:(NSNotification *)notification 
+{
+    NSWindow* window = notification.object;
+    if (window.isMainWindow)
+    {
+        EnvironmentManager::Get()->ExecutionState(EExecutionState::EXIT);
+        // [NSApp terminate:nil];
+    }
+}  
 
 @end
 
@@ -45,12 +76,11 @@ struct MacOS_Window : public IWindow
     virtual void Initialize(const int Width, const int Height, const char* WindowName) final;
     virtual void ProcessOSWindowMessages() final;
     virtual void SwapOpenGLBuffers() final;
+    virtual void Setup() final;
 };
 
 
-
-
-void MacOS_Window::Initialize(const int Width, const int Height, const char* WindowName)
+void MacOS_Window::Setup()
 {
     [NSApplication sharedApplication];
     
@@ -58,9 +88,13 @@ void MacOS_Window::Initialize(const int Width, const int Height, const char* Win
     [NSApp setDelegate:appDelegate];
     
     [NSApp finishLaunching];
+}
 
-    NSUInteger windowStyle = NSTitledWindowMask  | NSClosableWindowMask | NSResizableWindowMask | NSMiniaturizableWindowMask;
-    
+void MacOS_Window::Initialize(const int Width, const int Height, const char* WindowName)
+{
+    Setup();
+
+    NSUInteger windowStyle = NSWindowStyleMaskTitled  | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable;
     NSRect screenRect = [[NSScreen mainScreen] frame];
     NSRect viewRect = NSMakeRect(0, 0, Width, Height);
     NSRect windowRect = NSMakeRect(NSMidX(screenRect) - NSMidX(viewRect),
@@ -74,12 +108,10 @@ void MacOS_Window::Initialize(const int Width, const int Height, const char* Win
                                                         defer:NO];
     
     [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
-    
     id menubar = [[NSMenu new] autorelease];
     id appMenuItem = [[NSMenuItem new] autorelease];
     [menubar addItem:appMenuItem];
-    [NSApp setMainMenu:menubar];
-    
+    [NSApp setMainMenu:menubar]; 
     id appMenu = [[NSMenu new] autorelease];
     id appName = [[NSProcessInfo processInfo] processName];
     id quitTitle = [@"Quit " stringByAppendingString:appName];
@@ -87,63 +119,41 @@ void MacOS_Window::Initialize(const int Width, const int Height, const char* Win
                                                   action:@selector(terminate:) keyEquivalent:@"q"] autorelease];
     [appMenu addItem:quitMenuItem];
     [appMenuItem setSubmenu:appMenu];
-    
     NSWindowController * windowController = [[NSWindowController alloc] initWithWindow:window];
     [windowController autorelease];
-    
     NSView* view = [[[NSView alloc] initWithFrame:viewRect] autorelease];
     [window setContentView:view];
-
-    //Window Delegate
-    // NSWindowDelegate* windowDelegate = [[NSWindowDelegate alloc] init];
-    // [window setDelegate:windowDelegate];
-    
+    WindowDelegate* windowDelegate = [[WindowDelegate alloc] init];
+    [window setDelegate:windowDelegate];   
     [window setAcceptsMouseMovedEvents:YES];
-    //[window setDelegate:view];
-    
-    // Set app title
     [window setTitle:[NSString stringWithUTF8String:WindowName]];
-    
-    // Add fullscreen button
     [window setCollectionBehavior: NSWindowCollectionBehaviorFullScreenPrimary];
     [window makeKeyAndOrderFront:nil];
-
-
-
-    // NSApplication* application = [NSApplication sharedApplication];
-    // AppDelegate* appDelegate = [[[AppDelegate alloc ] init] autorelease];
-
-    // NSRect frame = NSMakeRect(0, 0, Width, Height);
-    //     NSWindow* window = [[NSWindow alloc] initWithContentRect:frame
-    //                                          styleMask:NSWindowStyleMaskClosable | NSWindowStyleMaskTitled | NSWindowStyleMaskResizable
-    //                                             backing:NSBackingStoreBuffered
-    //                                               defer:NO];
-        
-    
-    // [window setTitle:[NSString stringWithUTF8String:WindowName]];
-    // [window makeKeyAndOrderFront: nil];
-    // [window setBackgroundColor:[NSColor blueColor]];
-    // [application setDelegate:appDelegate];
-    // [application run];
-
-
 }
 
 
 void MacOS_Window::ProcessOSWindowMessages()
 {
-    NSEvent* event;
-    do 
-    {
-        event = [NSApp nextEventMatchingMask:NSAnyEventMask 
-                    untilDate:[NSDate distantPast] 
-                    inMode:NSDefaultRunLoopMode 
-                    dequeue:YES];
-        printf("Test\n");
-
-        [NSApp sendEvent: event];
+    @autoreleasepool {
+        NSEvent* ev;
+        do {
+            ev = [NSApp nextEventMatchingMask: NSAnyEventMask
+                                    untilDate: nil
+                                       inMode: NSDefaultRunLoopMode
+                                      dequeue: YES];
+            if (ev) {
+                switch (ev.type)
+                {
+                    case NSEventTypeLeftMouseDown:
+                        NSLog(@"Left Mouse Button Down");
+                        break;
+                    default:
+                        break;
+                }
+                [NSApp sendEvent: ev];
+            }
+        } while (ev);
     }
-    while (event != nil);
 }
 
 void MacOS_Window::SwapOpenGLBuffers()
