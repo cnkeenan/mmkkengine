@@ -26,7 +26,7 @@ bool Posix_Mutex::Lock() {
     }
     else
     {
-        ASSERT(false);
+        ASSERT(false, "Unable to obtain pthread_mutex.");
         return false;
     }
 
@@ -36,7 +36,7 @@ void Posix_Mutex::Unlock()
 {
     if(pthread_mutex_unlock(&m_CriticalSection) != 0)
     {
-        ASSERT(false);
+        ASSERT(false, "Unable to unlock pthread_mutex");
     }
 }
 
