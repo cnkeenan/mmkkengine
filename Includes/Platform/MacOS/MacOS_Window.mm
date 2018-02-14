@@ -16,11 +16,17 @@
 #import <Cocoa/Cocoa.h>
 #include "AppDelegate.h"
 
-
-FNowTime* FLog::NowTime = nullptr;
-FChangeConsoleColor* FLog::ChangeConsoleColor = nullptr;
-int FLog::Verbosity = (int)ELogLevel::INFO;
-
+FNowTime* FLog::s_NowTime = nullptr;
+FChangeConsoleColor* FLog::s_ChangeConsoleColor = nullptr;
+int FLog::s_Verbosity = (int)ELogLevel::INFO;
+uint64 FLog::s_Channels = 0xFFFFFFFFFFFFFFFF;
+FLog::FLogFile FLog::s_ChannelFiles[NUMBER_OF_CHANNELS] = {};
+FILE* FLog::s_LogDump = nullptr;
+const char* FLog::RESERVED_CHANNEL_PATH =  "../Data/Log/Reserved_Log/Reserved.log";
+const char* FLog::ENGINE_CHANNEL_PATH = "../Data/Log/Engine_Log/Engine.log";
+const char* FLog::PLATFORM_CHANNEL_PATH = "../Data/Log/Platform_Log/Platform.log";
+const char* FLog::DUMP_PATH = "../Data/Log/Dump.log";        
+IMutex* FLog::s_Mutex = nullptr;
 
 @implementation AppDelegate : NSObject
 
@@ -55,10 +61,10 @@ void MacOS_Window::Initialize(const int Width, const int Height, const char* Win
     AppDelegate* appDelegate = [[[AppDelegate alloc ] init] autorelease];
 
     NSRect frame = NSMakeRect(0, 0, Width, Height);
-        NSWindow* window = [[NSWindow alloc] initWithContentRect:frame
-                                             styleMask:NSWindowStyleMaskClosable | NSWindowStyleMaskTitled | NSWindowStyleMaskResizable
-                                                backing:NSBackingStoreBuffered
-                                                  defer:NO];
+    NSWindow* window = [[NSWindow alloc] initWithContentRect:frame
+                                                   styleMask:NSWindowStyleMaskClosable | NSWindowStyleMaskTitled | NSWindowStyleMaskResizable
+                                                     backing:NSBackingStoreBuffered
+                                                       defer:NO];
         
     
     [window setTitle:[NSString stringWithUTF8String:WindowName]];
@@ -70,7 +76,6 @@ void MacOS_Window::Initialize(const int Width, const int Height, const char* Win
 
 
 }
-
 
 
 void MacOS_Window::ProcessOSWindowMessages()

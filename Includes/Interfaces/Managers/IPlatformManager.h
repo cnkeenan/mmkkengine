@@ -34,8 +34,8 @@ class IMutex
 {
 protected:
 public:
-
-    virtual bool Lock() = 0;
+    virtual bool TryLock() = 0;
+    virtual void Lock() = 0;
     virtual void Unlock() = 0;
     virtual ~IMutex() {}
 };

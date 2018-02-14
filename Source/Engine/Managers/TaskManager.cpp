@@ -42,7 +42,7 @@ bool TaskManager::ProcessTask()
     bool Result = true;
     if(m_Tasks.size() != 0)
     {
-        bool HasLock = m_Mutex->Lock();
+        bool HasLock = m_Mutex->TryLock();
         if(HasLock)
         {
             const ITask* Task = m_Tasks.front();

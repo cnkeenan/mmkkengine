@@ -4,10 +4,11 @@
    ======================================================================== */
 #include <string.h>
 #include <stdio.h>
+#include <io.h>
+#include <fcntl.h>
 #include <vector>
 #include <deque>
 #include <stdarg.h>
-#include <Utility/AtomicTypes.h>
 
 #define LIBS_H
 #endif

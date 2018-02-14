@@ -1,6 +1,4 @@
 #if !defined(PLATFORMMANAGER_H)
-#include <Interfaces/Managers/IPlatformManager.h>
-
 template <typename T>
 class FThread;
 
