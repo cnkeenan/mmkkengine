@@ -31,6 +31,7 @@ int FLog::Verbosity = (int)ELogLevel::INFO;
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
 {
+    EnvironmentManager::Get()->ExecutionState(EExecutionState::EXIT);
     return YES;
 }
 
@@ -48,53 +49,101 @@ struct MacOS_Window : public IWindow
 
 
 
+
 void MacOS_Window::Initialize(const int Width, const int Height, const char* WindowName)
 {
+    [NSApplication sharedApplication];
     
-    NSApplication* application = [NSApplication sharedApplication];
-    AppDelegate* appDelegate = [[[AppDelegate alloc ] init] autorelease];
+    AppDelegate* appDelegate = [[AppDelegate alloc] init];
+    [NSApp setDelegate:appDelegate];
+    
+    [NSApp finishLaunching];
 
-    NSRect frame = NSMakeRect(0, 0, Width, Height);
-        NSWindow* window = [[NSWindow alloc] initWithContentRect:frame
-                                             styleMask:NSWindowStyleMaskClosable | NSWindowStyleMaskTitled | NSWindowStyleMaskResizable
-                                                backing:NSBackingStoreBuffered
-                                                  defer:NO];
+    NSUInteger windowStyle = NSTitledWindowMask  | NSClosableWindowMask | NSResizableWindowMask | NSMiniaturizableWindowMask;
+    
+    NSRect screenRect = [[NSScreen mainScreen] frame];
+    NSRect viewRect = NSMakeRect(0, 0, Width, Height);
+    NSRect windowRect = NSMakeRect(NSMidX(screenRect) - NSMidX(viewRect),
+                                   NSMidY(screenRect) - NSMidY(viewRect),
+                                   viewRect.size.width,
+                                   viewRect.size.height);
+    
+    NSWindow* window = [[NSWindow alloc] initWithContentRect:windowRect
+                                                    styleMask:windowStyle
+                                                      backing:NSBackingStoreBuffered
+                                                        defer:NO];
+    
+    [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+    
+    id menubar = [[NSMenu new] autorelease];
+    id appMenuItem = [[NSMenuItem new] autorelease];
+    [menubar addItem:appMenuItem];
+    [NSApp setMainMenu:menubar];
+    
+    id appMenu = [[NSMenu new] autorelease];
+    id appName = [[NSProcessInfo processInfo] processName];
+    id quitTitle = [@"Quit " stringByAppendingString:appName];
+    id quitMenuItem = [[[NSMenuItem alloc] initWithTitle:quitTitle
+                                                  action:@selector(terminate:) keyEquivalent:@"q"] autorelease];
+    [appMenu addItem:quitMenuItem];
+    [appMenuItem setSubmenu:appMenu];
+    
+    NSWindowController * windowController = [[NSWindowController alloc] initWithWindow:window];
+    [windowController autorelease];
+    
+    NSView* view = [[[NSView alloc] initWithFrame:viewRect] autorelease];
+    [window setContentView:view];
+
+    //Window Delegate
+    // NSWindowDelegate* windowDelegate = [[NSWindowDelegate alloc] init];
+    // [window setDelegate:windowDelegate];
+    
+    [window setAcceptsMouseMovedEvents:YES];
+    //[window setDelegate:view];
+    
+    // Set app title
+    [window setTitle:[NSString stringWithUTF8String:WindowName]];
+    
+    // Add fullscreen button
+    [window setCollectionBehavior: NSWindowCollectionBehaviorFullScreenPrimary];
+    [window makeKeyAndOrderFront:nil];
+
+
+
+    // NSApplication* application = [NSApplication sharedApplication];
+    // AppDelegate* appDelegate = [[[AppDelegate alloc ] init] autorelease];
+
+    // NSRect frame = NSMakeRect(0, 0, Width, Height);
+    //     NSWindow* window = [[NSWindow alloc] initWithContentRect:frame
+    //                                          styleMask:NSWindowStyleMaskClosable | NSWindowStyleMaskTitled | NSWindowStyleMaskResizable
+    //                                             backing:NSBackingStoreBuffered
+    //                                               defer:NO];
         
     
-    [window setTitle:[NSString stringWithUTF8String:WindowName]];
-    [window makeKeyAndOrderFront: nil];
-    [window setBackgroundColor:[NSColor blueColor]];
-    // NSLog(@"Test");
-    [application setDelegate:appDelegate];
-    [application run];
+    // [window setTitle:[NSString stringWithUTF8String:WindowName]];
+    // [window makeKeyAndOrderFront: nil];
+    // [window setBackgroundColor:[NSColor blueColor]];
+    // [application setDelegate:appDelegate];
+    // [application run];
 
 
 }
 
 
-
 void MacOS_Window::ProcessOSWindowMessages()
 {
-    bool quit = true;
-    
-    while (!quit) {
-        NSLog(@"Entered Loop");
-        NSEvent* event = [NSApp nextEventMatchingMask:NSEventMaskAny 
-                                    untilDate:nil 
-                                    inMode:NSDefaultRunLoopMode 
-                                    dequeue:YES];
-        switch([(NSEvent* )event type])
-        {
-            case NSEventTypeLeftMouseDown:
-                NSLog(@"NSEventTypeLeftMouseDown");
-                quit = true;
-                break;
-            default:
-                [NSApplication sendEvent:event];
-                break;
-        }
-        [event release];
+    NSEvent* event;
+    do 
+    {
+        event = [NSApp nextEventMatchingMask:NSAnyEventMask 
+                    untilDate:[NSDate distantPast] 
+                    inMode:NSDefaultRunLoopMode 
+                    dequeue:YES];
+        printf("Test\n");
+
+        [NSApp sendEvent: event];
     }
+    while (event != nil);
 }
 
 void MacOS_Window::SwapOpenGLBuffers()
