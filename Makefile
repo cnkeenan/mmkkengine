@@ -8,7 +8,7 @@ INCLUDES=-IIncludes/
 TARGET=Source/Engine/CoreEngine.cpp
 EXE=ProjectMario
 ifeq ($(OS),Linux)
-	CCFLAGS +=-lGL -lGLU -lX11
+	CCFLAGS +=-lGL -lX11
 endif
 
 ifeq ($(OS),Darwin)
