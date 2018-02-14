@@ -21,6 +21,17 @@ FNowTime* FLog::NowTime = nullptr;
 FChangeConsoleColor* FLog::ChangeConsoleColor = nullptr;
 int FLog::Verbosity = (int)ELogLevel::INFO;
 
+struct MacOS_Window : public IWindow 
+{
+    NSWindow* m_Window;
+    NSWindowController* m_WindowController;
+
+    virtual void Initialize(const int Width, const int Height, const char* WindowName) final;
+    virtual void ProcessOSWindowMessages() final;
+    virtual void SwapOpenGLBuffers() final;
+    virtual void Setup() final;
+};
+
 
 @implementation AppDelegate : NSObject
 
@@ -28,11 +39,6 @@ int FLog::Verbosity = (int)ELogLevel::INFO;
 {
     [window makeKeyAndOrderFront:self];
 }
-
-// - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
-// {
-//     return YES;
-// }
 
 @end
 
@@ -62,37 +68,24 @@ int FLog::Verbosity = (int)ELogLevel::INFO;
     if (window.isMainWindow)
     {
         EnvironmentManager::Get()->ExecutionState(EExecutionState::EXIT);
-        // [NSApp terminate:nil];
     }
 }  
 
 @end
 
-struct MacOS_Window : public IWindow 
-{
-    NSWindow* m_Window;
-    NSWindowController* m_WindowController;
-
-    virtual void Initialize(const int Width, const int Height, const char* WindowName) final;
-    virtual void ProcessOSWindowMessages() final;
-    virtual void SwapOpenGLBuffers() final;
-    virtual void Setup() final;
-};
-
-
 void MacOS_Window::Setup()
 {
-    [NSApplication sharedApplication];
+    // [NSApplication sharedApplication];
     
-    AppDelegate* appDelegate = [[AppDelegate alloc] init];
-    [NSApp setDelegate:appDelegate];
+    // AppDelegate* appDelegate = [[AppDelegate alloc] init];
+    // [NSApp setDelegate:appDelegate];
     
-    [NSApp finishLaunching];
+    // [NSApp finishLaunching];
 }
 
 void MacOS_Window::Initialize(const int Width, const int Height, const char* WindowName)
 {
-    Setup();
+    // Setup();
 
     NSUInteger windowStyle = NSWindowStyleMaskTitled  | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable;
     NSRect screenRect = [[NSScreen mainScreen] frame];
@@ -158,7 +151,7 @@ void MacOS_Window::ProcessOSWindowMessages()
 
 void MacOS_Window::SwapOpenGLBuffers()
 {
-
+   // [glContext flushBuffer];
 }
 
 IWindow* PlatformManager::CreateWindow(const int Width, const int Height, const char* WindowName)
