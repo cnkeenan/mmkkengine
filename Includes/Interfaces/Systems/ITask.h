@@ -1,12 +1,18 @@
-#if !defined(LIBS_H)
+#if !defined(ITASK_H)
 /* ========================================================================
    $Creator: Armand Karambasis $
    ======================================================================== */
-#include <string.h>
-#include <stdio.h>
-#include <vector>
-#include <deque>
-#include <stdarg.h>
 
-#define LIBS_H
+class ITask
+{
+private:
+protected:
+public:
+
+    virtual ESystemType GetType() = 0;
+    virtual void Execute() const = 0;
+    virtual ~ITask() {}
+};
+
+#define ITASK_H
 #endif

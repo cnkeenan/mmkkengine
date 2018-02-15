@@ -2,16 +2,15 @@
 /* ========================================================================
    $Creator: Armand Karambasis $
    ======================================================================== */
-#include <Utility/PlatformDetection.h>
-#include <Utility/AtomicTypes.h>
-#include <Utility/Macro.h>
+#include <ObjectFramework/ObjectFramework.h>
 #include <Interfaces/Managers/IPlatformManager.h>
-#include <Utility/Libs.h>
 #include <Utility/Delegate.h>
 #include <Utility/Logger.h>
 #include <Utility/Assert.h>
 #include <Utility/Events.h>
 #include <Utility/Strings.h>
+#include <Pong.h>
+
 #include <Engine/Managers/EnvironmentManager.h>
 #include <Engine/Managers/PlatformManager.h>
 #include <Engine/Managers/TaskManager.h>

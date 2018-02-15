@@ -9,6 +9,7 @@
 //TODO(EVERYONE): Also compilers if we want to develop on more than msvc and gcc
 
 
+//NOTE(EVERYONE): OS
 #if !defined(OS_WINDOWS)
 #define OS_WINDOWS 0
 #endif
@@ -37,6 +38,36 @@
 #define OS_LINUX 1
 #define POSIX 1
 #endif
+//////////////////////
+
+//NOTE(EVERYONE): Compilers
+#if !defined(GCC_COMPILER)
+#define GCC_COMPILER 0
+#endif
+
+#if !defined(CLANG_COMPILER)
+#define CLANG_COMPILER 0
+#endif
+
+#if !defined(MSVC_COMPILER)
+#define MSVC_COMPILER 0
+#endif
+
+#if defined(__GNUC__)
+#undef GCC_COMPILER
+#define GCC_COMPILER 1
+#endif
+
+#if defined(__clang__)
+#undef CLANG_COMPILER
+#define CLANG_COMPILER 1
+#endif
+
+#if defined(_MSC_VER)
+#undef MSVC_COMPILER
+#define MSVC_COMPILER 1
+#endif
+
 
 #define PLATFORMDETECTION_H
 #endif

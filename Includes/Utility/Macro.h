@@ -16,7 +16,7 @@
 #define CLEAR_BIT_64(number, x) (number &= ~(1ULL << x))
 #define TOGGLE_BIT_64(number, x) (number ^= 1ULL << x)
 #define CHECK_BIT_64(number, x) ((number >> x) & 1ULL)
-#define INVALID_CODE_PATH *(int*)0 = 0
+#define INVALID_CODE_PATH (*(int*)0 = 0)
 #define KILOBYTE(x) (x*1024LL)
 #define MEGABYTE(x) (x*1024LL*1024LL)
 #define GIGABYTE(x) (x*1024LL*1024LL*1024LL)

@@ -2,13 +2,6 @@
 #include <Interfaces/Managers/ITaskManager.h>
 #include "Thread.h"
 
-//TODO(JJ): Move this to interface
-class ITask
-{
-public:
-    virtual void Execute() const = 0;
-};
-
 class TaskManager : public ITaskManager
 {
 private:

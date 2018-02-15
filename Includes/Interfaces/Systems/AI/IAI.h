@@ -1,12 +1,16 @@
-#if !defined(LIBS_H)
+#if !defined(IAI_H)
 /* ========================================================================
    $Creator: Armand Karambasis $
    ======================================================================== */
-#include <string.h>
-#include <stdio.h>
-#include <vector>
-#include <deque>
-#include <stdarg.h>
+class IAI : public ISystem
+{
+private:
+protected:
+public:
 
-#define LIBS_H
+    ESystemType GetType() final { return ESystemType::AI; }
+    virtual ~IAI() {}
+};
+
+#define IAI_H
 #endif

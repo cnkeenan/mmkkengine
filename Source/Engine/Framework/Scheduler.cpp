@@ -28,7 +28,6 @@ double FScheduler::Tick()
     {   
         m_DistributionOrder = EDistributeOrder::ASCENDING;
     }
-    
-    
+
     return Result;
 }

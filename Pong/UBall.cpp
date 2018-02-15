@@ -1,12 +1,17 @@
-#if !defined(LIBS_H)
 /* ========================================================================
    $Creator: Armand Karambasis $
    ======================================================================== */
-#include <string.h>
-#include <stdio.h>
-#include <vector>
-#include <deque>
-#include <stdarg.h>
 
-#define LIBS_H
-#endif
+UBall::UBall(FObjectConstructor* ObjectConstructor) : UActor(ObjectConstructor)
+{}
+
+void UBall::BeginPlay()
+{    
+}
+
+void UBall::Tick(float DeltaTime)
+{
+}
+
+UBall::~UBall()
+{}

@@ -192,7 +192,7 @@ void Linux_Window::Initialize(
 
     XFree(vi);
     XStoreName(m_Display, m_Window, WindowName);
-    XMapWindow(m_Display, m_Window);
+    XMapWindow(m_Display, m_Window);    
 
     const char *glxExts = glXQueryExtensionsString(
         m_Display,

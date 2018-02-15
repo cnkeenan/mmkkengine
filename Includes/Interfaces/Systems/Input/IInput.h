@@ -1,12 +1,16 @@
-#if !defined(LIBS_H)
+#if !defined(IINPUT_H)
 /* ========================================================================
    $Creator: Armand Karambasis $
    ======================================================================== */
-#include <string.h>
-#include <stdio.h>
-#include <vector>
-#include <deque>
-#include <stdarg.h>
+class IInput : public ISystem
+{
+private:
+protected:
+public:
 
-#define LIBS_H
+    ESystemType GetType() final { return ESystemType::INPUT; }
+    virtual ~IInput() {}
+};
+
+#define IINPUT_H
 #endif
