@@ -5,7 +5,8 @@ private:
 public:
     Posix_Mutex();
 
-    virtual bool Lock() final;
+    virtual bool TryLock() final;
+    virtual void Lock() final;
     virtual void Unlock() final;
     
     ~Posix_Mutex();
@@ -14,7 +15,7 @@ public:
 Posix_Mutex::Posix_Mutex() {}
 Posix_Mutex::~Posix_Mutex() {}
 
-bool Posix_Mutex::Lock() {
+bool Posix_Mutex::TryLock() {
     int response = pthread_mutex_trylock(&m_CriticalSection);
     if(response == 0)
     {
@@ -30,6 +31,11 @@ bool Posix_Mutex::Lock() {
         return false;
     }
 
+}
+
+void Posix_Mutex::Lock()
+{
+    pthread_mutex_lock(&m_CriticalSection);
 }
 
 void Posix_Mutex::Unlock()
