@@ -169,6 +169,52 @@ public:
         va_end(Arguments);
     }
 
+    static inline bool DirectoryExists(const char* AbsDirectoryPath)
+    {
+        struct stat status;
+
+#if OS_LINUX
+#define ACCESS(x, y) access(x, y)
+#elif OS_WINDOWS
+#define ACCESS(x, y) _access(x, y)
+#endif
+
+        if (ACCESS(AbsDirectoryPath, 0) == 0)
+        {
+            stat(AbsDirectoryPath, &status);
+
+            return (status.st_mode & S_IFDIR) != 0;
+        }
+        return false;
+    }
+
+    static inline void CreateDirectories()
+    {
+        const char* logdirs[] = { 
+            "../Data",
+            "../Data/Log",
+            "../Data/Log/Engine_Log",
+            "../Data/Log/Platform_Log",
+            "../Data/Log/Reserved_Log"
+        }; 
+#if OS_LINUX
+#define MKDIR(x, y) mkdir(x, y)
+#elif OS_WINDOWS
+#define MKDIR(x, y) _mkdir(x)
+#endif
+
+        size_t ndirs = sizeof(logdirs)/sizeof(logdirs[0]); 
+
+        for (size_t i = 0; i < ndirs; i++)
+        {
+            if (!FLog::DirectoryExists(logdirs[i]))
+            {
+                MKDIR(logdirs[i], 0733);
+            }
+        }
+
+    }
+
     static inline void InitLogger(FNowTime* NowTime, FChangeConsoleColor* ChangeConsoleColor,
                                   IMutex* Mutex)
     {
@@ -178,6 +224,7 @@ public:
         
 #define CHANNEL_CREATE(x) s_ChannelFiles[(uint64)ELogChannel::x].Path = x##_PATH; \
         s_ChannelFiles[(uint64)ELogChannel::x].File = fopen(x##_PATH, "w")
+        FLog::CreateDirectories();
 
         s_LogDump = fopen(DUMP_PATH, "w");        
         CHANNEL_CREATE(RESERVED_CHANNEL);

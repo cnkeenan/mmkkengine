@@ -1,66 +1,16 @@
-#define GLX_CONTEXT_MAJOR_VERSION_ARB 0x2091
-#define GLX_CONTEXT_MINOR_VERSION_ARB 0x2092
-
-typedef GLXContext(*glXCreateContextAttribsARBProc)
-    (Display*, GLXFBConfig, GLXContext, Bool, const int*);
-
-static bool ctxErrorOccurred = False;
 
 struct Linux_Window : public IWindow
 {
     Display*     m_Display; /* access to X Server */
     Window       m_Window;
     GLXContext   m_RenderingContext;
+    GLXFBConfig  tmp_GLFBConfig;
 
     virtual void Initialize(
                     const int Width, const int Height, const char* WindowName);
     virtual void ProcessOSWindowMessages() final;
     virtual void SwapOpenGLBuffers() final;
 };
-
-
-static int ctxErrorHandler(Display *dpy, XErrorEvent *ev)
-{
-    ctxErrorOccurred = True;
-    return 0;
-}
-
-static bool isExtensionSupported(const char* extList, const char* extension)
-{
-    const char *start;
-    const char *where, *terminator;
-
-    where = strchr(extension, ' ');
-
-    if (where || *extension == '\0')
-    {
-        return False;
-    }
-
-    for (start=extList;;)
-    {
-        where = strstr(start, extension);
-        if (!where)
-        {
-            break;
-        }
-
-        terminator = where + strlen(extension);
-
-        if (where == start || *(where - 1) == ' ')
-        {
-            if (*terminator == ' ' || *terminator == '\0')
-            {
-                return True;
-            }
-        }
-        start = terminator;
-    }
-
-    return False;
-}
-
-
 
 void Linux_Window::Initialize(
             const int Width, const int Height, const char* WindowName)
@@ -153,10 +103,10 @@ void Linux_Window::Initialize(
         XFree(vi);
     }
 
-    GLXFBConfig bestFbc = fbc[best_fbc];
+    tmp_GLFBConfig = fbc[best_fbc];
     XFree(fbc);
 
-    XVisualInfo *vi = glXGetVisualFromFBConfig(m_Display, bestFbc);
+    XVisualInfo *vi = glXGetVisualFromFBConfig(m_Display, tmp_GLFBConfig);
     cmap = XCreateColormap(
             m_Display                          ,
             RootWindow(m_Display , vi->screen) ,
@@ -194,96 +144,6 @@ void Linux_Window::Initialize(
     XStoreName(m_Display, m_Window, WindowName);
     XMapWindow(m_Display, m_Window);
 
-    const char *glxExts = glXQueryExtensionsString(
-        m_Display,
-        DefaultScreen(m_Display)
-    );
-
-    glXCreateContextAttribsARBProc glXCreateContextAttribsARB = 0;
-    glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc) 
-        glXGetProcAddressARB((const GLubyte *) "glXCreateContextAttribsARB");
-
-    m_RenderingContext = 0;
-
-    ctxErrorOccurred = False;
-
-    int (*oldHandler) (Display*, XErrorEvent*) = XSetErrorHandler(&ctxErrorHandler);
-
-    if (!isExtensionSupported(glxExts, "GLX_ARB_create_context") ||
-            !glXCreateContextAttribsARB)
-    {
-        LOG(INFO, "glXCreateContextAttribsARB() not found.");
-        m_RenderingContext = glXCreateNewContext(
-            m_Display     ,
-            bestFbc       ,
-            GLX_RGBA_TYPE ,
-            0             ,
-            True
-        );
-         
-    }
-    else
-    {
-        //NOTE(Ray): I (JJ) change this to target 3.3
-        int context_attrs[] =
-        {
-            GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
-            GLX_CONTEXT_MINOR_VERSION_ARB, 3,
-            None
-        };
-        m_RenderingContext = glXCreateContextAttribsARB(
-            m_Display     ,
-            bestFbc       ,
-            0             ,
-            True          ,
-            context_attrs
-        );
-
-        XSync(m_Display, False);
-
-        if (!ctxErrorOccurred && m_RenderingContext)
-        {
-            LOG(INFO, PLATFORM_CHANNEL, "Creating GL 3.3 Context");
-        }
-        else
-        {
-            context_attrs[1] = 1;
-            context_attrs[3] = 0;
-            ctxErrorOccurred = False;
-
-            LOG(INFO, "Failed to create GL 3.0 Context");
-
-            m_RenderingContext = glXCreateContextAttribsARB(
-                m_Display     ,
-                bestFbc       ,
-                0             ,
-                True          ,
-                context_attrs
-            );
-            
-        }
-    }
-
-    XSync(m_Display, False);
-    XSetErrorHandler(oldHandler);
-
-    if (ctxErrorOccurred || !m_RenderingContext)
-    {
-        LOG(FAILURE, PLATFORM_CHANNEL, "Failed to create OpenGL Context");
-        exit(1);
-    }
-
-    if (!glXIsDirect(m_Display, m_RenderingContext))
-    {
-        LOG(INFO, PLATFORM_CHANNEL, "Indirect GLX Rendering Context obtained");
-    }
-    else
-    {
-        LOG(INFO, PLATFORM_CHANNEL, "Direct GLX Rendering Context obtained");
-    }
-
-    glXMakeCurrent(m_Display, m_Window, m_RenderingContext);
-
 }
 
 void Linux_Window::ProcessOSWindowMessages()
@@ -291,7 +151,7 @@ void Linux_Window::ProcessOSWindowMessages()
     //TODO: fix this implementation
     if (m_Display == nullptr || m_Window == 0) 
     {
-        LOG(FAILURE, "Not valid display or window");
+        LOG(FAILURE, PLATFORM_CHANNEL, "Not valid display or window");
         EnvironmentManager::Get()->ExecutionState(EExecutionState::EXIT);
     }
 
@@ -304,13 +164,13 @@ void Linux_Window::ProcessOSWindowMessages()
     switch(xevent.type) 
     {
         case Expose:
-            LOG(INFO, "Expose event");
+            LOG(INFO, PLATFORM_CHANNEL, "Expose event");
             XGetWindowAttributes(m_Display, m_Window, &attrs);
             glViewport(0, 0, attrs.width, attrs.height);
             break;
 
         case KeyPress:
-            LOG(INFO, "Key press event");
+            LOG(INFO, PLATFORM_CHANNEL, "Key press event");
             break;
 
         default:

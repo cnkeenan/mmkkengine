@@ -4,11 +4,19 @@
    ======================================================================== */
 #include <string.h>
 #include <stdio.h>
-#include <io.h>
-#include <fcntl.h>
 #include <vector>
 #include <deque>
 #include <stdarg.h>
+
+#if OS_WINDOWS
+#include <io.h>
+#endif
+#if OS_LINUX
+#include <unistd.h>
+#endif
+
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #define LIBS_H
 #endif
