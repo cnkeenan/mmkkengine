@@ -15,7 +15,8 @@ public:
     ESystemType GetType() final { return ESystemType::INPUT; }
     virtual void BeginPlay() = 0;
     virtual void Tick(float DeltaTime) = 0;
-
+    virtual ITask* GetTask() = 0;
+    
     virtual ~IInputScene() {}
 };
 

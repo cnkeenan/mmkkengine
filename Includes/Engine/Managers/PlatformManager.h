@@ -22,6 +22,9 @@ public:
     void InitializeOpenGLContext(IWindow *Window);
     uint32 GetNumberOfProcessors();
 
+    ISystem* LoadSystem(ESystemType SystemType);
+    void UnloadSystem(ISystem** System);
+    
     //NOTE(EVERYONE): Returns the thread id of the thread that called this funciton
     uint32 GetCallingThreadID();
     

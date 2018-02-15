@@ -6,6 +6,15 @@
 FLoader::FLoader()
 {
     //TODO(EVERYONE): Instantiate systems here
+    PlatformManager* Platform = PlatformManager::Get();
+    m_AI = (IAI*)Platform->LoadSystem(ESystemType::AI);
+    m_Collision = (ICollision*)Platform->LoadSystem(ESystemType::COLLISION);
+    m_Graphics = (IGraphics*)Platform->LoadSystem(ESystemType::GRAPHICS);
+    m_Input = (IInput*)Platform->LoadSystem(ESystemType::INPUT);
+    m_Physics = (IPhysics*)Platform->LoadSystem(ESystemType::PHYSICS);
+    m_Sound = (ISound*)Platform->LoadSystem(ESystemType::SOUND);
+    m_Transform = (ITransform*)Platform->LoadSystem(ESystemType::TRANSFORM);
+    m_Widget = (IWidget*)Platform->LoadSystem(ESystemType::WIDGET);
 }
 
 UWorld* FLoader::Load()
@@ -38,4 +47,13 @@ void FLoader::Unload(UWorld* World)
 FLoader::~FLoader()
 {
     //TODO(EVERYONE): Destroy systems here
+    PlatformManager* Platform = PlatformManager::Get();
+    Platform->UnloadSystem((ISystem**)&m_Widget);
+    Platform->UnloadSystem((ISystem**)&m_Transform);
+    Platform->UnloadSystem((ISystem**)&m_Sound);
+    Platform->UnloadSystem((ISystem**)&m_Physics);
+    Platform->UnloadSystem((ISystem**)&m_Input);
+    Platform->UnloadSystem((ISystem**)&m_Graphics);
+    Platform->UnloadSystem((ISystem**)&m_Collision);
+    Platform->UnloadSystem((ISystem**)&m_AI);
 }

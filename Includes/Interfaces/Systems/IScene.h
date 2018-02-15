@@ -22,6 +22,7 @@ public:
     virtual void BeginPlay() = 0;
     virtual void Tick(float DeltaTime) = 0;
     virtual ESystemType GetType() = 0;
+    virtual class ITask* GetTask() = 0;
     
     virtual ~IScene() {}
 };

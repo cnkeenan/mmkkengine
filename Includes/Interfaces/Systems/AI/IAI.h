@@ -13,5 +13,10 @@ public:
     virtual ~IAI() {}
 };
 
+
+//NOTE(EVERYONE): If we need managers add them here
+typedef IAI* fp_CreateAISystem();
+typedef void fp_DestroyAISystem(IAI** System);
+
 #define IAI_H
 #endif

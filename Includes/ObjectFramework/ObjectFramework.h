@@ -4,18 +4,11 @@
    ======================================================================== */
 
 #include <Utility/PlatformDetection.h>
-#if MSVC_COMPILER
+
 #ifdef FRAMEWORK_EXPORT
-#define OBJECTFRAMEWORK_API __declspec(dllexport)
+#define OBJECTFRAMEWORK_API EXPORT
 #else
-#define OBJECTFRAMEWORK_API __declspec(dllimport)
-#endif
-#elif GCC_COMPILER //NOTE(EVERYONE): This might be the same for clang
-#ifdef FRAMEWORK_EXPORT
-#define OBJECTFRAMEWORK_API __attribute__((visibility("default")))
-#else
-#define OBJECTFRAMEWORK_API
-#endif
+#define OBJECTFRAMEWORK_API IMPORT
 #endif
 
 #include <Utility/AtomicTypes.h>

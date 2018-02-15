@@ -29,7 +29,7 @@ public:
         if((*Scene))
             delete (*Scene);
 
-        (*Scene) = 0;
+        (*Scene) = nullptr;
     };
     virtual ~ISystem() {}
 };

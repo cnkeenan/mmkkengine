@@ -22,6 +22,17 @@
 #define GIGABYTE(x) (x*1024LL*1024LL*1024LL)
 #define TERABYTE(x) (x*1024LL*1024LL*1024LL*1024LL)
 
+#if MSVC_COMPILER
+#define EXPORT __declspec(dllexport)
+#define IMPORT __declspec(dllimport)
+#elif GCC_COMPILER
+#define EXPORT __attribute__((visibility("default")))
+#define IMPORT 
+#else
+#define EXPORT
+#define IMPORT
+#endif
+
 //NOTE(EVERYONE): If you guys are getting errors of these macros being defined multiple times just #undef them.
 //Posix defines these in a specific file but not windows 
 #define STDIN_FILENO

@@ -51,6 +51,7 @@ FUNCTION_SIGNATURE(wglMakeCurrent_);
 #include "Win32/Win32_Mutex.cpp"
 #include "Win32/Win32_Hardware.cpp"
 #include "Win32/Win32_Semaphore.cpp"
+#include "Win32/Win32_LoadSystem.cpp"
 
 #define WIN32_H
 #endif
