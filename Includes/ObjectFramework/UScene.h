@@ -4,9 +4,9 @@ class OBJECTFRAMEWORK_API UScene
 {
 private:
 public:
-    UScene();
+        
     virtual void BeginPlay();
-    virtual void Tick(float DeltaTime);
+    virtual void Tick(float DeltaTime);    
     virtual ~UScene();
 };
 

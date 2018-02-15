@@ -8,6 +8,7 @@ private:
 protected:
 public:
 
+    virtual IPhysicsScene* CreateScene() = 0;
     ESystemType GetType() final { return ESystemType::PHYSICS; }
     virtual ~IPhysics() {}
 };

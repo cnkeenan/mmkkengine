@@ -25,8 +25,11 @@ void FCoreEngine::Tick()
     EnvironmentManager* Environment = EnvironmentManager::Get();
 
     FHighResolutionTimer Timer = PlatformManager::Get()->CreateHighResolutionTimer();
-    
-    while(Environment->ExecutionState() == EExecutionState::RUN)
+
+    UWorld* World = m_Loader.Load();
+
+    World->BeginPlay();
+    while(Environment->ExecutionState() != EExecutionState::EXIT)
     {                        
         m_MainWindow->ProcessOSWindowMessages();
 
@@ -43,6 +46,15 @@ void FCoreEngine::Tick()
         glClear(GL_COLOR_BUFFER_BIT);        
 
         m_MainWindow->SwapOpenGLBuffers();
+
+        World->Tick(DeltaTime);
+
+        if(Environment->ExecutionState() == EExecutionState::NEW_SCENE)
+        {
+            m_Loader.Unload(World);
+            World = m_Loader.Load();
+            World->BeginPlay();
+        }
 
     }
 }
@@ -76,3 +88,4 @@ int main(int ArgumentCount, char** Arguments)
 #include "Managers/StateManager.cpp"
 #include "Managers/ServiceManager.cpp"
 #include "Framework/Scheduler.cpp"
+#include "Framework/Loader.cpp"

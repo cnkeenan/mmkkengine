@@ -8,10 +8,13 @@ class IInputScene : public IScene
 private:
 protected:
 public:
-
+                
+    virtual IInputObject* CreateObject() = 0;
+    virtual void DestroyObject(IInputObject** Object) = 0;            
+    
     ESystemType GetType() final { return ESystemType::INPUT; }
     virtual void BeginPlay() = 0;
-    virtual void Tick() = 0;
+    virtual void Tick(float DeltaTime) = 0;
 
     virtual ~IInputScene() {}
 };

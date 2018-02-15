@@ -24,6 +24,7 @@
 
 #include "UScene.h"
 #include "ObjectConstructor.h"
+#include "UWorld.h"
 #include "UObject.h"
 #include "UEntity.h"
 #include "UController.h"

@@ -4,8 +4,8 @@
    ======================================================================== */
 class PONG_API UBall : public UActor
 {
-public:
 private:
+public:
     UBall(FObjectConstructor* ObjectConstructor);
 
     virtual void BeginPlay() override;

@@ -9,9 +9,13 @@ private:
 protected:
 public:
 
+                        
+    virtual ISoundObject* CreateObject() = 0;
+    virtual void DestroyObject(ISoundObject** Object) = 0;                
+
     ESystemType GetType() final { return ESystemType::SOUND; }
     virtual void BeginPlay() = 0;
-    virtual void Tick() = 0;
+    virtual void Tick(float DeltaTime) = 0;
 
     virtual ~ISoundScene() {}
 };

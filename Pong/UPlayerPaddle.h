@@ -5,6 +5,7 @@
 
 class PONG_API UPlayerPaddle : public UPawn
 {
+public:
     UPlayerPaddle(FObjectConstructor* ObjectConstructor);
 
     virtual void BeginPlay() override;
@@ -15,6 +16,7 @@ class PONG_API UPlayerPaddle : public UPawn
 
 class PONG_API UPongPlayerController : public UPlayerController
 {
+public:
     UPongPlayerController(FObjectConstructor* ObjectConstructor);
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaTime) override;

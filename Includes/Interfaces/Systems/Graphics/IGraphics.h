@@ -8,6 +8,7 @@ private:
 protected:
 public:
 
+    virtual IGraphicsScene* CreateScene() = 0;
     ESystemType GetType() final { return ESystemType::GRAPHICS; }
     virtual ~IGraphics() {}
 };

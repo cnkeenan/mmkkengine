@@ -5,6 +5,7 @@
 
 
 #include "UScene.cpp"
+#include "UWorld.cpp"
 #include "ObjectConstructor.cpp"
 #include "UObject.cpp"
 #include "UEntity.cpp"

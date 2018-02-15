@@ -19,5 +19,8 @@ void UActor::Tick(float DeltaTime)
 
 UActor::~UActor()
 {
-    m_ObjectConstructor->Destruct((IObject**)&m_GraphicsObject);
+    if(m_GraphicsObject)
+    {
+        m_ObjectConstructor->Destruct((IObject**)&m_GraphicsObject);
+    }
 }

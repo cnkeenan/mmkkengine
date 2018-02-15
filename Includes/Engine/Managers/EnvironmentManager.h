@@ -4,7 +4,9 @@
 //TODO(EVERYONE): Handle more execution status's like pause, next scene etc.
 enum class EExecutionState
 {
-    RUN,    
+    RUN,
+    PAUSE,
+    NEW_SCENE,
     EXIT
 };
 

@@ -8,6 +8,7 @@ private:
 protected:
 public:
 
+    virtual ICollisionScene* CreateScene() = 0;
     ESystemType GetType() final { return ESystemType::COLLISION; }
     virtual ~ICollision() {}
 };

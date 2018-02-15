@@ -14,6 +14,14 @@
 #define LOG_ASSERT(x)
 #endif
 
+#if POSIX
+#define MKDIR(x, y) mkdir(x, y)
+#elif OS_WINDOWS
+#include <direct.h>
+#define MKDIR(x, y) _mkdir(x)
+#endif
+
+
 enum class ELogLevel
 {
     FAILURE,
@@ -173,7 +181,7 @@ public:
     {
         struct stat status;
 
-#if OS_LINUX
+#if POSIX
 #define ACCESS(x, y) access(x, y)
 #elif OS_WINDOWS
 #define ACCESS(x, y) _access(x, y)
@@ -197,11 +205,6 @@ public:
             "../Data/Log/Platform_Log",
             "../Data/Log/Reserved_Log"
         }; 
-#if OS_LINUX
-#define MKDIR(x, y) mkdir(x, y)
-#elif OS_WINDOWS
-#define MKDIR(x, y) _mkdir(x)
-#endif
 
         size_t ndirs = sizeof(logdirs)/sizeof(logdirs[0]); 
 

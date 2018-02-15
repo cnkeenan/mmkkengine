@@ -1,6 +1,3 @@
-UScene::UScene()
-{
-}
 
 void UScene::BeginPlay()
 {

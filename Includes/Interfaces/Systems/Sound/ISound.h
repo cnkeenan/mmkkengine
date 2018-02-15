@@ -8,7 +8,7 @@ private:
 protected:
 public:
 
-    
+    virtual ISoundScene* CreateScene() = 0;
     ESystemType GetType() final { return ESystemType::SOUND; }
     virtual ~ISound() {}
 };
