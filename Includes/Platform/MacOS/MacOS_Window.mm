@@ -9,7 +9,12 @@
  */
 
 #include <Utility/AtomicTypes.h>
+#include <Interfaces/Managers/IPlatformManager.h>
 #include <Utility/PlatformDetection.h>
+
+#include <Utility/Libs.h>
+#include <Utility/Macro.h>
+#include <Utility/Delegate.h>
 #import <Utility/Logger.h>
 #include <Engine/Managers/PlatformManager.h>
 #include <Engine/Managers/EnvironmentManager.h>
@@ -17,9 +22,9 @@
 #include "AppDelegate.h"
 
 
-FNowTime* FLog::NowTime = nullptr;
-FChangeConsoleColor* FLog::ChangeConsoleColor = nullptr;
-int FLog::Verbosity = (int)ELogLevel::INFO;
+FNowTime* FLog::s_NowTime = nullptr;
+FChangeConsoleColor* FLog::s_ChangeConsoleColor = nullptr;
+int FLog::s_Verbosity = (int)ELogLevel::INFO;
 uint64 FLog::s_Channels = 0xFFFFFFFFFFFFFFFF;
 FLog::FLogFile FLog::s_ChannelFiles[NUMBER_OF_CHANNELS] = {};
 FILE* FLog::s_LogDump = nullptr;
@@ -138,7 +143,7 @@ void MacOS_Window::ProcessOSWindowMessages()
     @autoreleasepool {
         NSEvent* ev;
         do {
-            ev = [NSApp nextEventMatchingMask: NSAnyEventMask
+            ev = [NSApp nextEventMatchingMask: NSEventMaskAny
                                     untilDate: nil
                                        inMode: NSDefaultRunLoopMode
                                       dequeue: YES];
