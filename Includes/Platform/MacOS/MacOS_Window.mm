@@ -35,12 +35,25 @@ const char* FLog::PLATFORM_CHANNEL_PATH = "../Data/Log/Platform_Log/Platform.log
 const char* FLog::DUMP_PATH = "../Data/Log/Dump.log";        
 IMutex* FLog::s_Mutex = nullptr;
 
+@interface CustomOpenGLView : NSOpenGLView 
+    + (void) setOpenGLContext:(NSOpenGLContext*) context;
+@end
+
+@implementation CustomOpenGLView : NSOpenGLView
+    + (void) setOpenGLContext:(NSOpenGLContext*) context
+    {
+        [self _openGLContext: context];
+    }
+@end
+
 struct MacOS_Window : public IWindow 
 {
     NSWindow* m_Window;
     NSView* m_View;
     NSWindowController* m_WindowController;
     NSOpenGLContext*   m_OpenGLContext;
+    CustomOpenGLView* m_OpenGLView;
+    NSRect m_Bounds;
 
 
     virtual void Initialize(const int Width, const int Height, const char* WindowName) final;
@@ -88,19 +101,17 @@ struct MacOS_Window : public IWindow
     }
 }  
 @end
-
-
 void MacOS_Window::Initialize(const int Width, const int Height, const char* WindowName)
 {
     NSUInteger windowStyle = NSWindowStyleMaskTitled  | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable;
     NSRect screenRect = [[NSScreen mainScreen] frame];
     NSRect viewRect = NSMakeRect(0, 0, Width, Height);
-    NSRect windowRect = NSMakeRect(NSMidX(screenRect) - NSMidX(viewRect),
+    m_Bounds = NSMakeRect(NSMidX(screenRect) - NSMidX(viewRect),
                                    NSMidY(screenRect) - NSMidY(viewRect),
                                    viewRect.size.width,
                                    viewRect.size.height);
   
-    m_Window = [[NSWindow alloc] initWithContentRect:windowRect
+    m_Window = [[NSWindow alloc] initWithContentRect:m_Bounds
                                                     styleMask:windowStyle
                                                       backing:NSBackingStoreBuffered
                                                         defer:NO];
