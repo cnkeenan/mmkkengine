@@ -3,7 +3,6 @@
 
 #include <unistd.h>
 #include <pthread.h>
-#include <semaphore.h>
 #include <time.h>
 #if OS_MAC
 #include <errno.h>
@@ -14,7 +13,6 @@
 #include "Posix/Posix_Timer.cpp"
 #include "Posix/Posix_Thread.cpp"
 #include "Posix/Posix_Hardware.cpp"
-#include "Posix/Posix_Semaphore.cpp"
 #include "Posix/Posix_Mutex.cpp"
 
 #endif
