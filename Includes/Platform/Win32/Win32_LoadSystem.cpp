@@ -14,61 +14,62 @@ ISystem* PlatformManager::LoadSystem(ESystemType SystemType)
         case ESystemType::AI:
         {
             LOAD_SYSTEM(CreateAISystem, "AI.dll");
-            Result = CreateAISystem();
-            
+            Result = CreateAISystem(MemoryManager::Get());            
         } break;
 
-        /*
+        
         case ESystemType::COLLISION:
         {
             LOAD_SYSTEM(CreateCollisionSystem, "Collision.dll");
-            Result = CreateCollisionSystem();
+            Result = CreateCollisionSystem(MemoryManager::Get());
         } break;
+
         
         case ESystemType::GRAPHICS:
         {
             LOAD_SYSTEM(CreateGraphicsSystem, "Graphics.dll");
-            Result = CreateGraphicsSystem();
+            Result = CreateGraphicsSystem(MemoryManager::Get());
         } break;
+
         
         case ESystemType::INPUT:
         {
             LOAD_SYSTEM(CreateInputSystem, "Input.dll");
-            Result = CreateInputSystem();
+            Result = CreateInputSystem(MemoryManager::Get());
         } break;
         
         case ESystemType::PHYSICS:
         {
             LOAD_SYSTEM(CreatePhysicsSystem, "Physics.dll");
-            Result = CreatePhysicsSystem();
+            Result = CreatePhysicsSystem(MemoryManager::Get());
         } break;
         
         case ESystemType::SOUND:
         {
             LOAD_SYSTEM(CreateSoundSystem, "Sound.dll");
-            Result = CreateSoundSystem();
+            Result = CreateSoundSystem(MemoryManager::Get());
         } break;
         
         case ESystemType::TRANSFORM:
         {
             LOAD_SYSTEM(CreateTransformSystem, "Transform.dll");
-            Result = CreateTransformSystem();
+            Result = CreateTransformSystem(MemoryManager::Get());
         } break;
         
         case ESystemType::WIDGET:
         {
             LOAD_SYSTEM(CreateWidgetSystem, "Widget.dll");
-            Result = CreateWidgetSystem();
+            Result = CreateWidgetSystem(MemoryManager::Get());
         } break;
 
-        */
+        
         default:
         {
             ASSERT(!"", "Not a valid system");
         } break;
     }
 
-    return nullptr;
+    return Result;
 }
 
 void PlatformManager::UnloadSystem(ISystem** System)
@@ -81,54 +82,51 @@ void PlatformManager::UnloadSystem(ISystem** System)
             case ESystemType::AI:
             {
                 LOAD_SYSTEM(DestroyAISystem, "AI.dll");
-                DestroyAISystem((IAI**)System);
+                DestroyAISystem((IAI**)System);            
+            } break;
             
+            case ESystemType::COLLISION:
+            {
+                LOAD_SYSTEM(DestroyCollisionSystem, "Collision.dll");
+                DestroyCollisionSystem((ICollision**)System);
+            } break;
+            
+            case ESystemType::GRAPHICS:
+            {
+                LOAD_SYSTEM(DestroyGraphicsSystem, "Graphics.dll");
+                DestroyGraphicsSystem((IGraphics**)System);
+            } break;
+            
+            case ESystemType::INPUT:
+            {
+                LOAD_SYSTEM(DestroyInputSystem, "Input.dll");
+                DestroyInputSystem((IInput**)System);
+            } break;
+        
+            case ESystemType::PHYSICS:
+            {
+                LOAD_SYSTEM(DestroyPhysicsSystem, "Physics.dll");
+                DestroyPhysicsSystem((IPhysics**)System);
+            } break;
+        
+            case ESystemType::SOUND:
+            {
+                LOAD_SYSTEM(DestroySoundSystem, "Sound.dll");
+                DestroySoundSystem((ISound**)System);
+            } break;
+        
+            case ESystemType::TRANSFORM:
+            {
+                LOAD_SYSTEM(DestroyTransformSystem, "Transform.dll");
+                DestroyTransformSystem((ITransform**)System);
+            } break;
+        
+            case ESystemType::WIDGET:
+            {
+                LOAD_SYSTEM(DestroyWidgetSystem, "Widget.dll");
+                DestroyWidgetSystem((IWidget**)System);
             } break;
 
-            /*
-              case ESystemType::COLLISION:
-              {
-              LOAD_SYSTEM(DestroyCollisionSystem, "Collision.dll");
-              DestroyCollisionSystem((ICollision**)System);
-              } break;
-        
-              case ESystemType::GRAPHICS:
-              {
-              LOAD_SYSTEM(DestroyGraphicsSystem, "Graphics.dll");
-              DestroyGraphicsSystem((IGraphics**)System);
-              } break;
-        
-              case ESystemType::INPUT:
-              {
-              LOAD_SYSTEM(DestroyInputSystem, "Input.dll");
-              DestroyInputSystem((IInput**)System);
-              } break;
-        
-              case ESystemType::PHYSICS:
-              {
-              LOAD_SYSTEM(DestroyPhysicsSystem, "Physics.dll");
-              DestroyPhysicsSystem((IPhysics**)System);
-              } break;
-        
-              case ESystemType::SOUND:
-              {
-              LOAD_SYSTEM(DestroySoundSystem, "Sound.dll");
-              DestroySoundSystem((ISound**)System);
-              } break;
-        
-              case ESystemType::TRANSFORM:
-              {
-              LOAD_SYSTEM(DestroyTransformSystem, "Transform.dll");
-              DestroyTransformSystem((ITransform**)System);
-              } break;
-        
-              case ESystemType::WIDGET:
-              {
-              LOAD_SYSTEM(DestroyWidgetSystem, "Widget.dll");
-              DestroyWidgetSystem((IWidget**)System);
-              } break;
-
-            */
             default:
             {
                 ASSERT(!"", "Not a valid system");

@@ -11,7 +11,7 @@ public:
 
                             
     virtual ITransformObject* CreateObject() = 0;
-    virtual void DestroyObject(ITransformObject** Object) = 0;                
+    virtual void DestroyObject(ITransformObject* Object) = 0;                
 
     ESystemType GetType() final { return ESystemType::TRANSFORM; }
     virtual void BeginPlay() = 0;

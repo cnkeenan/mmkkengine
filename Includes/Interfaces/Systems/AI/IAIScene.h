@@ -10,7 +10,7 @@ protected:
 public:
 
     virtual IAIObject* CreateObject() = 0;
-    virtual void DestroyObject(IAIObject** Object) = 0;
+    virtual void DestroyObject(IAIObject* Object) = 0;
     
     ESystemType GetType() final { return ESystemType::AI; }
     virtual void BeginPlay() = 0;

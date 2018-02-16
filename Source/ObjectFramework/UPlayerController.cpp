@@ -3,7 +3,7 @@
    ======================================================================== */
 UPlayerController::UPlayerController(FObjectConstructor* ObjectConstructor) : UController(ObjectConstructor)
 {
-    m_InputObject = m_ObjectConstructor->Construct<IInputObject>();
+    m_InputObject = m_ObjectConstructor->Construct<IInputObject>();    
 }
 
 void UPlayerController::BeginPlay()
@@ -22,5 +22,5 @@ void UPlayerController::SetupInput()
 
 UPlayerController::~UPlayerController()
 {
-    m_ObjectConstructor->Destruct((IObject**)&m_InputObject);
+    m_ObjectConstructor->Destruct((IObject*)m_InputObject);
 }

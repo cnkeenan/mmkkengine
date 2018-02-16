@@ -19,7 +19,7 @@ private:
     EDistributeOrder m_DistributionOrder;
 public:
     void Init(double Frequency);
-    double Tick();
+    double Tick(UWorld* World);
     inline void SetFrequency(double Frequency) { m_Frequency = Frequency; };
 };
 

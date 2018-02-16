@@ -6,9 +6,11 @@ class TaskManager : public ITaskManager
 {
 private:
     std::vector<FThread<TaskManager>*> m_Threads;
-    std::deque<const ITask*> m_Tasks;
+    std::queue<const ITask*> m_Tasks;
     ISemaphore* m_Semaphore;
     IMutex* m_Mutex;
+    uint32 m_CompletionGoal;
+    uint32 m_CompletionCount;
 
     static TaskManager* s_TaskManager;
 

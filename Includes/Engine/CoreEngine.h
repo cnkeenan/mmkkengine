@@ -10,6 +10,7 @@
 #include <Utility/Events.h>
 #include <Utility/Strings.h>
 
+#include <Engine/Managers/MemoryManager.h>
 #include <Engine/Managers/EnvironmentManager.h>
 #include <Engine/Managers/PlatformManager.h>
 #include <Engine/Managers/TaskManager.h>

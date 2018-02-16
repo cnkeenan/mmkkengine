@@ -1,6 +1,6 @@
 TaskManager* TaskManager::s_TaskManager = nullptr;
 
-TaskManager::TaskManager()
+TaskManager::TaskManager() : m_CompletionGoal(0), m_CompletionCount(0)
 {
     PlatformManager* Platform = PlatformManager::Get();
     m_Threads.resize(Platform->GetNumberOfProcessors()-1);
@@ -40,20 +40,21 @@ int TaskManager::ThreadProcedure()
 bool TaskManager::ProcessTask()
 {
     bool Result = true;
-    if(m_Tasks.size() != 0)
+    if(m_Mutex->TryLock())
     {
-        bool HasLock = m_Mutex->TryLock();
-        if(HasLock)
+        if(!m_Tasks.empty())
         {
+            
             const ITask* Task = m_Tasks.front();
-            m_Tasks.pop_front();
+            m_Tasks.pop();
             Task->Execute();
-            m_Mutex->Unlock();
+            m_CompletionCount++;
         }
-    }
-    else
-    {
-        Result = false;
+        else
+        {
+            Result = false;
+        }
+        m_Mutex->Unlock();                        
     }
 
     return Result;
@@ -61,14 +62,20 @@ bool TaskManager::ProcessTask()
 
 void TaskManager::SubmitTask(const ITask* Task)
 {
-    m_Tasks.push_back(Task);
+    m_Mutex->Lock();
+    m_CompletionGoal++;
+    m_Tasks.push(Task);
     m_Semaphore->Post();
+    m_Mutex->Unlock();
 }
 
 void TaskManager::CompleteAllSubmittedTasks()
-{
-    while(m_Tasks.size() != 0)
+{    
+    while(m_CompletionGoal != m_CompletionCount)
     {
         ProcessTask();
     }
+
+    m_CompletionCount = 0;
+    m_CompletionGoal = 0;
 }

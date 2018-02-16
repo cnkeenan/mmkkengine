@@ -9,9 +9,12 @@ private:
 protected:
 public:
 
+    ITransformObject() {}
+    
     ESystemType GetType() final { return ESystemType::TRANSFORM; }
     virtual void BeginPlay() = 0;
     virtual void Tick(float DeltaTime) = 0;
+    virtual bool IsInitialized() = 0;
     virtual ~ITransformObject() {}
 };
 

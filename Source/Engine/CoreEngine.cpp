@@ -11,9 +11,7 @@
 void FCoreEngine::Initialize()
 {
     m_FPS = 60;
-    PlatformManager* Platform = PlatformManager::Get();
-    TaskManager::Get();
-    FLog::InitLogger(Platform->GetCurrentTime, Platform->ChangeConsoleColor, Platform->CreateMutex());    
+    PlatformManager* Platform = PlatformManager::Get();        
     m_MainWindow = Platform->CreateWindow(1280, 720, "Marty-O");
     Platform->InitializeOpenGLContext(m_MainWindow);
 }
@@ -33,7 +31,7 @@ void FCoreEngine::Tick()
     {                        
         m_MainWindow->ProcessOSWindowMessages();
 
-        double DeltaTime = m_Scheduler.Tick();
+        double DeltaTime = m_Scheduler.Tick(World);
         //NOTE(EVERYONE): This is the beginning of the new frame        
 
         //NOTE(EVERYONE): We'll let the main thread start working on tasks while it waits for the
@@ -57,6 +55,7 @@ void FCoreEngine::Tick()
         }
 
     }
+    m_Loader.Unload(World);
 }
 
 void FCoreEngine::Destroy()
@@ -69,6 +68,13 @@ void FCoreEngine::Destroy()
 
 int main(int ArgumentCount, char** Arguments)
 {
+    PlatformManager* Platform = PlatformManager::Get();
+    TaskManager::Get();
+    EnvironmentManager::Get();
+    StateManager::GetSceneStateManager();
+    StateManager::GetObjectStateManager();
+    ServiceManager::Get();
+    FLog::InitLogger(Platform->GetCurrentTime, Platform->ChangeConsoleColor, Platform->CreateMutex());
     FCoreEngine Engine;    
     Engine.Initialize();
     Engine.Tick();
@@ -82,6 +88,7 @@ int main(int ArgumentCount, char** Arguments)
     return 0;
 }
 
+#include "Managers/MemoryManager.cpp"
 #include "Managers/EnvironmentManager.cpp"
 #include "Managers/PlatformManager.cpp"
 #include "Managers/TaskManager.cpp"

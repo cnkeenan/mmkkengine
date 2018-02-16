@@ -10,7 +10,7 @@ protected:
 public:
                 
     virtual IInputObject* CreateObject() = 0;
-    virtual void DestroyObject(IInputObject** Object) = 0;            
+    virtual void DestroyObject(IInputObject* Object) = 0;            
     
     ESystemType GetType() final { return ESystemType::INPUT; }
     virtual void BeginPlay() = 0;

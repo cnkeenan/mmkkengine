@@ -9,13 +9,14 @@ protected:
 public:
 
     virtual IAIScene* CreateScene() = 0;
+    virtual void DestroyScene(IAIScene** Scene) = 0;
     ESystemType GetType() final { return ESystemType::AI; }
     virtual ~IAI() {}
 };
 
 
 //NOTE(EVERYONE): If we need managers add them here
-typedef IAI* fp_CreateAISystem();
+typedef IAI* fp_CreateAISystem(class IMemoryManager* MemoryManager);
 typedef void fp_DestroyAISystem(IAI** System);
 
 #define IAI_H

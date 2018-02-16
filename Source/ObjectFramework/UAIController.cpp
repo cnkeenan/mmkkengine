@@ -18,5 +18,5 @@ void UAIController::Tick(float DeltaTime)
 
 UAIController::~UAIController()
 {
-    m_ObjectConstructor->Destruct((IObject**)&m_AIObject);
+    m_ObjectConstructor->Destruct((IObject*)m_AIObject);
 }

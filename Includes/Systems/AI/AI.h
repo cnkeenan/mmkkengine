@@ -3,10 +3,13 @@
    $Creator: Armand Karambasis $
    ======================================================================== */
 #include <ObjectFramework/ObjectFramework.h>
+#include <Interfaces/Managers/IMemoryManager.h>
+
+static IMemoryManager* gMemoryManager;
 
 #include "AITask.h"
-#include "AIScene.h"
 #include "AIObject.h"
+#include "AIScene.h"
 
 class AI : public IAI
 {
@@ -15,7 +18,8 @@ protected:
 public:
 
     AI();
-    IAIScene* CreateScene() final;    
+    IAIScene* CreateScene() final;
+    void DestroyScene(IAIScene** Scene) final;
     ~AI(); 
 };
 

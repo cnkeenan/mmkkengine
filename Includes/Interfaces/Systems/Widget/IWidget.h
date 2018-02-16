@@ -7,14 +7,17 @@ class IWidget : public ISystem
 private:
 protected:
 public:
-                                
-    virtual IWidgetObject* CreateObject() = 0;
-    virtual void DestroyObject(IWidgetObject** Object) = 0;                
 
     virtual IWidgetScene* CreateScene() = 0;
+    virtual void DestroyScene(IWidgetScene** Scene) = 0;
     ESystemType GetType() final { return ESystemType::WIDGET; }
     virtual ~IWidget() {}
 };
+
+
+//NOTE(EVERYONE): If we need managers add them here
+typedef IWidget* fp_CreateWidgetSystem(class IMemoryManager* MemoryManager);
+typedef void fp_DestroyWidgetSystem(IWidget** System);
 
 #define IWIDGET_H
 #endif

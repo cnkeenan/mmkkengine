@@ -8,7 +8,6 @@
 //TODO(EVERYONE): Still need to do processor architecture
 //TODO(EVERYONE): Also compilers if we want to develop on more than msvc and gcc
 
-
 //NOTE(EVERYONE): OS
 #if !defined(OS_WINDOWS)
 #define OS_WINDOWS 0

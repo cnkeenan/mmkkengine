@@ -21,7 +21,7 @@ public:
     T* Construct();
 
     
-    void Destruct(class IObject** Object);
+    void Destruct(class IObject* Object);
 };
 
 #define OBJECTCONSTRUCTOR_H

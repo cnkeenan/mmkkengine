@@ -21,6 +21,6 @@ UActor::~UActor()
 {
     if(m_GraphicsObject)
     {
-        m_ObjectConstructor->Destruct((IObject**)&m_GraphicsObject);
+        m_ObjectConstructor->Destruct((IObject*)m_GraphicsObject);
     }
 }

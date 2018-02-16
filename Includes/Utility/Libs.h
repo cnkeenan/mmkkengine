@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <vector>
 #include <deque>
+#include <queue>
 #include <stdarg.h>
 
 #if OS_WINDOWS

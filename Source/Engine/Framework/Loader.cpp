@@ -35,6 +35,8 @@ UWorld* FLoader::Load()
     Pawn2->ChangeController(new UPongAIController(ObjectConstructor));
     World->AddObject(Pawn2);
 
+    World->RemoveObject((UObject**)&Pawn1);
+
     return World;
 }
 

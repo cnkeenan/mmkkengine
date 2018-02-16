@@ -10,7 +10,7 @@ protected:
 public:
             
     virtual IGraphicsObject* CreateObject() = 0;
-    virtual void DestroyObject(IGraphicsObject** Object) = 0;        
+    virtual void DestroyObject(IGraphicsObject* Object) = 0;        
     
     ESystemType GetType() final { return ESystemType::GRAPHICS; }
     virtual void BeginPlay() = 0;

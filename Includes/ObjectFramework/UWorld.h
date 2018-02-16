@@ -5,6 +5,7 @@
 
 class OBJECTFRAMEWORK_API UWorld : public UScene
 {
+    friend class m_Scheduler;    
     union
     {
         FObjectConstructor m_ObjectConstructor;
@@ -36,7 +37,7 @@ public:
                  class ITransform* Transform, class IWidget* Widget);
     void AddObject(UObject* Object);
     void RemoveObject(UObject** Object);
-    FObjectConstructor* GetObjectConstructor(); 
+    FObjectConstructor* GetObjectConstructor();
     
     ~UWorld() {}
 };

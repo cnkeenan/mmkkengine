@@ -47,6 +47,18 @@ static bool isExtensionSupported(const char* extList, const char* extension)
     return False;
 }
 
+void* Linux_GetGLFunction(const char* Name)
+{
+    void* p = (void*)glXGetProcAddressARB((const GLubyte*)Name);
+    if(!p)
+    {
+        void* libGL = dlopen("libGL.so", RTLD_LAZY);
+        p = (void*)dlsym(libGL, Name);
+    }
+
+    return p;
+}
+
 void PlatformManager::InitializeOpenGLContext(IWindow *Window) {
 
     Linux_Window* win = (Linux_Window*)Window;
@@ -65,39 +77,28 @@ void PlatformManager::InitializeOpenGLContext(IWindow *Window) {
 
     int (*oldHandler) (Display*, XErrorEvent*) = XSetErrorHandler(&ctxErrorHandler);
 
-    if (!isExtensionSupported(glxExts, "GLX_ARB_create_context") ||
-            !glXCreateContextAttribsARB)
+    if(glxCreateContextAttribsARB)
     {
-        LOG(INFO, PLATFORM_CHANNEL, "glXCreateContextAttribsARB() not found.");
-        win->m_RenderingContext = glXCreateNewContext(
-                win->m_Display,
-                win->tmp_GLFBConfig,
-                GLX_RGBA_TYPE,
-                0,
-                True
-        );
-    }
-    else
-    {
+        LoadOpenGL_1_0(Linux_GetGLFunction);
         int context_attrs[] =
-        {
-            GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
-            GLX_CONTEXT_MINOR_VERSION_ARB, 3,
-            None
-        };
+            {
+                GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
+                GLX_CONTEXT_MINOR_VERSION_ARB, 3,
+                None
+            };
         win->m_RenderingContext = glXCreateContextAttribsARB(
             win->m_Display     ,
             win->tmp_GLFBConfig,
             0             ,
             True          ,
-            context_attrs
-        );
+            context_attrs);
 
         XSync(win->m_Display, False);
 
         if (!ctxErrorOccurred && win->m_RenderingContext)
         {
             LOG(INFO, PLATFORM_CHANNEL, "Creating GL 3.3 Context");
+            LoadOpenGL_3_3(Linux_GetGLFunction);
         }
         else
         {
@@ -112,10 +113,20 @@ void PlatformManager::InitializeOpenGLContext(IWindow *Window) {
                 win->tmp_GLFBConfig,
                 0             ,
                 True          ,
-                context_attrs
-            );
+                context_attrs);
             
         }
+    }
+    else
+    {
+        LOG(INFO, PLATFORM_CHANNEL, "glXCreateContextAttribsARB() not found.");
+        win->m_RenderingContext = glXCreateNewContext(
+            win->m_Display,
+            win->tmp_GLFBConfig,
+            GLX_RGBA_TYPE,
+            0,
+            True);
+        LoadOpenGL_1_0(Linux_GetGLFunction);
     }
 
     XSync(win->m_Display, false);

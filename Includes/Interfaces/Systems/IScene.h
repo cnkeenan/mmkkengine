@@ -24,7 +24,10 @@ public:
     virtual ESystemType GetType() = 0;
     virtual class ITask* GetTask() = 0;
     
-    virtual ~IScene() {}
+    virtual ~IScene()
+    {
+        int x = 5;
+    }
 };
 
 #define ISCENE_H

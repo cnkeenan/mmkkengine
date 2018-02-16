@@ -4,35 +4,29 @@
 
 AIScene::AIScene()
 {
+    m_ObjectPool = gMemoryManager->GetPool(GetType());
+    m_ObjectPool->CreatePool(sizeof(AIObject), NUMBER_OF_OBJECTS);
 }
 
 IAIObject* AIScene::CreateObject()
 {
     //TODO(JJ): Object pool
-    AIObject* Object = (AIObject*)operator new (sizeof(AIObject));
+    AIObject* Object = new AIObject();
     Object->Create();
-    m_Objects.push_back(Object);
     return Object;
 }
 
-void AIScene::DestroyObject(IAIObject** Object)
+void AIScene::DestroyObject(IAIObject* Object)
 {
     //TODO(JJ): Object pool
-    if((*Object))
+    if(Object->IsInitialized())
     {
-        AIObject** RealObject = (AIObject**)Object; 
-        for(uint32 ObjectIndex = 0; ObjectIndex < m_Objects.size(); ObjectIndex++)
-        {
-            if((*RealObject) == m_Objects[ObjectIndex])
-            {
-                m_Objects.erase(m_Objects.begin()+ObjectIndex);
-                (*RealObject)->Destroy();
-                operator delete((*RealObject));
-                (*RealObject) = nullptr;
-            }
-        }
+        AIObject* RealObject = (AIObject*)Object;
+        RealObject->Destroy();
+        delete RealObject;        
     }
 }
+
 
 void AIScene::BeginPlay()
 {
@@ -50,4 +44,6 @@ ITask* AIScene::GetTask()
 
 AIScene::~AIScene()
 {
+    //TODO(JJ): Destroy all valid objects first
+    m_ObjectPool->DestroyPool();
 }

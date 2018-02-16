@@ -55,50 +55,50 @@ ITransformObject* FObjectConstructor::Construct()
     return m_TransformScene->CreateObject();
 }
 
-void FObjectConstructor::Destruct(IObject** Object)
+void FObjectConstructor::Destruct(IObject* Object)
 {
-    if((*Object))
+    if(Object && Object->IsInitialized())
     {
-        switch((*Object)->GetType())
+        switch(Object->GetType())
         {
             case ESystemType::AI:
             {
-                m_AIScene->DestroyObject((IAIObject**)Object);
+                m_AIScene->DestroyObject((IAIObject*)Object);
             } break;
 
             case ESystemType::COLLISION:
             {
-                m_CollisionScene->DestroyObject((ICollisionObject**)Object);
+                m_CollisionScene->DestroyObject((ICollisionObject*)Object);
             } break;
 
             case ESystemType::GRAPHICS:
             {
-                m_GraphicsScene->DestroyObject((IGraphicsObject**)Object);
+                m_GraphicsScene->DestroyObject((IGraphicsObject*)Object);
             } break;
 
             case ESystemType::INPUT:
             {
-                m_InputScene->DestroyObject((IInputObject**)Object);
+                m_InputScene->DestroyObject((IInputObject*)Object);
             } break;
 
             case ESystemType::PHYSICS:
             {
-                m_PhysicsScene->DestroyObject((IPhysicsObject**)Object);
+                m_PhysicsScene->DestroyObject((IPhysicsObject*)Object);
             } break;
 
             case ESystemType::SOUND:
             {
-                m_SoundScene->DestroyObject((ISoundObject**)Object);
+                m_SoundScene->DestroyObject((ISoundObject*)Object);
             } break;
 
             case ESystemType::TRANSFORM:
             {
-                m_TransformScene->DestroyObject((ITransformObject**)Object);
+                m_TransformScene->DestroyObject((ITransformObject*)Object);
             } break;
 
             case ESystemType::WIDGET:
             {
-                m_WidgetScene->DestroyObject((IWidgetObject**)Object);
+                m_WidgetScene->DestroyObject((IWidgetObject*)Object);
             } break;
 
             default:

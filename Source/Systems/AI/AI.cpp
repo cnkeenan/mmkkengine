@@ -18,22 +18,37 @@ IAIScene* AI::CreateScene()
     return Result;
 }
 
+void AI::DestroyScene(IAIScene** Scene)
+{
+    if((*Scene))
+    {
+        AIScene** RealScene = (AIScene**)Scene;
+        delete (*RealScene);
+        (*Scene) = nullptr;
+    }
+}
+
 AI::~AI()
 {
 }
 
-EXPORT IAI* CreateAISystem()
+extern "C"
 {
-    IAI* Result = new AI();
-    return Result;
-}
-
-EXPORT void DestroyAISystem(IAI** System)
-{
-    if((*System))
+    EXPORT IAI* CreateAISystem(IMemoryManager* MemoryManager)
     {
-        delete (*System);
-        (*System) = nullptr;
+        gMemoryManager = MemoryManager;
+        IAI* Result = new AI();
+        return Result;
+    }
+
+    EXPORT void DestroyAISystem(IAI** System)
+    {
+        if((*System))
+        {
+            delete (*System);
+            (*System) = nullptr;
+        }
+        gMemoryManager = nullptr;
     }
 }
 

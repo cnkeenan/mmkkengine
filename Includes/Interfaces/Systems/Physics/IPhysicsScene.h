@@ -10,7 +10,7 @@ protected:
 public:
                     
     virtual IPhysicsObject* CreateObject() = 0;
-    virtual void DestroyObject(IPhysicsObject** Object) = 0;                
+    virtual void DestroyObject(IPhysicsObject* Object) = 0;                
     
     ESystemType GetType() final { return ESystemType::PHYSICS; }
     virtual void BeginPlay() = 0;

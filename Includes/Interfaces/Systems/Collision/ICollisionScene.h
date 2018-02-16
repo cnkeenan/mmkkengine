@@ -10,7 +10,7 @@ protected:
 public:
         
     virtual ICollisionObject* CreateObject() = 0;
-    virtual void DestroyObject(ICollisionObject** Object) = 0;        
+    virtual void DestroyObject(ICollisionObject* Object) = 0;        
     
     ESystemType GetType() final { return ESystemType::COLLISION; }
     virtual void BeginPlay() = 0;

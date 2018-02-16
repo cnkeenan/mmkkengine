@@ -7,7 +7,7 @@ void FScheduler::Init(double Frequency)
     m_DistributionOrder = EDistributeOrder::ASCENDING;    
 }
 
-double FScheduler::Tick()
+double FScheduler::Tick(UWorld* World)
 {
     double Result = 0.0f;
     do
@@ -21,11 +21,28 @@ double FScheduler::Tick()
     
     //NOTE(EVERYONE): Reversing the order of the tasks could make it more cache friendly for memory
     if(m_DistributionOrder == EDistributeOrder::ASCENDING)
-    {        
+    {
+        TaskSubmitter->SubmitTask(World->m_AIScene->GetTask());
+        TaskSubmitter->SubmitTask(World->m_CollisionScene->GetTask());
+        TaskSubmitter->SubmitTask(World->m_GraphicsScene->GetTask());
+        TaskSubmitter->SubmitTask(World->m_InputScene->GetTask());
+        TaskSubmitter->SubmitTask(World->m_PhysicsScene->GetTask());
+        TaskSubmitter->SubmitTask(World->m_SoundScene->GetTask());
+        TaskSubmitter->SubmitTask(World->m_TransformScene->GetTask());
+        TaskSubmitter->SubmitTask(World->m_WidgetScene->GetTask());
+        
         m_DistributionOrder = EDistributeOrder::DESCENDING;
     }
     else
-    {   
+    {
+        TaskSubmitter->SubmitTask(World->m_WidgetScene->GetTask());        
+        TaskSubmitter->SubmitTask(World->m_TransformScene->GetTask());
+        TaskSubmitter->SubmitTask(World->m_SoundScene->GetTask());
+        TaskSubmitter->SubmitTask(World->m_PhysicsScene->GetTask());
+        TaskSubmitter->SubmitTask(World->m_InputScene->GetTask());
+        TaskSubmitter->SubmitTask(World->m_GraphicsScene->GetTask());
+        TaskSubmitter->SubmitTask(World->m_CollisionScene->GetTask());
+        TaskSubmitter->SubmitTask(World->m_AIScene->GetTask());
         m_DistributionOrder = EDistributeOrder::ASCENDING;
     }
 

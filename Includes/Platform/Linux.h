@@ -1,6 +1,7 @@
 #ifndef _LINUX_H
 #define _LINUX_H
 
+#include <dlfcn.h>
 #include <X11/Xlib.h>
 #include <GL/glx.h>
 #include <iostream>

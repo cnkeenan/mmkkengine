@@ -6,6 +6,7 @@
 class AIObject : public IAIObject
 {
 private:
+    bool m_IsInitialized;
 protected:
 public:
 
@@ -14,6 +15,11 @@ public:
     
     void BeginPlay() final;
     void Tick(float DeltaTime) final;
+    bool IsInitialized() final;
+
+    void* operator new(size_t Size);
+    void operator delete(void* Object);
+    
     ~AIObject() {}
 };
 

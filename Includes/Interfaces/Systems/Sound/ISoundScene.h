@@ -11,7 +11,7 @@ public:
 
                         
     virtual ISoundObject* CreateObject() = 0;
-    virtual void DestroyObject(ISoundObject** Object) = 0;                
+    virtual void DestroyObject(ISoundObject* Object) = 0;                
 
     ESystemType GetType() final { return ESystemType::SOUND; }
     virtual void BeginPlay() = 0;

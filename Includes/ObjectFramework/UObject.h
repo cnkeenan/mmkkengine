@@ -18,6 +18,7 @@ protected:
     FObjectConstructor* m_ObjectConstructor;
 public:
 
+    UObject() {}
     //NOTE(EVERYONE): Can specifiy nullptr to not create the object 
     UObject(FObjectConstructor* ObjectConstructor);
 

@@ -75,18 +75,17 @@ void UWorld::RemoveObject(UObject** Object)
 void UWorld::Destroy(IAI* AI, ICollision* Collision, IGraphics* Graphics, IInput* Input,
                      IPhysics* Physics, ISound* Sound, ITransform* Transform, IWidget* Widget)
 {
-    Widget->DestroyScene((IScene**)&m_WidgetScene);
-    Transform->DestroyScene((IScene**)&m_TransformScene);
-    Sound->DestroyScene((IScene**)&m_SoundScene);
-    Physics->DestroyScene((IScene**)&m_PhysicsScene);
-    Input->DestroyScene((IScene**)&m_InputScene);
-    Graphics->DestroyScene((IScene**)&m_GraphicsScene);
-    Collision->DestroyScene((IScene**)&m_CollisionScene);
-    AI->DestroyScene((IScene**)&m_AIScene);
     for(auto& Object : m_Objects)
-    {
+    {        
         delete Object;
         Object = nullptr;
     }
+    Widget->DestroyScene(&m_WidgetScene);
+    Transform->DestroyScene(&m_TransformScene);
+    Sound->DestroyScene(&m_SoundScene);
+    Physics->DestroyScene(&m_PhysicsScene);
+    Input->DestroyScene(&m_InputScene);
+    Graphics->DestroyScene(&m_GraphicsScene);
+    Collision->DestroyScene(&m_CollisionScene);
+    AI->DestroyScene(&m_AIScene);    
 }
-

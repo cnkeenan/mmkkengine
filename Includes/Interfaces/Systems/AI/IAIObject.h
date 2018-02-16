@@ -12,6 +12,7 @@ public:
     ESystemType GetType() final { return ESystemType::AI; }
     virtual void BeginPlay() = 0;
     virtual void Tick(float DeltaTime) = 0;
+    virtual bool IsInitialized() = 0;
     virtual ~IAIObject() {}
 };
 

@@ -8,14 +8,16 @@ class AIScene : public IAIScene
 private:
 
     AITask m_Task;
-    std::vector<class AIObject*> m_Objects;
+    static const ptr_size NUMBER_OF_OBJECTS=64;
+    FPool* m_ObjectPool;
+    
 protected:
 public:
 
     AIScene();
 
     IAIObject* CreateObject() final;
-    void DestroyObject(IAIObject** Object) final;
+    void DestroyObject(IAIObject* Object) final;
     
     
     void BeginPlay() final;
