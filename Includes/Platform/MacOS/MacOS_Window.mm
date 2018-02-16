@@ -19,7 +19,8 @@
 #include <Engine/Managers/PlatformManager.h>
 #include <Engine/Managers/EnvironmentManager.h>
 #import <Cocoa/Cocoa.h>
-#include "AppDelegate.h"
+
+
 
 
 FNowTime* FLog::s_NowTime = nullptr;
@@ -37,28 +38,31 @@ IMutex* FLog::s_Mutex = nullptr;
 struct MacOS_Window : public IWindow 
 {
     NSWindow* m_Window;
+    NSView* m_View;
     NSWindowController* m_WindowController;
     NSOpenGLContext*   m_OpenGLContext;
+
 
     virtual void Initialize(const int Width, const int Height, const char* WindowName) final;
     virtual void ProcessOSWindowMessages() final;
     virtual void SwapOpenGLBuffers() final;
-    virtual void Setup() final;
 };
 
-@implementation WindowDelegate : NSObject
+@interface WindowDelegate : NSObject
 {
 
 }
 @end
 
 
-@implementation AppDelegate : NSObject
-- (void)applicationWillFinishLaunching:(NSNotification *)notification
-{
-    [window makeKeyAndOrderFront:self];
-}
-@end
+
+
+// @implementation AppDelegate : NSObject
+// - (void)applicationWillFinishLaunching:(NSNotification *)notification
+// {
+//     [window makeKeyAndOrderFront:self];
+// }
+// @end
 
 @implementation WindowDelegate : NSObject
 
@@ -115,8 +119,8 @@ void MacOS_Window::Initialize(const int Width, const int Height, const char* Win
     [appMenuItem setSubmenu:appMenu];
     m_WindowController = [[NSWindowController alloc] initWithWindow:m_Window];
     [m_WindowController autorelease];
-    NSView* view = [[[NSView alloc] initWithFrame:viewRect] autorelease];
-    [m_Window setContentView:view];
+    m_View = [[[NSView alloc] initWithFrame:viewRect] autorelease];
+    [m_Window setContentView:m_View];
     WindowDelegate* windowDelegate = [[WindowDelegate alloc] init];
     [m_Window setDelegate:windowDelegate];   
     [m_Window setAcceptsMouseMovedEvents:YES];
@@ -161,7 +165,7 @@ IWindow* PlatformManager::CreateWindow(const int Width, const int Height, const 
     return Result;
 }
 
-
+#import "MacOS_OpenGL.mm"
 
 
     
