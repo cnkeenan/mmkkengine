@@ -7,6 +7,9 @@
 #else
 #include <Utility/OpenGL.h>
 #endif
+#if OS_MAC
+#include <OpenGL/gl.h>
+#endif
 
 void FCoreEngine::Initialize()
 {

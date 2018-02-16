@@ -1,30 +1,30 @@
-class Posix_Semaphore : public ISemaphore
+class Linux_Semaphore : public ISemaphore
 {
     private:
         sem_t m_Semaphore;
     public:
-        Posix_Semaphore(int InitialCount);
+        Linux_Semaphore(int InitialCount);
         void Post() final;
         void Wait() final;
-        ~Posix_Semaphore();
+        ~Linux_Semaphore();
 };
 
-Posix_Semaphore::Posix_Semaphore(int InitialCount)
+Linux_Semaphore::Linux_Semaphore(int InitialCount)
 {
     sem_init(&m_Semaphore, 0, InitialCount);
 }
 
-void Posix_Semaphore::Post()
+void Linux_Semaphore::Post()
 {
     sem_post(&m_Semaphore);
 }
 
-void Posix_Semaphore::Wait()
+void Linux_Semaphore::Wait()
 {
     sem_wait(&m_Semaphore);
 }
 
-Posix_Semaphore::~Posix_Semaphore()
+Linux_Semaphore::~Linux_Semaphore()
 {
     sem_destroy(&m_Semaphore);
 }
@@ -32,6 +32,6 @@ Posix_Semaphore::~Posix_Semaphore()
 #undef CreateSemaphore
 ISemaphore* PlatformManager::CreateSemaphore(int InitialCount)
 {
-    ISemaphore* Semaphore = new Posix_Semaphore(InitialCount);
+    ISemaphore* Semaphore = new Linux_Semaphore(InitialCount);
     return Semaphore;
 }

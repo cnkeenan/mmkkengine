@@ -4,6 +4,7 @@ CXX=g++
 OBJC=
 ADD_OBJ=
 INCLUDES=-IIncludes/
+DEBUG= -g
 
 TARGET=Source/Engine/CoreEngine.cpp
 EXE=ProjectMario
@@ -13,7 +14,7 @@ endif
 
 ifeq ($(OS),Darwin)
 	CCFLAGS +=-framework Cocoa -framework OpenGL -framework Foundation
-	OBJC+=clang++ -std=c++11 -IIncludes Includes/Platform/MacOS/MacOS_Window.mm -c
+	OBJC+=clang++ -std=c++11 $(DEBUG) -IIncludes Includes/Platform/MacOS/MacOS_Window.mm -c
 	ADD_OBJ=MacOS_Window.o
 	CXX=clang++
 endif	
@@ -23,5 +24,5 @@ all:
 	rm -rf Bin 
 	mkdir Bin
 	$(OBJC)
-	$(CXX) $(CCFLAGS) $(INCLUDES) $(TARGET) -o Bin/$(EXE) $(ADD_OBJ)
+	$(CXX) $(CCFLAGS) $(DEBUG) $(INCLUDES) $(TARGET) -o Bin/$(EXE) $(ADD_OBJ)
 	

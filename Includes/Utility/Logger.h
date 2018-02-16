@@ -181,10 +181,13 @@ public:
     {
         struct stat status;
 
+
 #if POSIX
 #define ACCESS(x, y) access(x, y)
 #elif OS_WINDOWS
 #define ACCESS(x, y) _access(x, y)
+#else
+#define ACCESS(x, y) access(x, y)
 #endif
 
         if (ACCESS(AbsDirectoryPath, 0) == 0)
@@ -204,7 +207,13 @@ public:
             "../Data/Log/Engine_Log",
             "../Data/Log/Platform_Log",
             "../Data/Log/Reserved_Log"
-        }; 
+        };
+        
+#if OS_WINDOWS
+#define MKDIR(x, y) _mkdir(x)
+#else
+#define MKDIR(x, y) mkdir(x, y)
+#endif
 
         size_t ndirs = sizeof(logdirs)/sizeof(logdirs[0]); 
 

@@ -11,8 +11,7 @@
 
 #if OS_WINDOWS
 #include <io.h>
-#endif
-#if OS_LINUX
+#else
 #include <unistd.h>
 #endif
 
