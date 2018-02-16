@@ -46,34 +46,33 @@ struct MacOS_Window : public IWindow
     virtual void Setup() final;
 };
 
+@implementation WindowDelegate : NSObject
+{
+
+}
+@end
+
 
 @implementation AppDelegate : NSObject
-
 - (void)applicationWillFinishLaunching:(NSNotification *)notification
 {
     [window makeKeyAndOrderFront:self];
 }
-
 @end
 
 @implementation WindowDelegate : NSObject
 
 - (void)windowDidBecomeKey:(NSNotification *)notification 
 {
-    NSLog(@"Window: become key");
 }
-
 - (void)windowDidBecomeMain:(NSNotification *)notification
 {
-    NSLog(@"Window: become main");
 }
 - (void)windowDidResignKey:(NSNotification *)notification
 {
-    NSLog(@"Window: resign key");
 }
 - (void)windowDidResignMain:(NSNotification *)notification
 {
-    NSLog(@"Window: resign main");
 }
 
 -(void)windowWillClose:(NSNotification *)notification 
@@ -84,23 +83,11 @@ struct MacOS_Window : public IWindow
         EnvironmentManager::Get()->ExecutionState(EExecutionState::EXIT);
     }
 }  
-
 @end
 
-void MacOS_Window::Setup()
-{
-    // [NSApplication sharedApplication];
-    
-    // AppDelegate* appDelegate = [[AppDelegate alloc] init];
-    // [NSApp setDelegate:appDelegate];
-    
-    // [NSApp finishLaunching];
-}
 
 void MacOS_Window::Initialize(const int Width, const int Height, const char* WindowName)
 {
-    // Setup();
-
     NSUInteger windowStyle = NSWindowStyleMaskTitled  | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable;
     NSRect screenRect = [[NSScreen mainScreen] frame];
     NSRect viewRect = NSMakeRect(0, 0, Width, Height);
@@ -152,7 +139,6 @@ void MacOS_Window::ProcessOSWindowMessages()
                 switch (ev.type)
                 {
                     case NSEventTypeLeftMouseDown:
-                        NSLog(@"Left Mouse Button Down");
                         break;
                     default:
                         break;
