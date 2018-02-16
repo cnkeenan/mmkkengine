@@ -9,7 +9,12 @@
  */
 
 #include <Utility/AtomicTypes.h>
+#include <Interfaces/Managers/IPlatformManager.h>
 #include <Utility/PlatformDetection.h>
+
+#include <Utility/Libs.h>
+#include <Utility/Macro.h>
+#include <Utility/Delegate.h>
 #import <Utility/Logger.h>
 #include <Engine/Managers/PlatformManager.h>
 #include <Engine/Managers/EnvironmentManager.h>
@@ -17,9 +22,9 @@
 #include "AppDelegate.h"
 
 
-FNowTime* FLog::NowTime = nullptr;
-FChangeConsoleColor* FLog::ChangeConsoleColor = nullptr;
-int FLog::Verbosity = (int)ELogLevel::INFO;
+FNowTime* FLog::s_NowTime = nullptr;
+FChangeConsoleColor* FLog::s_ChangeConsoleColor = nullptr;
+int FLog::s_Verbosity = (int)ELogLevel::INFO;
 uint64 FLog::s_Channels = 0xFFFFFFFFFFFFFFFF;
 FLog::FLogFile FLog::s_ChannelFiles[NUMBER_OF_CHANNELS] = {};
 FILE* FLog::s_LogDump = nullptr;
@@ -33,6 +38,7 @@ struct MacOS_Window : public IWindow
 {
     NSWindow* m_Window;
     NSWindowController* m_WindowController;
+    NSOpenGLContext*   m_OpenGLContext;
 
     virtual void Initialize(const int Width, const int Height, const char* WindowName) final;
     virtual void ProcessOSWindowMessages() final;
@@ -103,7 +109,7 @@ void MacOS_Window::Initialize(const int Width, const int Height, const char* Win
                                    viewRect.size.width,
                                    viewRect.size.height);
   
-    NSWindow* window = [[NSWindow alloc] initWithContentRect:windowRect
+    m_Window = [[NSWindow alloc] initWithContentRect:windowRect
                                                     styleMask:windowStyle
                                                       backing:NSBackingStoreBuffered
                                                         defer:NO];
@@ -120,16 +126,16 @@ void MacOS_Window::Initialize(const int Width, const int Height, const char* Win
                                                   action:@selector(terminate:) keyEquivalent:@"q"] autorelease];
     [appMenu addItem:quitMenuItem];
     [appMenuItem setSubmenu:appMenu];
-    NSWindowController * windowController = [[NSWindowController alloc] initWithWindow:window];
-    [windowController autorelease];
+    m_WindowController = [[NSWindowController alloc] initWithWindow:m_Window];
+    [m_WindowController autorelease];
     NSView* view = [[[NSView alloc] initWithFrame:viewRect] autorelease];
-    [window setContentView:view];
+    [m_Window setContentView:view];
     WindowDelegate* windowDelegate = [[WindowDelegate alloc] init];
-    [window setDelegate:windowDelegate];   
-    [window setAcceptsMouseMovedEvents:YES];
-    [window setTitle:[NSString stringWithUTF8String:WindowName]];
-    [window setCollectionBehavior: NSWindowCollectionBehaviorFullScreenPrimary];
-    [window makeKeyAndOrderFront:nil];
+    [m_Window setDelegate:windowDelegate];   
+    [m_Window setAcceptsMouseMovedEvents:YES];
+    [m_Window setTitle:[NSString stringWithUTF8String:WindowName]];
+    [m_Window setCollectionBehavior: NSWindowCollectionBehaviorFullScreenPrimary];
+    [m_Window makeKeyAndOrderFront:nil];
 }
 
 
@@ -138,7 +144,7 @@ void MacOS_Window::ProcessOSWindowMessages()
     @autoreleasepool {
         NSEvent* ev;
         do {
-            ev = [NSApp nextEventMatchingMask: NSAnyEventMask
+            ev = [NSApp nextEventMatchingMask: NSEventMaskAny
                                     untilDate: nil
                                        inMode: NSDefaultRunLoopMode
                                       dequeue: YES];
