@@ -5,6 +5,9 @@
 #include <Engine/CoreEngine.h>
 #include <Utility/OpenGL.h>
 
+#if OS_MAC
+#include <OpenGL/gl.h>
+#endif
 
 void FCoreEngine::Initialize()
 {
