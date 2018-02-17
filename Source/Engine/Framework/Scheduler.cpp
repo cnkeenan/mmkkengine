@@ -12,7 +12,7 @@ double FScheduler::Tick(UWorld* World)
     double Result = 0.0f;
     do
     {
-        uint64 EndTimer = m_MasterClock.EndTimer();
+        fclock_t EndTimer = m_MasterClock.EndTimer();
         Result = m_MasterClock.ElapsedTime(EndTimer, m_StartTimer);                        
     } while(Result < m_Frequency);        
     m_StartTimer = m_MasterClock.StartTimer();    

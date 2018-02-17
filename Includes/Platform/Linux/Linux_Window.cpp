@@ -117,7 +117,7 @@ void Linux_Window::Initialize(
     swa.colormap = cmap;
     swa.background_pixmap = None;
     swa.border_pixel = 0;
-    swa.event_mask =  StructureNotifyMask | ExposureMask | KeyPressMask;
+    swa.event_mask =  StructureNotifyMask | ExposureMask | KeyPressMask | KeyReleaseMask;
 
     m_Window = XCreateWindow(
         m_Display                               ,
@@ -148,33 +148,38 @@ void Linux_Window::Initialize(
 
 void Linux_Window::ProcessOSWindowMessages()
 {
-    //TODO: fix this implementation
     if (m_Display == nullptr || m_Window == 0) 
     {
         LOG(FAILURE, PLATFORM_CHANNEL, "Not valid display or window");
         EnvironmentManager::Get()->ExecutionState(EExecutionState::EXIT);
     }
 
-    XEvent xevent;
-    XWindowAttributes attrs;
+    XEvent Event;
+    XWindowAttributes Attrs;
 
-
-    XPeekEvent(m_Display, &xevent);
-
-    switch(xevent.type) 
+    while(XPending(m_Display) > 0)
     {
-        case Expose:
-            LOG(INFO, PLATFORM_CHANNEL, "Expose event");
-            XGetWindowAttributes(m_Display, m_Window, &attrs);
-            glViewport(0, 0, attrs.width, attrs.height);
-            break;
+        XNextEvent(m_Display, &Event);
 
-        case KeyPress:
-            LOG(INFO, PLATFORM_CHANNEL, "Key press event");
-            break;
+        switch(Event.type)
+        {
+            case Expose:
+                XGetWindowAttributes(m_Display, m_Window, &Attrs);
+                glViewport(0, 0, Attrs.width, Attrs.height);
+                break;
 
-        default:
-            break;
+            case KeyPress:
+            case KeyRelease:
+            {} break;
+
+            case ConfigureNotify:
+            {} break;
+
+            case DestroyNotify:
+            {
+                EnvironmentManager::Get()->ExecutionState(EExecutionState::EXIT);
+            } break;
+        }
     }
 
 }

@@ -4,14 +4,14 @@
 static LARGE_INTEGER Global_Frequency;
 static bool Global_Initialized;
 
-static uint64 Win32_Clock()
+static fclock_t Win32_Clock()
 {
     LARGE_INTEGER Counter;
     QueryPerformanceCounter(&Counter);
     return Counter.QuadPart;
 }
 
-static double Win32_GetElapsedTime(uint64 EndCounter, uint64 StartCounter)
+static double Win32_GetElapsedTime(fclock_t EndCounter, fclock_t StartCounter)
 {
     double Result = (double)(EndCounter-StartCounter)/(double)Global_Frequency.QuadPart;
     return Result;
