@@ -5,7 +5,8 @@
 
 class OBJECTFRAMEWORK_API UWorld : public UScene
 {
-    friend class m_Scheduler;    
+    friend class FScheduler;    
+private:    
     union
     {
         FObjectConstructor m_ObjectConstructor;

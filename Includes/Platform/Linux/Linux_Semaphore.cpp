@@ -29,7 +29,7 @@ Linux_Semaphore::~Linux_Semaphore()
     sem_destroy(&m_Semaphore);
 }
 
-#undef CreateSemaphore
+
 ISemaphore* PlatformManager::CreateSemaphore(int InitialCount)
 {
     ISemaphore* Semaphore = new Linux_Semaphore(InitialCount);

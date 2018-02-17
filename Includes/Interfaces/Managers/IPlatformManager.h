@@ -41,6 +41,8 @@ public:
     virtual void DestroySemaphore(ISemaphore* Semaphore) = 0;
 
     virtual class FOpenGL* GetOpenGL() = 0;
+
+    virtual ~IPlatformManager() {}
 };
 
 class IMutex

@@ -59,7 +59,7 @@ FObjectConstructor* UWorld::GetObjectConstructor()
 
 void UWorld::RemoveObject(UObject** Object)
 {
-    for(int32 ObjectIndex = 0; ObjectIndex < m_Objects.size(); ObjectIndex++)
+    for(uint32 ObjectIndex = 0; ObjectIndex < m_Objects.size(); ObjectIndex++)
     {
         if(m_Objects[ObjectIndex] == (*Object))
         {

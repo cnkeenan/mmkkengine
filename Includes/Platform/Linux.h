@@ -3,6 +3,7 @@
 
 #include <dlfcn.h>
 #include <X11/Xlib.h>
+#include <semaphore.h> 
 #include <dlfcn.h>
 #include <iostream>
 
@@ -90,5 +91,6 @@ FUNCTION_SIGNATURE(glViewport) = (fp_glViewport*)Linux_GetGLFunction("glViewport
 #include "Linux/Linux_Window.cpp"
 #include "Linux/Linux_OpenGL.cpp"
 #include "Linux/Linux_LoadSystem.cpp"
+#include "Linux/Linux_Semaphore.cpp"
 
 #endif

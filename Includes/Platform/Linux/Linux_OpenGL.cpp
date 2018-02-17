@@ -139,3 +139,14 @@ void PlatformManager::InitializeOpenGLContext(IWindow *Window) {
     glXMakeCurrent(win->m_Display, win->m_Window, win->m_RenderingContext);
 }
 
+
+void PlatformManager::MakeContextCurrent(IWindow* Window)
+{
+    Linux_Window* RealWindow = (Linux_Window*)Window;
+    if(RealWindow)
+        glXMakeCurrent(RealWindow->m_Display, RealWindow->m_Window, RealWindow->m_RenderingContext);
+    else
+        glXMakeCurrent(RealWindow->m_Display, None, nullptr);
+}
+
+

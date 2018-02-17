@@ -25,8 +25,7 @@ public:
     virtual class ITask* GetTask() = 0;
     
     virtual ~IScene()
-    {
-        int x = 5;
+    {        
     }
 };
 

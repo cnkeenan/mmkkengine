@@ -34,7 +34,7 @@ public:
 
     inline void RemoveObserver(IObserver* Observer)
     {        
-        for(int32 ObserverIndex = 0; ObserverIndex < m_Observers.size(); ObserverIndex++)
+        for(uint32 ObserverIndex = 0; ObserverIndex < m_Observers.size(); ObserverIndex++)
         {
             if(m_Observers[ObserverIndex] == Observer)
             {

@@ -7,6 +7,8 @@ class PlatformManager : public IPlatformManager
 private:
     static PlatformManager* s_PlatformManager;
     FOpenGL m_OpenGL;
+
+    PlatformManager() {}
     
 public:
     static inline PlatformManager* Get()
@@ -43,6 +45,7 @@ public:
 
     static void ChangeConsoleColor(EConsoleColor BackgroundColor, EConsoleColor ForegroundColor);
     static char *GetCurrentTime(char *Buffer);
+    ~PlatformManager() {}
 
 public:
     virtual FHighResolutionTimer CreateHighResolutionTimer() final;

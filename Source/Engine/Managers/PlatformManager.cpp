@@ -25,7 +25,9 @@ void* FThread<T>::Run(void* Data)
     int ReturnCode = (Thread->m_Object->*Thread->m_Method)();
 #if OS_WINDOWS
     return ReturnCode;
-#endif
+#else
+    return nullptr;
+#endif    
 }
 
 

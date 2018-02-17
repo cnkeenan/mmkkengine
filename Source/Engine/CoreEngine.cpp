@@ -22,8 +22,6 @@ void FCoreEngine::Tick()
 
     EnvironmentManager* Environment = EnvironmentManager::Get();
 
-    FHighResolutionTimer Timer = PlatformManager::Get()->CreateHighResolutionTimer();
-
     UWorld* World = m_Loader.Load();
     
     World->BeginPlay();
