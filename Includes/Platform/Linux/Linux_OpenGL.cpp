@@ -6,6 +6,7 @@ typedef GLXContext(*glXCreateContextAttribsARBProc)
 
 static bool ctxErrorOccurred = False;
 
+
 static int ctxErrorHandler(Display *dpy, XErrorEvent *ev)
 {
     ctxErrorOccurred = True;
@@ -93,11 +94,14 @@ void PlatformManager::InitializeOpenGLContext(IWindow *Window) {
             context_attrs
         );
 
+        LoadOpenGL_1_0(Linux_GetGLFunction);
+
         XSync(win->m_Display, False);
 
         if (!ctxErrorOccurred && win->m_RenderingContext)
         {
-            LOG(INFO, PLATFORM_CHANNEL, "Creating GL 3.3 Context");
+            LOG(INFO, PLATFORM_CHANNEL, "Created GL 3.3 Context");
+            LoadOpenGL_3_3(Linux_GetGLFunction);
         }
         else
         {
@@ -114,7 +118,7 @@ void PlatformManager::InitializeOpenGLContext(IWindow *Window) {
                 True          ,
                 context_attrs
             );
-            
+
         }
     }
 

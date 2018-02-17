@@ -1,6 +1,5 @@
 #define CLOCK_PRECISION 1E9
-
-static uint64 Posix_Clock()
+static fclock_t Posix_Clock()
 {
 #if OS_LINUX
 #define CLOCK_TYPE CLOCK_MONOTONIC_RAW
@@ -9,13 +8,15 @@ static uint64 Posix_Clock()
 #endif
     struct timespec now;
     clock_gettime(CLOCK_TYPE, &now);
-    uint64 Result = now.tv_sec + now.tv_nsec;
-    return Result;
+    return now;
 }
 
-static double Posix_GetElapsedTime(uint64 EndCounter, uint64 StartCounter)
+static double Posix_GetElapsedTime(fclock_t EndCounter, fclock_t StartCounter)
 {
-    return (EndCounter - StartCounter) / CLOCK_PRECISION;
+    struct timespec End = EndCounter;
+    struct timespec Start = StartCounter;
+    double Result = ((End.tv_sec - Start.tv_sec)*1000) + ((End.tv_nsec - Start.tv_nsec)/1000000.0);
+    return Result;
 }
 
 FHighResolutionTimer PlatformManager::CreateHighResolutionTimer() 
@@ -27,12 +28,17 @@ FHighResolutionTimer PlatformManager::CreateHighResolutionTimer()
     return Timer;
 }
 
-// TODO: not sure why this is being undeffed
 #undef GetCurrentTime
 char* PlatformManager::GetCurrentTime(char* Result)
 {
-    //const std::string res = "UNIMPLEMENTED";
-    const char* cstr = "UNIMPLEMENTED";
-    return (char*)cstr; 
+    static fclock_t First = Posix_Clock();
+    fclock_t Timed = Posix_Clock();
+    double Elapsed = Posix_GetElapsedTime(Timed, First);
+
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+
+    sprintf(Result, "%d:%d:%d.%d", tm.tm_hour, tm.tm_min, tm.tm_sec, (int)Elapsed % 1000);
+    return Result; 
 }
 
