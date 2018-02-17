@@ -29,7 +29,7 @@ void FCoreEngine::Tick()
         m_MainWindow->ProcessOSWindowMessages();
 
         double DeltaTime = m_Scheduler.Tick();
-        LOG(INFO, ENGINE_CHANNEL, "Delta: %f", DeltaTime);
+        //LOG(INFO, ENGINE_CHANNEL, "Delta: %f", DeltaTime);
         //NOTE(EVERYONE): This is the beginning of the new frame        
 
         //NOTE(EVERYONE): We'll let the main thread start working on tasks while it waits for the
