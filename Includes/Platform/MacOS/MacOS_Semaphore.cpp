@@ -1,12 +1,13 @@
 class MacOS_Semaphore : public ISemaphore
 {
-    private:
-        dispatch_semaphore_t m_Semaphore;
-    public:
-        MacOS_Semaphore(int InitialCount);
-        void Post() final;
-        void Wait() final;
-        ~MacOS_Semaphore();
+  private:
+    dispatch_semaphore_t m_Semaphore;
+
+  public:
+    MacOS_Semaphore(int InitialCount);
+    void Post() final;
+    void Wait() final;
+    ~MacOS_Semaphore();
 };
 
 MacOS_Semaphore::MacOS_Semaphore(int InitialCount)
@@ -21,7 +22,7 @@ void MacOS_Semaphore::Post()
 
 void MacOS_Semaphore::Wait()
 {
-    dispatch_semaphore_wait(m_Semaphore, DISPATCH_TIME_FOREVER);
+    dispatch_semaphore_wait(m_Semaphore, DISPATCH_TIME_NOW);
 }
 
 MacOS_Semaphore::~MacOS_Semaphore()
@@ -30,8 +31,8 @@ MacOS_Semaphore::~MacOS_Semaphore()
 }
 
 #undef CreateSemaphore
-ISemaphore* PlatformManager::CreateSemaphore(int InitialCount)
+ISemaphore *PlatformManager::CreateSemaphore(int InitialCount)
 {
-    ISemaphore* Semaphore = new MacOS_Semaphore(InitialCount);
+    ISemaphore *Semaphore = new MacOS_Semaphore(InitialCount);
     return Semaphore;
 }
