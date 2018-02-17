@@ -2,11 +2,7 @@
    $Creator: Armand Karambasis $
    ======================================================================== */
 #include <Engine/CoreEngine.h>
-#if OS_LINUX
-#include <GL/glu.h>
-#else
-#include <Utility/OpenGL.h>
-#endif
+
 #if OS_MAC
 #include <OpenGL/gl.h>
 #endif
@@ -15,8 +11,8 @@ void FCoreEngine::Initialize()
 {
     m_FPS = 60;
     PlatformManager* Platform = PlatformManager::Get();        
-    m_MainWindow = Platform->CreateWindow(1280, 720, "Marty-O");
-    Platform->InitializeOpenGLContext(m_MainWindow);
+    m_MainWindow = Platform->CreateWindow(1280, 720, "Marty-O");    
+    m_Loader.Initialize(m_MainWindow);
 }
 
 void FCoreEngine::Tick()
@@ -28,10 +24,12 @@ void FCoreEngine::Tick()
     FHighResolutionTimer Timer = PlatformManager::Get()->CreateHighResolutionTimer();
 
     UWorld* World = m_Loader.Load();
-
+    
     World->BeginPlay();
+    FOpenGL* OpenGL = PlatformManager::Get()->GetOpenGL();
     while(Environment->ExecutionState() != EExecutionState::EXIT)
-    {                        
+    {                
+        
         m_MainWindow->ProcessOSWindowMessages();
 
         double DeltaTime = m_Scheduler.Tick(World);
@@ -39,17 +37,12 @@ void FCoreEngine::Tick()
 
         //NOTE(EVERYONE): We'll let the main thread start working on tasks while it waits for the
         //frame's current tasks to finish execution
-        TaskManager::Get()->CompleteAllSubmittedTasks();
-
-        //NOTE(EVERYONE): State manager distribution here
+        TaskManager::Get()->CompleteAllSubmittedTasks();        
         
-        glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);        
-
-        m_MainWindow->SwapOpenGLBuffers();
-
-        World->Tick(DeltaTime);
-
+        //NOTE(EVERYONE): State manager distribution here
+                
+        World->Tick(DeltaTime);        
+        
         if(Environment->ExecutionState() == EExecutionState::NEW_SCENE)
         {
             m_Loader.Unload(World);
@@ -62,8 +55,7 @@ void FCoreEngine::Tick()
 }
 
 void FCoreEngine::Destroy()
-{
-    LOG(INFO, ENGINE_CHANNEL, "Hi");
+{    
     PlatformManager::Get()->DestroyWindow(m_MainWindow);
     m_MainWindow = nullptr;            
     FLog::DestroyLogger(FDelegate<void, IMutex*>::Bind<PlatformManager, &PlatformManager::DestroyMutex>(PlatformManager::Get()));
@@ -71,6 +63,7 @@ void FCoreEngine::Destroy()
 
 int main(int ArgumentCount, char** Arguments)
 {
+    MemoryManager::Get();
     PlatformManager* Platform = PlatformManager::Get();
     TaskManager::Get();
     EnvironmentManager::Get();

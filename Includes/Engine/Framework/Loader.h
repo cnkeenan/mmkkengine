@@ -19,6 +19,7 @@ private:
     
 public:
     FLoader();
+    void Initialize(IWindow* Window);
     UWorld* Load();
     void Unload(UWorld* World);
     ~FLoader();

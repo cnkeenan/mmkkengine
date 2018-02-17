@@ -6,6 +6,7 @@ class PlatformManager : public IPlatformManager
 {
 private:
     static PlatformManager* s_PlatformManager;
+    FOpenGL m_OpenGL;
     
 public:
     static inline PlatformManager* Get()
@@ -19,10 +20,16 @@ public:
     IWindow *CreateWindow(const int Width, const int Height, const char *WindowName);
     void DestroyWindow(IWindow *Window);
 
-    void InitializeOpenGLContext(IWindow *Window);
+    void InitializeOpenGLContext(IWindow *Window) final;
+    void MakeContextCurrent(IWindow* Window) final;
+    inline FOpenGL* GetOpenGL() final
+    {
+        return &m_OpenGL;
+    };
+    
     uint32 GetNumberOfProcessors();
 
-    ISystem* LoadSystem(ESystemType SystemType);
+    ISystem* LoadSystem(ESystemType SystemType, IWindow* Window);
     void UnloadSystem(ISystem** System);
     
     //NOTE(EVERYONE): Returns the thread id of the thread that called this funciton

@@ -2,7 +2,7 @@
    $Creator: Armand Karambasis $
    ======================================================================== */
 
-ISystem* PlatformManager::LoadSystem(ESystemType SystemType)
+ISystem* PlatformManager::LoadSystem(ESystemType SystemType, IWindow* Window)
 {
     ISystem* Result = nullptr;
 
@@ -28,7 +28,9 @@ ISystem* PlatformManager::LoadSystem(ESystemType SystemType)
         case ESystemType::GRAPHICS:
         {
             LOAD_SYSTEM(CreateGraphicsSystem, "Graphics.dll");
-            Result = CreateGraphicsSystem(MemoryManager::Get());
+            Result = CreateGraphicsSystem(MemoryManager::Get(),
+                                          PlatformManager::Get(),
+                                          Window);
         } break;
 
         

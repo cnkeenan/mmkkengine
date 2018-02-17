@@ -14,7 +14,8 @@ struct Win32_Window : public IWindow
     HWND m_Window;
     HDC m_DeviceContext;
     HGLRC m_RenderingContext;
-
+    FOpenGL* OpenGL;
+    
     virtual void Initialize(const int Width, const int Height, const char* WindowName) final;
     virtual void ProcessOSWindowMessages() final;
     virtual void SwapOpenGLBuffers() final;
@@ -71,7 +72,7 @@ static LRESULT CALLBACK Win32_WindowProcedure(HWND Window, UINT Message, WPARAM 
 //NOTE(EVERYONE): We want the width and height to be the size of the client area not the window resolution.
 //That is just a little bit bigger because of the padding.
 void Win32_Window::Initialize(const int Width, const int Height, const char* WindowName)
-{
+{    
     WNDCLASSEX WindowClass = {};
     WindowClass.cbSize = sizeof(WNDCLASSEX);
     WindowClass.hInstance = GetModuleHandle(0);

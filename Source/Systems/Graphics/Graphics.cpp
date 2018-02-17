@@ -9,6 +9,7 @@
 
 Graphics::Graphics()
 {
+    gPlatformManager->InitializeOpenGLContext(gWindow);
 }
 
 IGraphicsScene* Graphics::CreateScene()
@@ -33,9 +34,13 @@ Graphics::~Graphics()
 
 extern "C"
 {
-    EXPORT IGraphics* CreateGraphicsSystem(IMemoryManager* MemoryManager)
+    EXPORT IGraphics* CreateGraphicsSystem(IMemoryManager* MemoryManager,
+                                           IPlatformManager* PlatformManager,
+                                           IWindow* Window)
     {
         gMemoryManager = MemoryManager;
+        gPlatformManager = PlatformManager;
+        gWindow = Window;
         IGraphics* Result = new Graphics();
         return Result;
     }
@@ -48,5 +53,7 @@ extern "C"
             (*System) = nullptr;
         }
         gMemoryManager = nullptr;
+        gPlatformManager = nullptr;
+        gWindow = nullptr;
     }
 }

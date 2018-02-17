@@ -5,16 +5,20 @@
 
 FLoader::FLoader()
 {
+}
+
+void FLoader::Initialize(IWindow* Window)
+{
     //TODO(EVERYONE): Instantiate systems here
     PlatformManager* Platform = PlatformManager::Get();
-    m_AI = (IAI*)Platform->LoadSystem(ESystemType::AI);
-    m_Collision = (ICollision*)Platform->LoadSystem(ESystemType::COLLISION);
-    m_Graphics = (IGraphics*)Platform->LoadSystem(ESystemType::GRAPHICS);
-    m_Input = (IInput*)Platform->LoadSystem(ESystemType::INPUT);
-    m_Physics = (IPhysics*)Platform->LoadSystem(ESystemType::PHYSICS);
-    m_Sound = (ISound*)Platform->LoadSystem(ESystemType::SOUND);
-    m_Transform = (ITransform*)Platform->LoadSystem(ESystemType::TRANSFORM);
-    m_Widget = (IWidget*)Platform->LoadSystem(ESystemType::WIDGET);
+    m_AI = (IAI*)Platform->LoadSystem(ESystemType::AI, Window);
+    m_Collision = (ICollision*)Platform->LoadSystem(ESystemType::COLLISION, Window);
+    m_Graphics = (IGraphics*)Platform->LoadSystem(ESystemType::GRAPHICS, Window);
+    m_Input = (IInput*)Platform->LoadSystem(ESystemType::INPUT, Window);
+    m_Physics = (IPhysics*)Platform->LoadSystem(ESystemType::PHYSICS, Window);
+    m_Sound = (ISound*)Platform->LoadSystem(ESystemType::SOUND, Window);
+    m_Transform = (ITransform*)Platform->LoadSystem(ESystemType::TRANSFORM, Window);
+    m_Widget = (IWidget*)Platform->LoadSystem(ESystemType::WIDGET, Window);
 }
 
 UWorld* FLoader::Load()

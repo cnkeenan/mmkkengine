@@ -14,7 +14,10 @@ public:
     virtual ~IGraphics() {}
 };
 
-typedef IGraphics* fp_CreateGraphicsSystem(class IMemoryManager* MemoryManager);
+typedef IGraphics*
+fp_CreateGraphicsSystem(class IMemoryManager* MemoryManager,
+                        class IPlatformManager* PlatformManager,
+                        class IWindow* Window);
 typedef void fp_DestroyGraphicsSystem(IGraphics** System);
 
 #define IGRAPHICS_H

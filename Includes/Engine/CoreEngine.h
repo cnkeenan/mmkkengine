@@ -9,6 +9,7 @@
 #include <Utility/Assert.h>
 #include <Utility/Events.h>
 #include <Utility/Strings.h>
+#include <Utility/OpenGL.h>
 
 #include <Engine/Managers/MemoryManager.h>
 #include <Engine/Managers/EnvironmentManager.h>

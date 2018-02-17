@@ -20,14 +20,21 @@ class IPlatformManager
 {
 public:
 
+    virtual void InitializeOpenGLContext(class IWindow* Window) = 0;
+
+    //NOTE(EVERYONE): Pass nullptr to unset the context
+    virtual void MakeContextCurrent(IWindow* Window) = 0;
+    
     virtual FHighResolutionTimer CreateHighResolutionTimer() = 0;
     virtual class IMutex* CreateMutex() = 0;
     virtual void DestroyMutex(IMutex* Mutex) = 0;
-
+    
     //NOTE(EVERYONE): Doubt we will use a semaphore in the systems
     //but just in case you can create one in the interface
     virtual class ISemaphore* CreateSemaphore(int InitialCount) = 0;
     virtual void DestroySemaphore(ISemaphore* Semaphore) = 0;
+
+    virtual class FOpenGL* GetOpenGL() = 0;
 };
 
 class IMutex
