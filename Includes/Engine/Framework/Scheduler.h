@@ -12,7 +12,7 @@ class FScheduler
 {
 private:
     FHighResolutionTimer m_MasterClock;    
-    uint64 m_StartTimer;
+    fclock_t m_StartTimer;
     double m_Frequency;
     double m_Lag;
     

@@ -1,12 +1,10 @@
 /* ========================================================================
    $Creator: Armand Karambasis $
    ======================================================================== */
+
 #include <Engine/CoreEngine.h>
-#if OS_LINUX
-#include <GL/glu.h>
-#else
 #include <Utility/OpenGL.h>
-#endif
+
 
 void FCoreEngine::Initialize()
 {
@@ -31,6 +29,7 @@ void FCoreEngine::Tick()
         m_MainWindow->ProcessOSWindowMessages();
 
         double DeltaTime = m_Scheduler.Tick();
+        LOG(INFO, ENGINE_CHANNEL, "Delta: %f", DeltaTime);
         //NOTE(EVERYONE): This is the beginning of the new frame        
 
         //NOTE(EVERYONE): We'll let the main thread start working on tasks while it waits for the
@@ -38,7 +37,7 @@ void FCoreEngine::Tick()
         TaskManager::Get()->CompleteAllSubmittedTasks();
 
         //NOTE(EVERYONE): State manager distribution here
-        
+       
         glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);        
 
