@@ -1,4 +1,3 @@
-
 struct Linux_Window : public IWindow
 {
     Display*     m_Display; /* access to X Server */
@@ -7,7 +6,7 @@ struct Linux_Window : public IWindow
     GLXFBConfig  tmp_GLFBConfig;
 
     virtual void Initialize(
-                    const int Width, const int Height, const char* WindowName);
+                    const int Width, const int Height, const char* WindowName) final;
     virtual void ProcessOSWindowMessages() final;
     virtual void SwapOpenGLBuffers() final;
 };

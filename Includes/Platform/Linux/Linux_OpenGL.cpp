@@ -48,18 +48,6 @@ static bool isExtensionSupported(const char* extList, const char* extension)
     return False;
 }
 
-void* Linux_GetGLFunction(const char* Name)
-{
-    void* p = (void*)glXGetProcAddressARB((const GLubyte*)Name);
-    if(!p)
-    {
-        void* libGL = dlopen("libGL.so", RTLD_LAZY);
-        p = (void*)dlsym(libGL, Name);
-    }
-
-    return p;
-}
-
 void PlatformManager::InitializeOpenGLContext(IWindow *Window) {
 
     Linux_Window* win = (Linux_Window*)Window;
@@ -78,9 +66,9 @@ void PlatformManager::InitializeOpenGLContext(IWindow *Window) {
 
     int (*oldHandler) (Display*, XErrorEvent*) = XSetErrorHandler(&ctxErrorHandler);
 
-    if(glxCreateContextAttribsARB)
+    if(glXCreateContextAttribsARB)
     {
-        LoadOpenGL_1_0(Linux_GetGLFunction);
+        LoadOpenGL_1_0(Linux_GetGLFunction, &m_OpenGL);
         int context_attrs[] =
             {
                 GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
@@ -100,7 +88,7 @@ void PlatformManager::InitializeOpenGLContext(IWindow *Window) {
         {
             LOG(INFO, PLATFORM_CHANNEL, "Creating GL 3.3 Context");
             LOG(INFO, PLATFORM_CHANNEL, "Created GL 3.3 Context");
-            LoadOpenGL_3_3(Linux_GetGLFunction);
+            LoadOpenGL_3_3(Linux_GetGLFunction, &m_OpenGL);
         }
         else
         {
@@ -127,7 +115,7 @@ void PlatformManager::InitializeOpenGLContext(IWindow *Window) {
             GLX_RGBA_TYPE,
             0,
             True);
-        LoadOpenGL_1_0(Linux_GetGLFunction);
+        LoadOpenGL_1_0(Linux_GetGLFunction, &m_OpenGL);
     }
 
     XSync(win->m_Display, false);

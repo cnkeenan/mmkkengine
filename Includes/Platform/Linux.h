@@ -53,6 +53,7 @@ typedef const char* fp_glXQueryExtensionsString(Display*, int);
 typedef GLXContext fp_glXCreateNewContext(Display*, GLXFBConfig, int, GLXContext, Bool);
 typedef Bool fp_glXIsDirect(Display*, GLXContext);
 typedef Bool fp_glXMakeCurrent(Display*, GLXDrawable, GLXContext);
+typedef void fp_glViewport(GLint x, GLint y, GLsizei width, GLsizei height);
 
 void* Linux_GetFunction(const char* Name)
 {
@@ -76,19 +77,18 @@ void* Linux_GetGLFunction(const char* Name)
 }
 
 FUNCTION_SIGNATURE(glXQueryVersion) = (fp_glXQueryVersion*)Linux_GetGLFunction("glXQueryVersion");
-
 FUNCTION_SIGNATURE(glXChooseFBConfig) = (fp_glXChooseFBConfig*)Linux_GetGLFunction("glXChooseFBConfig");
-
 FUNCTION_SIGNATURE(glXGetVisualFromFBConfig) = (fp_glXGetVisualFromFBConfig*) Linux_GetGLFunction("glXGetVisualFromFBConfig");
 FUNCTION_SIGNATURE(glXSwapBuffers) = (fp_glXSwapBuffers*)Linux_GetGLFunction("glXSwapBuffers");
-
 FUNCTION_SIGNATURE(glXQueryExtensionsString) = (fp_glXQueryExtensionsString*)Linux_GetGLFunction("glXQueryExtensionsString");
 FUNCTION_SIGNATURE(glXCreateNewContext) = (fp_glXCreateNewContext*)Linux_GetGLFunction("glXCreateNewContext");
 FUNCTION_SIGNATURE(glXIsDirect) = (fp_glXIsDirect*)Linux_GetGLFunction("glXIsDirect");
 FUNCTION_SIGNATURE(glXMakeCurrent) = (fp_glXMakeCurrent*)Linux_GetGLFunction("glXMakeCurrent");
 FUNCTION_SIGNATURE(glXGetFBConfigAttrib) = (fp_glXGetFBConfigAttrib*)Linux_GetGLFunction("glXGetFBConfigAttrib");
+FUNCTION_SIGNATURE(glViewport) = (fp_glViewport*)Linux_GetGLFunction("glViewport");
 
 #include "Linux/Linux_Window.cpp"
 #include "Linux/Linux_OpenGL.cpp"
+#include "Linux/Linux_LoadSystem.cpp"
 
 #endif
