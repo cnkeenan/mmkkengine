@@ -22,6 +22,7 @@ public:
     void Initialize(IWindow* Window);
     UWorld* Load();
     void Unload(UWorld* World);
+    void Destroy();
     ~FLoader();
 };
 

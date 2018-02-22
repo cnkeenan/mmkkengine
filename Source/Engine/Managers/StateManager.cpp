@@ -11,8 +11,8 @@ void StateManager::Observe(IObserver* Observer, FSubject* Subject)
         {            
             for(auto& ListObserver : SubjectObserver.Observers)
             {
-                //NOTE(EVERYONE): Make sure we do not allow duplicate observers in the change-controller
-                ASSERT(ListObserver != Observer, "Duplicate observers");                                
+                //NOTE(EVERYONE): Make sure we do not allow duplicate observers in the change-controller                
+                ASSERT(ListObserver != Observer);                                
             }
 
             SubjectObserver.Observers.push_back(Observer);

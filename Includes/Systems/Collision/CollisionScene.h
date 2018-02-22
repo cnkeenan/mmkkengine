@@ -5,11 +5,12 @@
 
 class CollisionScene : public ICollisionScene
 {
+    
 private:
     CollisionTask m_Task;
 
     static const ptr_size NUMBER_OF_OBJECTS = 64;
-    FPool* m_ObjectPool;
+    TObjectPool<CollisionObject> m_ObjectPool;
 protected:
 public:
 

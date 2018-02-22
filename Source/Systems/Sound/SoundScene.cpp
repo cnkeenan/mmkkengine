@@ -3,14 +3,13 @@
    ======================================================================== */
 
 SoundScene::SoundScene()
-{
-    m_ObjectPool = gMemoryManager->GetPool(GetType());
-    m_ObjectPool->CreatePool(sizeof(SoundObject), NUMBER_OF_OBJECTS);
+{    
+    m_ObjectPool.Initialize(NUMBER_OF_OBJECTS);
 }
 
 ISoundObject* SoundScene::CreateObject()
 {
-    SoundObject* Object = new SoundObject();
+    SoundObject* Object = new(&m_ObjectPool) SoundObject();
     Object->Create();    
     return Object;
 }
@@ -21,7 +20,7 @@ void SoundScene::DestroyObject(ISoundObject* Object)
     {
         SoundObject* RealObject = (SoundObject*)Object;
         RealObject->Destroy();
-        delete RealObject;
+        SoundObject::operator delete(RealObject, &m_ObjectPool);
     }
 }
     
@@ -42,5 +41,7 @@ ITask* SoundScene::GetTask()
 SoundScene::~SoundScene()
 {
     //TODO(JJ): Destroy all valid objects first
-    m_ObjectPool->DestroyPool();
+    for(auto& Object : m_ObjectPool)
+        Object.Destroy();
+    m_ObjectPool.Destroy();
 }

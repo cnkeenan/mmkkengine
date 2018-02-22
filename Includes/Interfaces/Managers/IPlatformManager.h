@@ -40,7 +40,7 @@ public:
     virtual class ISemaphore* CreateSemaphore(int InitialCount) = 0;
     virtual void DestroySemaphore(ISemaphore* Semaphore) = 0;
 
-    virtual class FOpenGL* GetOpenGL() = 0;
+    virtual struct FOpenGL* GetOpenGL() = 0;
 
     virtual ~IPlatformManager() {}
 };

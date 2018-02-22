@@ -16,7 +16,7 @@ public:
 
 
 //NOTE(EVERYONE): If we need managers add them here
-typedef IInput* fp_CreateInputSystem(class IMemoryManager* MemoryManager);
+typedef IInput* fp_CreateInputSystem(class FLogger* Logger, class IMemoryManager* MemoryManager);
 typedef void fp_DestroyInputSystem(IInput** System);
 
 #define IINPUT_H

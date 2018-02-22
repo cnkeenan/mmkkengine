@@ -3,6 +3,8 @@
    $Creator: Armand Karambasis $
    ======================================================================== */
 
+class UObject;
+
 class OBJECTFRAMEWORK_API UWorld : public UScene
 {
     friend class FScheduler;    
@@ -22,9 +24,9 @@ private:
             IWidgetScene* m_WidgetScene;
         };
     };
-    
-    std::vector<class UObject*> m_Objects;
 
+    std::vector<UObject*> m_Objects;
+    
 public:
 
     void Initialize(IAIScene* AIScene, ICollisionScene* CollisionScene,

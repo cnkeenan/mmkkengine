@@ -33,6 +33,31 @@
 #define IMPORT
 #endif
 
+#if POSIX
+#define CLOCK_PRECISION 1E9
+#endif
+
+#if OS_LINUX
+#define CLOCK_TYPE CLOCK_MONOTONIC_RAW
+#elif OS_MAC
+#define CLOCK_TYPE CLOCK_MONOTONIC
+#endif
+            
+#if OS_WINDOWS
+#define MKDIR(x, y) _mkdir(x)
+#else
+#define MKDIR(x, y) mkdir(x, y)
+#endif
+
+#if POSIX
+#define ACCESS(x, y) access(x, y)
+#elif OS_WINDOWS
+#define ACCESS(x, y) _access(x, y)
+#else
+#define ACCESS(x, y) access(x, y)
+#endif
+
+    
 //NOTE(EVERYONE): If you guys are getting errors of these macros being defined multiple times just #undef them.
 //Posix defines these in a specific file but not windows 
 #define STDIN_FILENO

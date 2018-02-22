@@ -3,14 +3,13 @@
    ======================================================================== */
 
 PhysicsScene::PhysicsScene()
-{
-    m_ObjectPool = gMemoryManager->GetPool(GetType());
-    m_ObjectPool->CreatePool(sizeof(PhysicsObject), NUMBER_OF_OBJECTS);
+{    
+    m_ObjectPool.Initialize(NUMBER_OF_OBJECTS);
 }
 
 IPhysicsObject* PhysicsScene::CreateObject()
 {
-    PhysicsObject* Object = new PhysicsObject();
+    PhysicsObject* Object = new(&m_ObjectPool) PhysicsObject();
     Object->Create();
     return Object;
 }
@@ -21,7 +20,7 @@ void PhysicsScene::DestroyObject(IPhysicsObject* Object)
     {
         PhysicsObject* RealObject = (PhysicsObject*)Object;
         RealObject->Destroy();
-        delete RealObject;
+        PhysicsObject::operator delete(RealObject, &m_ObjectPool);
     }
 }
     
@@ -42,5 +41,7 @@ ITask* PhysicsScene::GetTask()
 PhysicsScene::~PhysicsScene()
 {
     //TODO(JJ): Destroy all valid objects first
-    m_ObjectPool->DestroyPool();    
+    for(auto& Object : m_ObjectPool)
+        Object.Destroy();
+    m_ObjectPool.Destroy();    
 }

@@ -17,14 +17,16 @@ bool SoundObject::IsInitialized()
     return m_IsInitialized;
 }
 
-void* SoundObject::operator new(size_t Size)
+void* SoundObject::operator new(size_t Size, void* Pointer)
 {
-    return gMemoryManager->GetPool(ESystemType::SOUND)->Allocate();
+    TObjectPool<SoundObject>* ObjectPool = (TObjectPool<SoundObject>*)Pointer;
+    return ObjectPool->Create();    
 }
 
-void SoundObject::operator delete(void* Object)
+void SoundObject::operator delete(void* Object, void* Pointer)
 {
-    gMemoryManager->GetPool(ESystemType::SOUND)->Free(Object);
+    TObjectPool<SoundObject>* ObjectPool = (TObjectPool<SoundObject>*)Pointer;
+    ObjectPool->Free((SoundObject*)Object);        
 }
 
 void SoundObject::BeginPlay()

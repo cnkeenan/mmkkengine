@@ -33,9 +33,11 @@ Input::~Input()
 
 extern "C"
 {
-    EXPORT IInput* CreateInputSystem(IMemoryManager* MemoryManager)
+    EXPORT IInput* CreateInputSystem(FLogger* Logger, IMemoryManager* MemoryManager)
     {
+        INPUT_CHANNEL_File = fopen(INPUT_CHANNEL_PATH, "w");
         gMemoryManager = MemoryManager;
+        gLogger = Logger;
         IInput* Result = new Input();
         return Result;        
     }
@@ -47,6 +49,28 @@ extern "C"
             delete (*System);
             (*System) = nullptr;
         }
+        gLogger = nullptr;
         gMemoryManager = nullptr;
+        fclose(INPUT_CHANNEL_File);
     }
+}
+
+void* operator new(ptr_size Size)
+{
+    return gMemoryManager->Allocate(Size);
+}
+
+void* operator new[](ptr_size Size)
+{
+    return gMemoryManager->Allocate(Size);
+}
+
+void operator delete(void* Pointer)
+{
+    gMemoryManager->Free(Pointer);
+}
+
+void operator delete[](void* Pointer)
+{
+    gMemoryManager->Free(Pointer);
 }

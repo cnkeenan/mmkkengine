@@ -34,9 +34,11 @@ AI::~AI()
 
 extern "C"
 {
-    EXPORT IAI* CreateAISystem(IMemoryManager* MemoryManager)
+    EXPORT IAI* CreateAISystem(FLogger* Logger, IMemoryManager* MemoryManager)
     {
+        AI_CHANNEL_File = fopen(AI_CHANNEL_PATH, "w");
         gMemoryManager = MemoryManager;
+        gLogger = Logger;
         IAI* Result = new AI();
         return Result;
     }
@@ -48,7 +50,28 @@ extern "C"
             delete (*System);
             (*System) = nullptr;
         }
+        gLogger = nullptr;
         gMemoryManager = nullptr;
+        fclose(AI_CHANNEL_File);
     }
 }
 
+void* operator new(ptr_size Size)
+{
+    return gMemoryManager->Allocate(Size);
+}
+
+void* operator new[](ptr_size Size)
+{
+    return gMemoryManager->Allocate(Size);
+}
+
+void operator delete(void* Pointer)
+{
+    gMemoryManager->Free(Pointer);
+}
+
+void operator delete[](void* Pointer)
+{
+    gMemoryManager->Free(Pointer);
+}

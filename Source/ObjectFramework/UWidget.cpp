@@ -20,6 +20,9 @@ void UWidget::Tick(float DeltaTime)
 
 UWidget::~UWidget()
 {
-    m_ObjectConstructor->Destruct((IObject*)m_WidgetObject);
-    m_ObjectConstructor->Destruct((IObject*)m_GraphicsObject);
+    if(!m_IsSceneDead)
+    {
+        m_ObjectConstructor->Destruct((IObject*)m_WidgetObject);
+        m_ObjectConstructor->Destruct((IObject*)m_GraphicsObject);
+    }
 }

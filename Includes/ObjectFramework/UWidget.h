@@ -9,6 +9,7 @@ private:
     class IGraphicsObject* m_GraphicsObject;
     
 protected:
+
 public:
 
     UWidget(FObjectConstructor* ObjectConstructor);

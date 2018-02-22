@@ -5,12 +5,11 @@
 #include "Logger.h"
 
 #if DEBUG_BUILD
-#define ASSERT(x, y)                            \
+#define ASSERT(x)                               \
     do                                          \
     {                                           \
         if(!(x))                                \
         {                                       \
-            LOG(FAILURE, RESERVED_CHANNEL, y);  \
             INVALID_CODE_PATH;                  \
         }                                       \
     } while(0)

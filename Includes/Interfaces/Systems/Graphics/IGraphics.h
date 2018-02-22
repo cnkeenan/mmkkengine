@@ -15,7 +15,8 @@ public:
 };
 
 typedef IGraphics*
-fp_CreateGraphicsSystem(class IMemoryManager* MemoryManager,
+fp_CreateGraphicsSystem(class FLogger* Logger,
+                        class IMemoryManager* MemoryManager,
                         class IPlatformManager* PlatformManager,
                         class IWindow* Window);
 typedef void fp_DestroyGraphicsSystem(IGraphics** System);

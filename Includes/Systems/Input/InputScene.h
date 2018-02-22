@@ -8,7 +8,7 @@ class InputScene : public IInputScene
 private:
     InputTask m_Task;
     static const ptr_size NUMBER_OF_OBJECTS=64;
-    FPool* m_ObjectPool;    
+    TObjectPool<InputObject> m_ObjectPool;    
 protected:
 public:
 

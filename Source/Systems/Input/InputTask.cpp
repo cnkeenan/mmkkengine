@@ -8,6 +8,7 @@ InputTask::InputTask()
 
 void InputTask::Execute() const
 {
+    
 }
 
 InputTask::~InputTask()

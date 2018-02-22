@@ -37,6 +37,13 @@ static LRESULT CALLBACK Win32_WindowProcedure(HWND Window, UINT Message, WPARAM 
 
     switch(Message)
     {
+        case WM_SIZE:
+        {
+            FOpenGL* OpenGL = PlatformManager::Get()->GetOpenGL();
+            if(OpenGL->glViewport)
+                OpenGL->glViewport(0, 0, LOWORD(LParam), HIWORD(LParam));
+        } break;
+        
         case WM_CREATE:
         {
             RAWINPUTDEVICE RawInputDevices[4];
@@ -87,9 +94,9 @@ void Win32_Window::Initialize(const int Width, const int Height, const char* Win
         BOOL Result = AdjustWindowRectEx(&ClientRect, Style, FALSE, 0);
         if(Result)
         {
-            m_Window = CreateWindow(WindowName, WindowName, Style, CW_USEDEFAULT, CW_USEDEFAULT,
-                                    ClientRect.right-ClientRect.left, ClientRect.bottom-ClientRect.top,
-                                    0, 0, WindowClass.hInstance, 0);
+            m_Window = CreateWindowA(WindowName, WindowName, Style, CW_USEDEFAULT, CW_USEDEFAULT,
+                                     ClientRect.right-ClientRect.left, ClientRect.bottom-ClientRect.top,
+                                     0, 0, WindowClass.hInstance, 0);
             if(m_Window)
             {
                 ShowWindow(m_Window, SW_SHOW);

@@ -33,9 +33,11 @@ Sound::~Sound()
 
 extern "C"
 {
-    EXPORT ISound* CreateSoundSystem(IMemoryManager* MemoryManager)
+    EXPORT ISound* CreateSoundSystem(FLogger* Logger, IMemoryManager* MemoryManager)
     {
+        SOUND_CHANNEL_File = fopen(SOUND_CHANNEL_PATH, "w");
         gMemoryManager = MemoryManager;
+        gLogger = Logger;
         ISound* Result = new Sound();
         return Result;
     }
@@ -47,6 +49,28 @@ extern "C"
             delete (*System);
             (*System) = nullptr;
         }
+        gLogger = nullptr;            
         gMemoryManager = nullptr;
+        fclose(SOUND_CHANNEL_File);
     }
+}
+
+void* operator new(ptr_size Size)
+{
+    return gMemoryManager->Allocate(Size);
+}
+
+void* operator new[](ptr_size Size)
+{
+    return gMemoryManager->Allocate(Size);
+}
+
+void operator delete(void* Pointer)
+{
+    gMemoryManager->Free(Pointer);
+}
+
+void operator delete[](void* Pointer)
+{
+    gMemoryManager->Free(Pointer);
 }

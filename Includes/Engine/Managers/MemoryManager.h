@@ -3,21 +3,16 @@
    $Creator: Armand Karambasis $
    ======================================================================== */
 #include <Interfaces/Managers/IMemoryManager.h>
-#include <Utility/Pool.h>
 
 class MemoryManager : public IMemoryManager
 {
 private:
-    FPool m_AIPool;
-    FPool m_CollisionPool;
-    FPool m_GraphicsPool;
-    FPool m_InputPool;
-    FPool m_PhysicsPool;
-    FPool m_SoundPool;
-    FPool m_TransformPool;
-    FPool m_WidgetPool;
 
-    FPool* GetPool(ESystemType Type);
+    ptr_size m_TotalAllocated;
+    ptr_size m_CurrentUsed;
+    ptr_size m_TotalFreed;
+
+    MemoryManager();
     
 public:
 
@@ -29,6 +24,9 @@ public:
         static MemoryManager s_MemoryManager;
         return &s_MemoryManager;
     }
+
+    void* Allocate(ptr_size Size) final;
+    void Free(void* Pointer) final;
 };
 
 #define MEMORYMANAGER_H

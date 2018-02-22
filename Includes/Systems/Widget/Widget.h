@@ -4,8 +4,12 @@
    ======================================================================== */
 #include <ObjectFramework/ObjectFramework.h>
 #include <Interfaces/Managers/IMemoryManager.h>
+#include <Interfaces/Managers/IPlatformManager.h>
+#include <Utility/Logger.h>
 
 static IMemoryManager* gMemoryManager;
+static FILE* WIDGET_CHANNEL_File;
+FLogger* gLogger = nullptr;
 
 #include "WidgetTask.h"
 #include "WidgetObject.h"

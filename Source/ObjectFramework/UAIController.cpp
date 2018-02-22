@@ -18,5 +18,6 @@ void UAIController::Tick(float DeltaTime)
 
 UAIController::~UAIController()
 {
-    m_ObjectConstructor->Destruct((IObject*)m_AIObject);
+    if(!m_IsSceneDead)
+        m_ObjectConstructor->Destruct((IObject*)m_AIObject);
 }

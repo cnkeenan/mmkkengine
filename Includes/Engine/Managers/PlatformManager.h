@@ -2,13 +2,29 @@
 template <typename T>
 class FThread;
 
+    
+#if defined(CreateWindow)
+#undef CreateWindow
+#endif
+
+#if defined(CreateMutex)
+#undef CreateMutex
+#endif
+
+#if defined(CreateSemaphore)
+#undef CreateSemaphore
+#endif
+
 class PlatformManager : public IPlatformManager
 {
 private:
     static PlatformManager* s_PlatformManager;
     FOpenGL m_OpenGL;
 
-    PlatformManager() {}
+    PlatformManager()
+    {
+        m_OpenGL = {};
+    }
     
 public:
     static inline PlatformManager* Get()
@@ -19,7 +35,8 @@ public:
         return s_PlatformManager;
     }
 
-    IWindow *CreateWindow(const int Width, const int Height, const char *WindowName);
+
+    IWindow* CreateWindow(const int Width, const int Height, const char *WindowName);
     void DestroyWindow(IWindow *Window);
 
     void InitializeOpenGLContext(IWindow *Window) final;
@@ -43,8 +60,6 @@ public:
     template <typename T>
     void DestroyThread(FThread<T> *Thread);
 
-    static void ChangeConsoleColor(EConsoleColor BackgroundColor, EConsoleColor ForegroundColor);
-    static char *GetCurrentTime(char *Buffer);
     ~PlatformManager() {}
 
 public:

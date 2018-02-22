@@ -34,13 +34,15 @@ Graphics::~Graphics()
 
 extern "C"
 {
-    EXPORT IGraphics* CreateGraphicsSystem(IMemoryManager* MemoryManager,
+    EXPORT IGraphics* CreateGraphicsSystem(FLogger* Logger, IMemoryManager* MemoryManager,
                                            IPlatformManager* PlatformManager,
                                            IWindow* Window)
     {
+        GRAPHICS_CHANNEL_File = fopen(GRAPHICS_CHANNEL_PATH, "w");
         gMemoryManager = MemoryManager;
         gPlatformManager = PlatformManager;
         gWindow = Window;
+        gLogger = Logger;
         IGraphics* Result = new Graphics();
         return Result;
     }
@@ -55,5 +57,27 @@ extern "C"
         gMemoryManager = nullptr;
         gPlatformManager = nullptr;
         gWindow = nullptr;
+        gLogger = nullptr;
+        fclose(GRAPHICS_CHANNEL_File);
     }
+}
+
+void* operator new(ptr_size Size)
+{
+    return gMemoryManager->Allocate(Size);
+}
+
+void* operator new[](ptr_size Size)
+{
+    return gMemoryManager->Allocate(Size);
+}
+
+void operator delete(void* Pointer)
+{
+    gMemoryManager->Free(Pointer);
+}
+
+void operator delete[](void* Pointer)
+{
+    gMemoryManager->Free(Pointer);
 }

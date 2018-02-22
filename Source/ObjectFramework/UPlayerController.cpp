@@ -21,6 +21,7 @@ void UPlayerController::SetupInput()
 }
 
 UPlayerController::~UPlayerController()
-{
-    m_ObjectConstructor->Destruct((IObject*)m_InputObject);
+{    
+    if(!m_IsSceneDead)
+        m_ObjectConstructor->Destruct((IObject*)m_InputObject);
 }

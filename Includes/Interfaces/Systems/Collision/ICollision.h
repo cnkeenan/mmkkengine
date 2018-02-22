@@ -16,7 +16,7 @@ public:
 };
 
 //NOTE(EVERYONE): If we need managers add them here
-typedef ICollision* fp_CreateCollisionSystem(class IMemoryManager* MemoryManager);
+typedef ICollision* fp_CreateCollisionSystem(class FLogger* Logger, class IMemoryManager* MemoryManager);
 typedef void fp_DestroyCollisionSystem(ICollision** System);
 
 #define ICOLLISION_H

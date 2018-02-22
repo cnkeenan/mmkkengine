@@ -7,6 +7,7 @@ void UWorld::Initialize(IAIScene* AIScene, ICollisionScene* CollisionScene,
                         IPhysicsScene* PhysicsScene, ISoundScene* SoundScene,
                         ITransformScene* TransformScene, IWidgetScene* WidgetScene)
 {
+    m_Objects.reserve(64);
     m_AIScene = AIScene;
     m_CollisionScene = CollisionScene;
     m_GraphicsScene = GraphicsScene;
@@ -20,8 +21,9 @@ void UWorld::Initialize(IAIScene* AIScene, ICollisionScene* CollisionScene,
 void UWorld::BeginPlay()
 {
     UScene::BeginPlay();
-    for(auto& Object : m_Objects)
+    for(auto Object : m_Objects)
         Object->BeginPlay();
+    //TODO(JJ): When object pool is done, iterate through begin play    
     m_AIScene->BeginPlay();
     m_SoundScene->BeginPlay();
     m_WidgetScene->BeginPlay();
@@ -35,8 +37,9 @@ void UWorld::BeginPlay()
 void UWorld::Tick(float DeltaTime)
 {    
     UScene::Tick(DeltaTime);
-    for(auto& Object : m_Objects)
+    for(auto Object : m_Objects)
         Object->Tick(DeltaTime);
+    //TODO(JJ): When object pool is done, iterate through tick    
     m_AIScene->Tick(DeltaTime);
     m_SoundScene->Tick(DeltaTime);
     m_WidgetScene->Tick(DeltaTime);
@@ -59,27 +62,20 @@ FObjectConstructor* UWorld::GetObjectConstructor()
 
 void UWorld::RemoveObject(UObject** Object)
 {
-    for(uint32 ObjectIndex = 0; ObjectIndex < m_Objects.size(); ObjectIndex++)
+    for(ptr_size ObjectIndex=0; ObjectIndex < m_Objects.size(); ObjectIndex++)
     {
         if(m_Objects[ObjectIndex] == (*Object))
         {
-            m_Objects.erase(m_Objects.begin()+ObjectIndex);            
-            delete (*Object);
+            m_Objects.erase(m_Objects.begin()+ObjectIndex);
+            UObject::operator delete(*Object);
             (*Object) = nullptr;
-            break;
         }
     }
-
 }
 
 void UWorld::Destroy(IAI* AI, ICollision* Collision, IGraphics* Graphics, IInput* Input,
                      IPhysics* Physics, ISound* Sound, ITransform* Transform, IWidget* Widget)
-{
-    for(auto& Object : m_Objects)
-    {        
-        delete Object;
-        Object = nullptr;
-    }
+{    
     Widget->DestroyScene(&m_WidgetScene);
     Transform->DestroyScene(&m_TransformScene);
     Sound->DestroyScene(&m_SoundScene);
@@ -87,5 +83,8 @@ void UWorld::Destroy(IAI* AI, ICollision* Collision, IGraphics* Graphics, IInput
     Input->DestroyScene(&m_InputScene);
     Graphics->DestroyScene(&m_GraphicsScene);
     Collision->DestroyScene(&m_CollisionScene);
-    AI->DestroyScene(&m_AIScene);    
+    AI->DestroyScene(&m_AIScene);
+    //TODO(JJ): When object pool is done, iterate through deleting objects
+    for(auto Object : m_Objects)
+        UObject::operator delete(Object, true);    
 }

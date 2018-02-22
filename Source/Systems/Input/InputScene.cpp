@@ -4,13 +4,12 @@
 
 InputScene::InputScene()
 {
-    m_ObjectPool = gMemoryManager->GetPool(GetType());
-    m_ObjectPool->CreatePool(sizeof(InputObject), NUMBER_OF_OBJECTS);
+    m_ObjectPool.Initialize(NUMBER_OF_OBJECTS);
 }
 
 IInputObject* InputScene::CreateObject()
 {
-    InputObject* Object = new InputObject();
+    InputObject* Object = new(&m_ObjectPool) InputObject();
     Object->Create();    
     return Object;
 }
@@ -21,7 +20,7 @@ void InputScene::DestroyObject(IInputObject* Object)
     {
         InputObject* RealObject = (InputObject*)Object;
         RealObject->Destroy();
-        delete RealObject;
+        InputObject::operator delete(RealObject, &m_ObjectPool);
     }
 }
     
@@ -42,5 +41,9 @@ ITask* InputScene::GetTask()
 InputScene::~InputScene()
 {
     //TODO(JJ): Destroy all valid objects first
-    m_ObjectPool->DestroyPool();    
+    for(auto& Object : m_ObjectPool)
+    {
+        Object.Destroy();
+    }
+    m_ObjectPool.Destroy();    
 }

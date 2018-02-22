@@ -3,6 +3,7 @@
    ======================================================================== */
 #include <ObjectFramework/ObjectFramework.h>
 
+static IMemoryManager* gMemoryManager;
 
 #include "UScene.cpp"
 #include "UWorld.cpp"
@@ -15,3 +16,30 @@
 #include "UPlayerController.cpp"
 #include "UActor.cpp"
 #include "UPawn.cpp"
+
+//NOTE(EVERYONE): if the framework needs anything from the engine (like the managers) pass it in this
+//function
+void InitializeFramework(IMemoryManager* MemoryManager)
+{
+    gMemoryManager = MemoryManager;
+}
+
+void* operator new(ptr_size Size)
+{
+    return gMemoryManager->Allocate(Size);
+}
+
+void* operator new[](ptr_size Size)
+{
+    return gMemoryManager->Allocate(Size);
+}
+
+void operator delete(void* Pointer)
+{
+    gMemoryManager->Free(Pointer);
+}
+
+void operator delete[](void* Pointer)
+{
+    gMemoryManager->Free(Pointer);
+}

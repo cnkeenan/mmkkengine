@@ -3,14 +3,13 @@
    ======================================================================== */
 
 GraphicsScene::GraphicsScene()
-{
-    m_ObjectPool = gMemoryManager->GetPool(GetType());
-    m_ObjectPool->CreatePool(sizeof(GraphicsObject), NUMBER_OF_OBJECTS);
+{    
+    m_ObjectPool.Initialize(NUMBER_OF_OBJECTS);
 }
 
 IGraphicsObject* GraphicsScene::CreateObject()
 {
-    GraphicsObject* Object = new GraphicsObject();
+    GraphicsObject* Object = new(&m_ObjectPool) GraphicsObject();
     Object->Create();    
     return Object;
 }
@@ -21,7 +20,7 @@ void GraphicsScene::DestroyObject(IGraphicsObject* Object)
     {
         GraphicsObject* RealObject = (GraphicsObject*)Object;
         RealObject->Destroy();
-        delete RealObject;
+        GraphicsObject::operator delete(RealObject, &m_ObjectPool);
     }
 }
     
@@ -42,5 +41,9 @@ ITask* GraphicsScene::GetTask()
 GraphicsScene::~GraphicsScene()
 {
     //TODO(JJ): Destroy all valid objects first
-    m_ObjectPool->DestroyPool();
+    for(auto& Object : m_ObjectPool)
+    {
+        Object.Destroy();
+    }
+    m_ObjectPool.Destroy();
 }

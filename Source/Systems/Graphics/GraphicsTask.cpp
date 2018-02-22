@@ -23,6 +23,8 @@ void GraphicsTask::Execute() const
     gWindow->SwapOpenGLBuffers();
     
     gPlatformManager->MakeContextCurrent(nullptr);
+
+    
 }
 
 GraphicsTask::~GraphicsTask()

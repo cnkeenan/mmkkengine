@@ -30,25 +30,3 @@ FHighResolutionTimer PlatformManager::CreateHighResolutionTimer()
     Timer.ElapsedTime = Win32_GetElapsedTime;
     return Timer;
 }
-
-#undef GetCurrentTime
-char* PlatformManager::GetCurrentTime(char* Result)
-{
-    if(!Global_Initialized)
-    {
-        QueryPerformanceFrequency(&Global_Frequency);
-        Global_Initialized = true;
-    }
-    
-    char Buffer[128];
-    GetTimeFormat(LOCALE_USER_DEFAULT, 0, 0, "HH':'mm':'ss", Buffer, sizeof(Buffer));
-
-    static uint64 First = Win32_Clock();
-    uint64 Timed = Win32_Clock();
-
-    uint64 Elapsed = (Timed-First)*1000;
-    Elapsed /= Global_Frequency.QuadPart;
-    
-    sprintf(Result, "%s.%03I64d", Buffer, Elapsed % 1000);
-    return Result; 
-}

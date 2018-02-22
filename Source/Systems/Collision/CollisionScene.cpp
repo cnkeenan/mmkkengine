@@ -4,13 +4,12 @@
 
 CollisionScene::CollisionScene()
 {
-    m_ObjectPool = gMemoryManager->GetPool(GetType());
-    m_ObjectPool->CreatePool(sizeof(CollisionObject), NUMBER_OF_OBJECTS);
+    m_ObjectPool.Initialize(NUMBER_OF_OBJECTS);    
 }
 
 ICollisionObject* CollisionScene::CreateObject()
 {
-    CollisionObject* Object = new CollisionObject();
+    CollisionObject* Object = new(&m_ObjectPool) CollisionObject();
     Object->Create();    
     return Object;
 }
@@ -21,7 +20,7 @@ void CollisionScene::DestroyObject(ICollisionObject* Object)
     {
         CollisionObject* RealObject = (CollisionObject*)Object;
         RealObject->Destroy();
-        delete RealObject;
+        CollisionObject::operator delete(RealObject, &m_ObjectPool);
     }
 }
     
@@ -42,5 +41,9 @@ ITask* CollisionScene::GetTask()
 CollisionScene::~CollisionScene()
 {
     //TODO(JJ): Destroy all valid objects first
-    m_ObjectPool->DestroyPool();
+    for(auto& Object : m_ObjectPool)
+    {
+        Object.Destroy();
+    }     
+    m_ObjectPool.Destroy();
 }

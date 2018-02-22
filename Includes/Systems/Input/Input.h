@@ -4,8 +4,12 @@
    ======================================================================== */
 #include <ObjectFramework/ObjectFramework.h>
 #include <Interfaces/Managers/IMemoryManager.h>
+#include <Interfaces/Managers/IPlatformManager.h>
+#include <Utility/Logger.h>
 
 static IMemoryManager* gMemoryManager;
+static FILE* INPUT_CHANNEL_File;
+FLogger* gLogger = nullptr;
 
 #include "InputTask.h"
 #include "InputObject.h"

@@ -9,7 +9,7 @@ private:
     PhysicsTask m_Task;
 
     static const ptr_size NUMBER_OF_OBJECTS=64;
-    FPool* m_ObjectPool;
+    TObjectPool<PhysicsObject> m_ObjectPool;
 
 protected:
 public:

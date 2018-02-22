@@ -2,9 +2,9 @@ ISystem* PlatformManager::LoadSystem(ESystemType SystemType, IWindow* Window)
 {
     ISystem* Result = nullptr;
 
-#define LOAD_SYSTEM(x, y) \
-    void* hndl_##x = dlopen(y, RTLD_LAZY); \
-    fp_##x* x = (fp_##x*) dlsym(hndl_##x, #x);
+#define LOAD_SYSTEM(x, y)                           \
+    void* hndl_##x = dlopen(y, RTLD_LAZY);          \
+        fp_##x* x = (fp_##x*) dlsym(hndl_##x, #x)
 
     switch(SystemType)
     {

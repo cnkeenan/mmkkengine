@@ -5,10 +5,11 @@
 
 class GraphicsScene : public IGraphicsScene
 {
+    friend class GraphicsObject;
 private:
     GraphicsTask m_Task;
     static const ptr_size NUMBER_OF_OBJECTS=64;
-    FPool* m_ObjectPool;    
+    TObjectPool<GraphicsObject> m_ObjectPool;    
 protected:
 public:
 

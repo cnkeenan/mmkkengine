@@ -28,7 +28,7 @@ UWorld* FLoader::Load()
                       m_Input->CreateScene(), m_Physics->CreateScene(), m_Sound->CreateScene(),
                       m_Transform->CreateScene(), m_Widget->CreateScene());
     FObjectConstructor* ObjectConstructor = World->GetObjectConstructor();    
-
+    
     World->AddObject(new UBall(ObjectConstructor));
 
     UPawn* Pawn1 = new UPlayerPaddle(ObjectConstructor);
@@ -38,7 +38,7 @@ UWorld* FLoader::Load()
     UPawn* Pawn2 = new UAIPaddle(ObjectConstructor);
     Pawn2->ChangeController(new UPongAIController(ObjectConstructor));
     World->AddObject(Pawn2);
-
+    
     World->RemoveObject((UObject**)&Pawn1);
 
     return World;
@@ -50,7 +50,7 @@ void FLoader::Unload(UWorld* World)
     delete World;    
 }
 
-FLoader::~FLoader()
+void FLoader::Destroy()
 {
     //TODO(EVERYONE): Destroy systems here
     PlatformManager* Platform = PlatformManager::Get();
@@ -62,4 +62,8 @@ FLoader::~FLoader()
     Platform->UnloadSystem((ISystem**)&m_Graphics);
     Platform->UnloadSystem((ISystem**)&m_Collision);
     Platform->UnloadSystem((ISystem**)&m_AI);
+}
+
+FLoader::~FLoader()
+{
 }

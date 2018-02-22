@@ -4,8 +4,12 @@
    ======================================================================== */
 #include <ObjectFramework/ObjectFramework.h>
 #include <Interfaces/Managers/IMemoryManager.h>
+#include <Interfaces/Managers/IPlatformManager.h>
+#include <Utility/Logger.h>
 
 static IMemoryManager* gMemoryManager;
+static FILE* PHYSICS_CHANNEL_File;
+FLogger* gLogger = nullptr;
 
 #include "PhysicsTask.h"
 #include "PhysicsObject.h"

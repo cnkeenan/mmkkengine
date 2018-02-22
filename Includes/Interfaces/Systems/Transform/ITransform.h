@@ -16,7 +16,7 @@ public:
 
 
 //NOTE(EVERYONE): If we need managers add them here
-typedef ITransform* fp_CreateTransformSystem(class IMemoryManager* MemoryManager);
+typedef ITransform* fp_CreateTransformSystem(class FLogger* Logger, class IMemoryManager* MemoryManager);
 typedef void fp_DestroyTransformSystem(ITransform** System);
 
 

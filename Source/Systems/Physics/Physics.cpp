@@ -33,9 +33,11 @@ Physics::~Physics()
 
 extern "C"
 {
-    EXPORT IPhysics* CreatePhysicsSystem(IMemoryManager* MemoryManager)
+    EXPORT IPhysics* CreatePhysicsSystem(FLogger* Logger, IMemoryManager* MemoryManager)
     {
+        PHYSICS_CHANNEL_File = fopen(PHYSICS_CHANNEL_PATH, "w");
         gMemoryManager = MemoryManager;
+        gLogger = Logger;
         IPhysics* Result = new Physics();
         return Result;
     }
@@ -47,6 +49,28 @@ extern "C"
             delete (*System);
             (*System) = nullptr;
         }
+        gLogger = nullptr;
         gMemoryManager = nullptr;
+        fclose(PHYSICS_CHANNEL_File);
     }
+}
+
+void* operator new(ptr_size Size)
+{
+    return gMemoryManager->Allocate(Size);
+}
+
+void* operator new[](ptr_size Size)
+{
+    return gMemoryManager->Allocate(Size);
+}
+
+void operator delete(void* Pointer)
+{
+    gMemoryManager->Free(Pointer);
+}
+
+void operator delete[](void* Pointer)
+{
+    gMemoryManager->Free(Pointer);
 }

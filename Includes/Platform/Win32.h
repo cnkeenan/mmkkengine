@@ -46,7 +46,6 @@ FUNCTION_SIGNATURE(wglMakeCurrent_);
 #include "Win32/Win32_Window.cpp"
 #include "Win32/Win32_OpenGL.cpp"
 #include "Win32/Win32_Timer.cpp"
-#include "Win32/Win32_Console.cpp"
 #include "Win32/Win32_Thread.cpp"
 #include "Win32/Win32_Mutex.cpp"
 #include "Win32/Win32_Hardware.cpp"

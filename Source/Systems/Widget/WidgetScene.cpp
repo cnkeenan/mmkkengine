@@ -4,13 +4,12 @@
 
 WidgetScene::WidgetScene()
 {
-    m_ObjectPool = gMemoryManager->GetPool(GetType());
-    m_ObjectPool->CreatePool(sizeof(WidgetObject), NUMBER_OF_OBJECTS);
+    m_ObjectPool.Initialize(NUMBER_OF_OBJECTS);
 }
 
 IWidgetObject* WidgetScene::CreateObject()
 {
-    WidgetObject* Object = new WidgetObject();
+    WidgetObject* Object = new(&m_ObjectPool) WidgetObject();
     Object->Create();    
     return Object;
 }
@@ -21,7 +20,7 @@ void WidgetScene::DestroyObject(IWidgetObject* Object)
     {
         WidgetObject* RealObject = (WidgetObject*)Object;
         RealObject->Destroy();
-        delete RealObject;
+        WidgetObject::operator delete(&RealObject, &m_ObjectPool);
     }
 }
     
@@ -42,5 +41,7 @@ ITask* WidgetScene::GetTask()
 WidgetScene::~WidgetScene()
 {
     //TODO(JJ): Destroy all valid objects first
-    m_ObjectPool->DestroyPool();
+    for(auto& Object : m_ObjectPool)
+        Object.Destroy();
+    m_ObjectPool.Destroy();
 }

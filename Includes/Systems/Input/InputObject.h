@@ -14,8 +14,8 @@ public:
     void Destroy();
 
     
-    void* operator new(size_t Size);
-    void operator delete(void* Object);
+    void* operator new(size_t Size, void* Pointer);
+    void operator delete(void* Object, void* Pointer);
     
     void BeginPlay() final;
     void Tick(float DeltaTime) final;

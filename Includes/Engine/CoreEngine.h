@@ -4,7 +4,6 @@
    ======================================================================== */
 #include <ObjectFramework/ObjectFramework.h>
 #include <Interfaces/Managers/IPlatformManager.h>
-#include <Utility/Delegate.h>
 #include <Utility/Logger.h>
 #include <Utility/Assert.h>
 #include <Utility/Events.h>
@@ -20,6 +19,9 @@
 #include <Engine/Framework/Scheduler.h>
 #include <Engine/Framework/Loader.h>
 
+static FILE* ENGINE_CHANNEL_File;
+static FILE* PLATFORM_CHANNEL_File;
+
 class FCoreEngine
 {
 private:
@@ -34,9 +36,7 @@ public:
     void Initialize();
     void Tick();
     void Destroy();
-
-    bool TestEventMethod(TestEvent* Event);
-    
+ 
 };
 
 #define COREENGINE_H

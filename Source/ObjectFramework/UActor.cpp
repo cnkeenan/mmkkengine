@@ -19,7 +19,7 @@ void UActor::Tick(float DeltaTime)
 
 UActor::~UActor()
 {
-    if(m_GraphicsObject)
+    if(!m_IsSceneDead)
     {
         m_ObjectConstructor->Destruct((IObject*)m_GraphicsObject);
     }

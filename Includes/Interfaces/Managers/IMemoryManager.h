@@ -2,28 +2,22 @@
 /* ========================================================================
    $Creator: Armand Karambasis $
    ======================================================================== */
-#include <Utility/Pool.h>
-
-#define POOL_EXPOSE(x) \
-    friend class x##Scene; \
-    friend class x##Object   
-
 class IMemoryManager
 {
-private:
-    POOL_EXPOSE(AI);
-    POOL_EXPOSE(Collision);
-    POOL_EXPOSE(Graphics);
-    POOL_EXPOSE(Input);
-    POOL_EXPOSE(Physics);
-    POOL_EXPOSE(Sound);
-    POOL_EXPOSE(Transform);
-    POOL_EXPOSE(Widget);
-
-    virtual FPool* GetPool(ESystemType Type) = 0;
+private:    
 protected:
 public:
+
+    virtual void* Allocate(ptr_size Size) = 0;
+    virtual void Free(void* Pointer) = 0;
 };
+
+
+void* operator new(ptr_size Size);
+void* operator new[](ptr_size Size);
+void operator delete(void* Pointer);
+void operator delete[](void* Pointer);
+
 
 #define IMEMORYMANAGER_H
 #endif

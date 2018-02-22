@@ -43,8 +43,7 @@ bool TaskManager::ProcessTask()
     if(m_Mutex->TryLock())
     {
         if(!m_Tasks.empty())
-        {
-            
+        {            
             const ITask* Task = m_Tasks.front();
             m_Tasks.pop();
             Task->Execute();

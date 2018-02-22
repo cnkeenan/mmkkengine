@@ -17,14 +17,16 @@ bool GraphicsObject::IsInitialized()
     return m_IsInitialized;
 }
 
-void* GraphicsObject::operator new(size_t Size)
+void* GraphicsObject::operator new(size_t Size, void* Pointer)
 {
-    return gMemoryManager->GetPool(ESystemType::GRAPHICS)->Allocate();
+    TObjectPool<GraphicsObject>* ObjectPool = (TObjectPool<GraphicsObject>*)Pointer;
+    return ObjectPool->Create();    
 }
 
-void GraphicsObject::operator delete(void* Object)
+void GraphicsObject::operator delete(void* Object, void* Pointer)
 {
-    gMemoryManager->GetPool(ESystemType::GRAPHICS)->Free(Object);
+    TObjectPool<GraphicsObject>* ObjectPool = (TObjectPool<GraphicsObject>*)Pointer;
+    ObjectPool->Free((GraphicsObject*)Object);        
 }
 
 void GraphicsObject::BeginPlay()

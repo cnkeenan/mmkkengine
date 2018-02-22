@@ -39,239 +39,93 @@ enum class EConsoleColor
     WHITE
 };
 
-enum class ELoggerType
+enum class ELogType
 {
     CONSOLE,
     FILE,
     BOTH
 };
 
-#define NUMBER_OF_CHANNELS 3
+#define NUMBER_OF_CHANNELS 11
 enum class ELogChannel
 {    
     RESERVED_CHANNEL, //NOTE(EVERYONE): This channel should always be on. For things like ASSERT
     ENGINE_CHANNEL,
-    PLATFORM_CHANNEL,    
+    PLATFORM_CHANNEL,
+    AI_CHANNEL,
+    COLLISION_CHANNEL,
+    GRAPHICS_CHANNEL,
+    INPUT_CHANNEL,
+    PHYSICS_CHANNEL,
+    SOUND_CHANNEL,
+    TRANSFORM_CHANNEL,
+    WIDGET_CHANNEL
 };
 
-typedef char* FNowTime(char* Result);
-typedef void FChangeConsoleColor(EConsoleColor BackgroundColor, EConsoleColor ForegroundColor);
+inline char* GetCurrentTime(char* Result);
+inline void ChangeConsoleColor(EConsoleColor BackgroundColor, EConsoleColor ForegroundColor);
 
 #define TurnChannelOn(x) TurnChannelOn_(ELogChannel::x)
 #define TurnChannelOff(x) TurnChannelOff_(ELogChannel::x)
 
-class FLog
+struct FLogFile
 {
-private:
-    //NOTE(EVERYONE): Statics    
-    static const char* RESERVED_CHANNEL_PATH;
-    static const char* ENGINE_CHANNEL_PATH;
-    static const char* PLATFORM_CHANNEL_PATH;
-    static const char* DUMP_PATH;
-        
-    struct FLogFile
-    {
-        FILE* File;
-        const char* Path;
-    };
-    
-    static FNowTime* s_NowTime;
-    static FChangeConsoleColor* s_ChangeConsoleColor;
-    static int s_Verbosity;
-    static uint64 s_Channels;    
-    static FLogFile s_ChannelFiles[NUMBER_OF_CHANNELS];
-    static FILE* s_LogDump;
-    static IMutex* s_Mutex;
-    
-private:
-    char m_Logger[1024];
-    ELogLevel m_Level;
-    ELogChannel m_Channel;
-    ELoggerType m_LogType;
+    FILE* File;
+    const char* Path;
+};
 
-    
+#define RESERVED_CHANNEL_PATH "../Data/Log/Reserved_Log/Reserved.log"
+#define ENGINE_CHANNEL_PATH "../Data/Log/Engine_Log/Engine.log"            
+#define PLATFORM_CHANNEL_PATH "../Data/Log/Platform_Log/Platform.log"
+#define AI_CHANNEL_PATH "../Data/Log/AI_Log/AI.log"
+#define COLLISION_CHANNEL_PATH "../Data/Log/Collision_Log/Collision.log"
+#define GRAPHICS_CHANNEL_PATH "../Data/Log/Graphics_Log/Graphics.log"
+#define INPUT_CHANNEL_PATH "../Data/Log/Input_Log/Input.log"
+#define PHYSICS_CHANNEL_PATH "../Data/Log/Physics_Log/Physics.log"
+#define SOUND_CHANNEL_PATH "../Data/Log/Sound_Log/Sound.log"
+#define TRANSFORM_CHANNEL_PATH "../Data/Log/Transform_Log/Transform.log"
+#define WIDGET_CHANNEL_PATH "../Data/Log/Widget_Log/Widget.log"
+
+class FLogger
+{
+        
+    int m_Verbosity;
+    uint64 m_Channels;        
+
 public:
-    inline FLog(ELogLevel Level, ELogChannel Channel, ELoggerType LogType) : m_Level(Level),
-                                                                             m_Channel(Channel),
-                                                                             m_LogType(LogType)
-    {}
-    
-    inline ~FLog()
+
+    inline FLogger()
     {
-        uint64 IntChannel = (uint64)m_Channel;
-        if((s_Verbosity >= (int)m_Level) && CHECK_BIT_64(s_Channels, IntChannel))
-        {
-            EConsoleColor BackgroundColor;
-            EConsoleColor ForegroundColor;
-        
-            switch(m_Level)
-            {
-                case ELogLevel::FAILURE:
-                {                
-                    BackgroundColor = EConsoleColor::RED;
-                    ForegroundColor = EConsoleColor::WHITE;
-                } break;
+        m_Verbosity = (int)ELogLevel::INFO;
+        m_Channels = 0xFFFFFFFFFFFFFFFF;        
 
-                case ELogLevel::WARNING:
-                {                
-                    BackgroundColor = EConsoleColor::BLACK;
-                    ForegroundColor = EConsoleColor::RED;
-                } break;
+        CreateDirectories();                
+    }    
 
-                case ELogLevel::DEBUG:
-                {
-                    BackgroundColor = EConsoleColor::BLACK;
-                    ForegroundColor = EConsoleColor::GREEN;
-                } break;
-
-                case ELogLevel::INFO:
-                {
-                    BackgroundColor = EConsoleColor::BLACK;
-                    ForegroundColor = EConsoleColor::WHITE;
-                } break;
-            }
-
-            s_ChangeConsoleColor(BackgroundColor, ForegroundColor);
-            char OutputBuffer[2048];
-            char TimeBuffer[128];
-            sprintf(OutputBuffer, "- CHANNEL: %s\t TIME: %s\t %s:\t %s\n", ToString(m_Channel), s_NowTime(TimeBuffer),
-                    ToString(m_Level), m_Logger);            
-
-            s_Mutex->Lock();
-            //NOTE(EVERYONE): Print to console stderr
-            if((m_LogType == ELoggerType::CONSOLE) || (m_LogType == ELoggerType::BOTH))
-            {
-                fprintf(stderr, OutputBuffer);
-                fflush(stderr);
-            }
-
-            //NOTE(EVERYONE): Print to dump file
-
-            if((m_LogType == ELoggerType::FILE) || (m_LogType == ELoggerType::BOTH))
-            {
-                fprintf(s_LogDump, OutputBuffer);
-                fflush(s_LogDump);
-
-                //NOTE(EVERYONE): Print to channel file
-                FILE* FileHandle = s_ChannelFiles[(int)m_Channel].File;
-                fprintf(FileHandle, OutputBuffer);
-                fflush(FileHandle);
-                long int StreamPosition = ftell(FileHandle);
-                if(StreamPosition > MEGABYTE(10))
-                {
-                    LOG_ASSERT(!"If the log file is this large it may be too cluttered. Generic counters (like fps) should be outputted via text rendering"); 
-                    freopen(s_ChannelFiles[(int)m_Channel].Path, "w", FileHandle);
-                }
-            }
-
-            s_Mutex->Unlock();
-        }
+    inline void SetVerbosity(int Verbosity)
+    {
+        m_Verbosity = Verbosity;
     }
 
-    
-    inline void Format(const char* Format, ...)
+    inline void TurnChannelOn_(ELogChannel Channel)
     {
-        va_list Arguments;
-        va_start(Arguments, Format);
-        vsprintf(m_Logger, Format, Arguments);    
-        va_end(Arguments);
-    }
+        if(Channel == ELogChannel::RESERVED_CHANNEL)
+            INVALID_CODE_PATH;
 
-    static inline bool DirectoryExists(const char* AbsDirectoryPath)
-    {
-        struct stat status;
-
-
-#if POSIX
-#define ACCESS(x, y) access(x, y)
-#elif OS_WINDOWS
-#define ACCESS(x, y) _access(x, y)
-#else
-#define ACCESS(x, y) access(x, y)
-#endif
-
-        if (ACCESS(AbsDirectoryPath, 0) == 0)
-        {
-            stat(AbsDirectoryPath, &status);
-
-            return (status.st_mode & S_IFDIR) != 0;
-        }
-        return false;
-    }
-
-    static inline void CreateDirectories()
-    {
-        const char* logdirs[] = { 
-            "../Data",
-            "../Data/Log",
-            "../Data/Log/Engine_Log",
-            "../Data/Log/Platform_Log",
-            "../Data/Log/Reserved_Log"
-        };
-        
-#if OS_WINDOWS
-#define MKDIR(x, y) _mkdir(x)
-#else
-#define MKDIR(x, y) mkdir(x, y)
-#endif
-
-        size_t ndirs = sizeof(logdirs)/sizeof(logdirs[0]); 
-
-        for (size_t i = 0; i < ndirs; i++)
-        {
-            if (!FLog::DirectoryExists(logdirs[i]))
-            {
-                MKDIR(logdirs[i], 0733);
-            }
-        }
-
-    }
-
-    static inline void InitLogger(FNowTime* NowTime, FChangeConsoleColor* ChangeConsoleColor,
-                                  IMutex* Mutex)
-    {
-        s_NowTime = NowTime;
-        s_ChangeConsoleColor = ChangeConsoleColor;
-        s_Mutex = Mutex;
-        
-#define CHANNEL_CREATE(x) s_ChannelFiles[(uint64)ELogChannel::x].Path = x##_PATH; \
-        s_ChannelFiles[(uint64)ELogChannel::x].File = fopen(x##_PATH, "w")
-        FLog::CreateDirectories();
-
-        s_LogDump = fopen(DUMP_PATH, "w");        
-        CHANNEL_CREATE(RESERVED_CHANNEL);
-        CHANNEL_CREATE(ENGINE_CHANNEL);
-        CHANNEL_CREATE(PLATFORM_CHANNEL);        
-    }
-
-    static inline void DestroyLogger(FDelegate<void, IMutex*> DestroyMutex)
-    {        
-        fclose(s_ChannelFiles[(uint64)ELogChannel::RESERVED_CHANNEL].File);
-        fclose(s_ChannelFiles[(uint64)ELogChannel::ENGINE_CHANNEL].File);
-        fclose(s_ChannelFiles[(uint64)ELogChannel::PLATFORM_CHANNEL].File);
-        fclose(s_LogDump);
-        DestroyMutex(s_Mutex);
-    }
-
-    static inline void SetVerbosity(int Verbosity)
-    {
-        s_Verbosity = Verbosity;
-    }
-
-    static inline void TurnChannelOn_(ELogChannel Channel)
-    {
-        LOG_ASSERT(Channel != ELogChannel::RESERVED_CHANNEL);
         uint64 IntChannel = (uint64)Channel;
-        SET_BIT_64(s_Channels, IntChannel);
+        SET_BIT_64(m_Channels, IntChannel);
     }
 
-    static inline void TurnChannelOff_(ELogChannel Channel)
+    inline void TurnChannelOff_(ELogChannel Channel)
     {
-        LOG_ASSERT(Channel != ELogChannel::RESERVED_CHANNEL);
-        unsigned long IntChannel = (unsigned long)Channel;
-        CLEAR_BIT_64(s_Channels, IntChannel);
+        if(Channel == ELogChannel::RESERVED_CHANNEL)
+            INVALID_CODE_PATH;
+
+        uint64 IntChannel = (uint64)Channel;
+        CLEAR_BIT_64(m_Channels, IntChannel);
     }
 
+    
     static inline const char* ToString(ELogLevel Level) 
     {
         switch(Level)
@@ -298,12 +152,12 @@ public:
 
             default:
             {
-                LOG_ASSERT(false);
+                INVALID_CODE_PATH;
                 return "ERROR";
             } break;
         }
     }
-
+    
     static inline const char* ToString(ELogChannel Channel)
     {
         switch(Channel)
@@ -323,40 +177,348 @@ public:
                 return "PLATFORM";
             } break;
 
+            case ELogChannel::AI_CHANNEL:
+            {
+                return "AI";
+            } break;
+            
+            case ELogChannel::COLLISION_CHANNEL:
+            {
+                return "COLLISION";
+            } break;
+            
+            case ELogChannel::GRAPHICS_CHANNEL:
+            {
+                return "GRAPHICS";
+            } break;
+            
+            case ELogChannel::INPUT_CHANNEL:
+            {
+                return "INPUT";
+            } break;
+            
+            case ELogChannel::PHYSICS_CHANNEL:
+            {
+                return "PHYSICS";
+            } break;
+            
+            case ELogChannel::SOUND_CHANNEL:
+            {
+                return "SOUND";
+            } break;
+            
+            case ELogChannel::TRANSFORM_CHANNEL:
+            {
+                return "TRANSFORM";
+            } break;
+            
+            case ELogChannel::WIDGET_CHANNEL:
+            {
+                return "WIDGET";
+            } break;
+
             default:
             {
-                LOG_ASSERT(false);
+                INVALID_CODE_PATH;
                 return "ERROR";
             } break;
         }
     }
-public:    
+    
+    inline bool DirectoryExists(const char* AbsDirectoryPath)
+    {
+        struct stat status;
+
+
+        if (ACCESS(AbsDirectoryPath, 0) == 0)
+        {
+            stat(AbsDirectoryPath, &status);
+
+            return (status.st_mode & S_IFDIR) != 0;
+        }
+        return false;
+    }
+    
+    inline void CreateDirectories()
+    {
+        const char* logdirs[] = { 
+            "../Data",
+            "../Data/Log",
+            "../Data/Log/Engine_Log",
+            "../Data/Log/Platform_Log",
+            "../Data/Log/Reserved_Log",
+            "../Data/Log/AI_Log",
+            "../Data/Log/Collision_Log",
+            "../Data/Log/Graphics_Log",
+            "../Data/Log/Input_Log",
+            "../Data/Log/Physics_Log",
+            "../Data/Log/Sound_Log",
+            "../Data/Log/Transform_Log",
+            "../Data/Log/Widget_Log"
+        };
+
+        size_t ndirs = sizeof(logdirs)/sizeof(logdirs[0]); 
+
+        for (size_t i = 0; i < ndirs; i++)
+        {
+            if (!FLogger::DirectoryExists(logdirs[i]))
+            {
+                MKDIR(logdirs[i], 0733);
+            }
+        }
+
+    }
+    
+    inline void Log(ELogLevel Level, ELogChannel Channel, ELogType LogType, FILE* FileHandle,
+                    const char* FilePath, const char* Format, ...)
+    {        
+        char Buffer[512];
+        va_list Arguments;
+        va_start(Arguments, Format);
+        vsprintf(Buffer, Format, Arguments);
+        va_end(Arguments);
+
+        EConsoleColor BackgroundColor = EConsoleColor::BLACK;
+        EConsoleColor ForegroundColor = EConsoleColor::WHITE;
+
+        switch(Level)
+        {
+            case ELogLevel::FAILURE:
+            {
+                BackgroundColor = EConsoleColor::RED;
+                ForegroundColor = EConsoleColor::WHITE;
+            } break;
+                
+            case ELogLevel::WARNING:
+            {                
+                BackgroundColor = EConsoleColor::BLACK;
+                ForegroundColor = EConsoleColor::RED;
+            } break;
+
+            case ELogLevel::DEBUG:
+            {
+                BackgroundColor = EConsoleColor::BLACK;
+                ForegroundColor = EConsoleColor::GREEN;
+            } break;
+        }
+
+        ChangeConsoleColor(BackgroundColor, ForegroundColor);
+        char ResultBuffer[1024];
+        char TimeBuffer[128];
+        sprintf(ResultBuffer, "- CHANNEL: %s\t TIME: %s\t %s:\t %s\n",
+                ToString(Channel), GetCurrentTime(TimeBuffer),
+                ToString(Level), Buffer);
+
+        switch(LogType)
+        {
+            case ELogType::BOTH:
+            {                
+                fprintf(stderr, ResultBuffer);                                    
+                fprintf(FileHandle, ResultBuffer);
+
+                _flushall();                
+
+                long int StreamPosition = ftell(FileHandle);
+                if(StreamPosition > GIGABYTE(1))
+                {                        
+                    freopen(FilePath, "w", FileHandle);
+                }
+
+            } break;
+
+            case ELogType::CONSOLE:
+            {
+                fprintf(stderr, ResultBuffer);
+                fflush(stderr);
+            } break;
+
+            case ELogType::FILE:
+            {                
+                fprintf(FileHandle, ResultBuffer);
+                fflush(FileHandle);                
+
+                long int StreamPosition = ftell(FileHandle);
+                if(StreamPosition > GIGABYTE(1))
+                {                        
+                    freopen(FilePath, "w", FileHandle);
+                }
+            } break;
+        }
+        
+    }
+
+    ~FLogger()
+    {                
+    }
+    
 };
 
-#if !OS_MAC
-#ifndef STATIC_LOG_IMPLEMENTATION
-FNowTime* FLog::s_NowTime = nullptr;
-FChangeConsoleColor* FLog::s_ChangeConsoleColor = nullptr;
-int FLog::s_Verbosity = (int)ELogLevel::INFO;
-uint64 FLog::s_Channels = 0xFFFFFFFFFFFFFFFF;
-FLog::FLogFile FLog::s_ChannelFiles[NUMBER_OF_CHANNELS] = {};
-FILE* FLog::s_LogDump = nullptr;
-const char* FLog::RESERVED_CHANNEL_PATH =  "../Data/Log/Reserved_Log/Reserved.log";
-const char* FLog::ENGINE_CHANNEL_PATH = "../Data/Log/Engine_Log/Engine.log";
-const char* FLog::PLATFORM_CHANNEL_PATH = "../Data/Log/Platform_Log/Platform.log";
-const char* FLog::DUMP_PATH = "../Data/Log/Dump.log";
-IMutex* FLog::s_Mutex = nullptr;
-#define STATIC_LOG_IMPLEMENTATION
-#endif
-#endif
+extern FLogger* gLogger;
 
-//NOTE(EVERYONE): I (JJ) timed the logger. It takes about 0.1-0.3ms to execute. It does not matter
-//if it's a file log, console log, or both. Remember we have a 16.67ms limit per frame, so don't log to often.
-//Not entirely sure where we can optimize. Its about 3 times slower than printf
+#define LOG(level, channel, format, ...) gLogger->Log(ELogLevel::level, ELogChannel::channel, ELogType::BOTH, channel##_File, channel##_PATH, format, ##__VA_ARGS__)
+#define FILE_LOG(level, channel, format, ...) gLogger->Log(ELogLevel::level, ELogChannel::channel, ELogType::FILE, channel##_File, channel##_PATH, format, ##__VA_ARGS__)
+#define CONSOLE_LOG(level, channel, format, ...) gLogger->Log(ELogLevel::level, ELogChannel::channel, ELogType::CONSOLE, channel##_File, channel##_PATH, format, ##__VA_ARGS__)
 
-#define LOG(level, channel, format, ...) FLog(ELogLevel::level, ELogChannel::channel, ELoggerType::BOTH).Format(format, ##__VA_ARGS__) 
-#define FILE_LOG(level, channel, format, ...) FLog(ELogLevel::level, ELogChannel::channel, ELoggerType::FILE).Format(format, ##__VA_ARGS__)
-#define CONSOLE_LOG(level, channel, format, ...) FLog(ELogLevel::level, ELogChannel::channel, ELoggerType::CONSOLE).Format(format, ##__VA_ARGS__)
+#if OS_WINDOWS
+#include <Windows.h>
+#undef GetCurrentTime
+char* GetCurrentTime(char* Result)
+{
+    static LARGE_INTEGER Frequency;
+    if(Frequency.QuadPart == 0)
+        QueryPerformanceFrequency(&Frequency);
+
+    char Buffer[64];
+    GetTimeFormat(LOCALE_USER_DEFAULT, 0, 0, "HH':'mm':'ss", Buffer, sizeof(Buffer));
+
+    static LARGE_INTEGER StartTime;
+    if(StartTime.QuadPart == 0)
+        QueryPerformanceCounter(&StartTime);
+
+    LARGE_INTEGER EndTime;
+    QueryPerformanceCounter(&EndTime);
+
+    uint64 Elapsed = (EndTime.QuadPart-StartTime.QuadPart)*1000;
+    Elapsed /= Frequency.QuadPart;
+
+    sprintf(Result, "%s.%03I64d", Buffer, Elapsed%1000);
+    return Result;
+}
+
+void ChangeConsoleColor(EConsoleColor BackgroundColor, EConsoleColor ForegroundColor)
+{
+    HANDLE Console = GetStdHandle(STD_ERROR_HANDLE);
+
+    WORD Attributes = 0;
+
+    switch(ForegroundColor)
+    {
+        case EConsoleColor::RED:
+        {
+            Attributes = FOREGROUND_RED;
+        } break;
+
+        case EConsoleColor::GREEN:
+        {
+            Attributes = FOREGROUND_GREEN;
+        } break;
+
+        case EConsoleColor::BLUE:
+        {
+            Attributes = FOREGROUND_BLUE;
+        } break;
+
+        case EConsoleColor::WHITE:
+        {
+            Attributes = FOREGROUND_BLUE|FOREGROUND_GREEN|FOREGROUND_RED;
+        } break;
+    }
+    
+    switch(BackgroundColor)
+    {
+        case EConsoleColor::RED:
+        {
+            Attributes |= BACKGROUND_RED;
+        } break;
+
+        case EConsoleColor::GREEN:
+        {
+            Attributes |= BACKGROUND_GREEN;
+        } break;
+
+        case EConsoleColor::BLUE:
+        {
+            Attributes |= BACKGROUND_BLUE;
+        } break;
+
+        case EConsoleColor::WHITE:
+        {
+            Attributes |= BACKGROUND_BLUE|BACKGROUND_GREEN|BACKGROUND_RED;
+        } break;
+    }
+    SetConsoleTextAttribute(Console, Attributes);
+}
+
+#elif POSIX
+char* GetCurrentTime(char* Result)
+{    
+    static timespec Start;
+    if(First.tv_sec == 0)
+        clock_gettime(CLOCK_TYPE, &First);
+
+    timespec End;
+    clock_gettime(CLOCK_TYPE, &End);
+    
+    double Elapsed = ((End.tv_sec-Start.tv_sec)*1000) + ((End.tv_nsec - Start.tv_nsec)/1000000.0);
+
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+
+    sprintf(Result, "%d:%d:%d.%d", tm.tm_hour, tm.tm_min, tm.tm_sec, (int)Elapsed % 1000);
+    return Result; 
+}
+
+
+void ChangeConsoleColor(EConsoleColor BackgroundColor, EConsoleColor ForegroundColor)
+{
+    switch(ForegroundColor)
+    {
+        case EConsoleColor::RED:
+        {
+            system("tput setaf 1");
+        } break;
+
+        case EConsoleColor::GREEN:
+        {
+            system("tput setaf 2");
+        } break;
+
+        case EConsoleColor::BLUE:
+        {
+            system("tput setaf 4");
+        } break;
+
+        case EConsoleColor::WHITE:
+        {
+            system("tput setaf 7");
+        } break;
+
+        case EConsoleColor::BLACK:
+        {
+            system("tput setaf 0");
+        } break;
+
+    }
+    
+    switch(BackgroundColor)
+    {
+        case EConsoleColor::RED:
+        {
+            system("tput setab 1");
+        } break;
+
+        case EConsoleColor::GREEN:
+        {
+            system("tput setab 2");
+        } break;
+
+        case EConsoleColor::BLUE:
+        {
+            system("tput setab 4");
+        } break;
+
+        case EConsoleColor::WHITE:
+        {
+            system("tput setab 7");
+        } break;
+        case EConsoleColor::BLACK:
+        {
+            system("tput setab 0");
+        } break;
+    }
+}
+
+#endif
 
 #define LOGGER_H
 #endif

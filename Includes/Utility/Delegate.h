@@ -13,6 +13,9 @@ private:
     
 public:
 
+    inline FDelegate() : m_Object(nullptr), m_Method(nullptr)
+    {}
+
     inline FDelegate(void* Object, Method Method) : m_Object(Object), m_Method(Method)
     {
     }

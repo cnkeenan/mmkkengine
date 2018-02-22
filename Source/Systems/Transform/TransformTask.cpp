@@ -8,6 +8,7 @@ TransformTask::TransformTask()
 
 void TransformTask::Execute() const
 {
+    
 }
 
 TransformTask::~TransformTask()

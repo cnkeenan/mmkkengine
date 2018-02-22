@@ -13,15 +13,28 @@ inline T* Cast(UObject* Object)
 class OBJECTFRAMEWORK_API UObject
 {    
 private:
-
+    
 protected:
     FObjectConstructor* m_ObjectConstructor;
+    bool m_IsSceneDead;
+
+    
 public:
 
     UObject() {}
     //NOTE(EVERYONE): Can specifiy nullptr to not create the object 
     UObject(FObjectConstructor* ObjectConstructor);
 
+    void operator delete(void* Object, bool IsSceneDead);
+    void operator delete(void* Object);
+
+        
+    inline virtual void SetIsSceneDead(bool IsSceneDead)
+    {
+        m_IsSceneDead = IsSceneDead;
+    }
+
+    
     virtual void BeginPlay();
     virtual void Tick(float DeltaTime);    
     virtual ~UObject();

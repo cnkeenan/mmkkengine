@@ -4,13 +4,12 @@
 
 TransformScene::TransformScene()
 {
-    m_ObjectPool = gMemoryManager->GetPool(GetType());
-    m_ObjectPool->CreatePool(sizeof(TransformObject), NUMBER_OF_OBJECTS); 
+    m_ObjectPool.Initialize(NUMBER_OF_OBJECTS); 
 }
 
 ITransformObject* TransformScene::CreateObject()
 {
-    TransformObject* Object = new TransformObject();
+    TransformObject* Object = new(&m_ObjectPool) TransformObject();
     Object->Create();    
     return Object;
 }
@@ -21,7 +20,7 @@ void TransformScene::DestroyObject(ITransformObject* Object)
     {
         TransformObject* RealObject = (TransformObject*)Object;
         RealObject->Destroy();
-        delete RealObject;
+        TransformObject::operator delete(RealObject, &m_ObjectPool);
     }
 }
     
@@ -42,5 +41,7 @@ ITask* TransformScene::GetTask()
 TransformScene::~TransformScene()
 {
     //TODO(JJ): Destroy all valid objects first
-    m_ObjectPool->DestroyPool();
+    for(auto& Object : m_ObjectPool)
+        Object.Destroy();
+    m_ObjectPool.Destroy();
 }

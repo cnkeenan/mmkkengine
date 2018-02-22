@@ -17,14 +17,16 @@ bool PhysicsObject::IsInitialized()
     return m_IsInitialized;
 }
 
-void* PhysicsObject::operator new(size_t Size)
+void* PhysicsObject::operator new(size_t Size, void* Pointer)
 {
-    return gMemoryManager->GetPool(ESystemType::PHYSICS)->Allocate();
+    TObjectPool<PhysicsObject>* ObjectPool = (TObjectPool<PhysicsObject>*)Pointer;
+    return ObjectPool->Create();    
 }
 
-void PhysicsObject::operator delete(void* Object)
+void PhysicsObject::operator delete(void* Object, void* Pointer)
 {
-    gMemoryManager->GetPool(ESystemType::PHYSICS)->Free(Object);
+    TObjectPool<PhysicsObject>* ObjectPool = (TObjectPool<PhysicsObject>*)Pointer;
+    ObjectPool->Free((PhysicsObject*)Object);        
 }
 
 void PhysicsObject::BeginPlay()

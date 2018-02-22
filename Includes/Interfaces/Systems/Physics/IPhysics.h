@@ -15,7 +15,7 @@ public:
 };
 
 //NOTE(EVERYONE): If we need managers add them here
-typedef IPhysics* fp_CreatePhysicsSystem(class IMemoryManager* MemoryManager);
+typedef IPhysics* fp_CreatePhysicsSystem(class FLogger* Logger, class IMemoryManager* MemoryManager);
 typedef void fp_DestroyPhysicsSystem(IPhysics** System);
 
 

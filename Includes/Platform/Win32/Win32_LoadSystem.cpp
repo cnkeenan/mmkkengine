@@ -14,60 +14,59 @@ ISystem* PlatformManager::LoadSystem(ESystemType SystemType, IWindow* Window)
         case ESystemType::AI:
         {
             LOAD_SYSTEM(CreateAISystem, "AI.dll");
-            Result = CreateAISystem(MemoryManager::Get());            
+            Result = CreateAISystem(gLogger, MemoryManager::Get());            
         } break;
 
         
         case ESystemType::COLLISION:
         {
             LOAD_SYSTEM(CreateCollisionSystem, "Collision.dll");
-            Result = CreateCollisionSystem(MemoryManager::Get());
+            Result = CreateCollisionSystem(gLogger, MemoryManager::Get());
         } break;
 
         
         case ESystemType::GRAPHICS:
         {
             LOAD_SYSTEM(CreateGraphicsSystem, "Graphics.dll");
-            Result = CreateGraphicsSystem(MemoryManager::Get(),
+            Result = CreateGraphicsSystem(gLogger, MemoryManager::Get(),
                                           PlatformManager::Get(),
                                           Window);
         } break;
-
         
         case ESystemType::INPUT:
         {
             LOAD_SYSTEM(CreateInputSystem, "Input.dll");
-            Result = CreateInputSystem(MemoryManager::Get());
+            Result = CreateInputSystem(gLogger, MemoryManager::Get());
         } break;
         
         case ESystemType::PHYSICS:
         {
             LOAD_SYSTEM(CreatePhysicsSystem, "Physics.dll");
-            Result = CreatePhysicsSystem(MemoryManager::Get());
+            Result = CreatePhysicsSystem(gLogger, MemoryManager::Get());
         } break;
         
         case ESystemType::SOUND:
         {
             LOAD_SYSTEM(CreateSoundSystem, "Sound.dll");
-            Result = CreateSoundSystem(MemoryManager::Get());
+            Result = CreateSoundSystem(gLogger, MemoryManager::Get());
         } break;
         
         case ESystemType::TRANSFORM:
         {
             LOAD_SYSTEM(CreateTransformSystem, "Transform.dll");
-            Result = CreateTransformSystem(MemoryManager::Get());
+            Result = CreateTransformSystem(gLogger, MemoryManager::Get());
         } break;
         
         case ESystemType::WIDGET:
         {
             LOAD_SYSTEM(CreateWidgetSystem, "Widget.dll");
-            Result = CreateWidgetSystem(MemoryManager::Get());
+            Result = CreateWidgetSystem(gLogger, MemoryManager::Get());
         } break;
-
         
         default:
         {
-            ASSERT(!"", "Not a valid system");
+            LOG(FAILURE, PLATFORM_CHANNEL, "Not a valid system");
+            ASSERT(!"");
         } break;
     }
 
@@ -131,7 +130,8 @@ void PlatformManager::UnloadSystem(ISystem** System)
 
             default:
             {
-                ASSERT(!"", "Not a valid system");
+                LOG(FAILURE, PLATFORM_CHANNEL, "Not a valid system");
+                ASSERT(false);
             } break;
         }
     }

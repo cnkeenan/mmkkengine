@@ -57,7 +57,7 @@ ITransformObject* FObjectConstructor::Construct()
 
 void FObjectConstructor::Destruct(IObject* Object)
 {
-    if(Object && Object->IsInitialized())
+    if(Object->IsInitialized())
     {
         switch(Object->GetType())
         {

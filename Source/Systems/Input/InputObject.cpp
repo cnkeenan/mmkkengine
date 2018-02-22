@@ -17,14 +17,16 @@ bool InputObject::IsInitialized()
     return m_IsInitialized;
 }
 
-void* InputObject::operator new(size_t Size)
+void* InputObject::operator new(size_t Size, void* Pointer)
 {
-    return gMemoryManager->GetPool(ESystemType::INPUT)->Allocate();
+    TObjectPool<InputObject>* ObjectPool = (TObjectPool<InputObject>*)Pointer;
+    return ObjectPool->Create();        
 }
 
-void InputObject::operator delete(void* Object)
+void InputObject::operator delete(void* Object, void* Pointer)
 {
-    return gMemoryManager->GetPool(ESystemType::INPUT)->Free(Object);
+    TObjectPool<InputObject>* ObjectPool = (TObjectPool<InputObject>*)Pointer;
+    ObjectPool->Free((InputObject*)Object);
 }
 
 void InputObject::BeginPlay()

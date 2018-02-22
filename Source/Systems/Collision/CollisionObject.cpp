@@ -17,14 +17,16 @@ bool CollisionObject::IsInitialized()
     return m_IsInitialized;
 }
 
-void* CollisionObject::operator new(size_t Size)
+void* CollisionObject::operator new(size_t Size, void* Pointer)
 {
-    return gMemoryManager->GetPool(ESystemType::COLLISION)->Allocate();
+    TObjectPool<CollisionObject>* ObjectPool = (TObjectPool<CollisionObject>*)Pointer;
+    return ObjectPool->Create();    
 }
 
-void CollisionObject::operator delete(void* Object)
+void CollisionObject::operator delete(void* Object, void* Pointer)
 {
-    gMemoryManager->GetPool(ESystemType::COLLISION)->Free(Object);
+    TObjectPool<CollisionObject>* ObjectPool = (TObjectPool<CollisionObject>*)Pointer;
+    ObjectPool->Free((CollisionObject*)Object);        
 }
 
 void CollisionObject::BeginPlay()

@@ -18,7 +18,7 @@ public:
 
 Win32_Semaphore::Win32_Semaphore(int InitialCount)
 {
-    m_Semaphore = CreateSemaphore(nullptr, InitialCount, MAX_SEMAPHORE_COUNT, nullptr);
+    m_Semaphore = CreateSemaphoreA(nullptr, InitialCount, MAX_SEMAPHORE_COUNT, nullptr);
 }
 
 void Win32_Semaphore::Post()

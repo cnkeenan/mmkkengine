@@ -11,6 +11,8 @@ private:
     class IPhysicsObject* m_PhysicsObject;
     class ISoundObject* m_SoundObject;
 protected:
+
+
 public:
 
     UEntity(FObjectConstructor* ObjectConstructor);

@@ -17,14 +17,16 @@ bool WidgetObject::IsInitialized()
     return m_IsInitialized;
 }
 
-void* WidgetObject::operator new(size_t Size)
+void* WidgetObject::operator new(size_t Size, void* Pointer)
 {
-    return gMemoryManager->GetPool(ESystemType::WIDGET)->Allocate();
+    TObjectPool<WidgetObject>* ObjectPool = (TObjectPool<WidgetObject>*)Pointer;
+    return ObjectPool->Create();    
 }
 
-void WidgetObject::operator delete(void* Object)
+void WidgetObject::operator delete(void* Object, void* Pointer)
 {
-    gMemoryManager->GetPool(ESystemType::WIDGET)->Free(Object);
+    TObjectPool<WidgetObject>* ObjectPool = (TObjectPool<WidgetObject>*)Pointer;
+    ObjectPool->Free((WidgetObject*)Object);        
 }
 
 void WidgetObject::BeginPlay()

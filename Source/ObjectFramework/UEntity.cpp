@@ -21,9 +21,12 @@ void UEntity::Tick(float DeltaTime)
 }
 
 UEntity::~UEntity()
-{    
-    m_ObjectConstructor->Destruct((IObject*)m_SoundObject);
-    m_ObjectConstructor->Destruct((IObject*)m_PhysicsObject);
-    m_ObjectConstructor->Destruct((IObject*)m_CollisionObject);
-    m_ObjectConstructor->Destruct((IObject*)m_TransformObject);
+{
+    if(!m_IsSceneDead)
+    {
+        m_ObjectConstructor->Destruct((IObject*)m_SoundObject);
+        m_ObjectConstructor->Destruct((IObject*)m_PhysicsObject);
+        m_ObjectConstructor->Destruct((IObject*)m_CollisionObject);
+        m_ObjectConstructor->Destruct((IObject*)m_TransformObject);
+    }
 }

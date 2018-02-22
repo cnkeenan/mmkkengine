@@ -4,14 +4,17 @@
    ======================================================================== */
 #include "Delegate.h"
 
+#if defined(MOUSE_MOVED)
+#undef MOUSE_MOVED
+#endif
+
 enum class EEventType
 {
-    TEST,
     KEY_PRESSED,
     KEY_RELEASED,
     MOUSE_PRESSED,
     MOUSE_RELEASED,
-    MOUSE_MOVED
+    MOUSE_MOVED,
 };
 
 class FEventDispatcher
@@ -46,15 +49,6 @@ public:
 //NOTE(EVERYONE): ADD EVENTS HERE
 //When subclassing events, you must define a static EEventType GetStaticType() 
 //that returns the event type. Make sure to add that event type to the Enum at the top of the class
-
-class TestEvent : public FEvent
-{
-
-public:
-    inline TestEvent(EEventType Type) : FEvent(Type) {}
-
-    static EEventType GetStaticType() { return EEventType::TEST; } 
-};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 template <typename T>

@@ -16,7 +16,7 @@ public:
 
 
 //NOTE(EVERYONE): If we need managers add them here
-typedef ISound* fp_CreateSoundSystem(class IMemoryManager* MemoryManager);
+typedef ISound* fp_CreateSoundSystem(class FLogger* Logger, class IMemoryManager* MemoryManager);
 typedef void fp_DestroySoundSystem(ISound** System);
 
 

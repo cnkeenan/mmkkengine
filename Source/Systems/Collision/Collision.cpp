@@ -33,9 +33,11 @@ Collision::~Collision()
 
 extern "C"
 {
-    EXPORT ICollision* CreateCollisionSystem(IMemoryManager* MemoryManager)
+    EXPORT ICollision* CreateCollisionSystem(FLogger* Logger, IMemoryManager* MemoryManager)
     {
+        COLLISION_CHANNEL_File = fopen(COLLISION_CHANNEL_PATH, "w");
         gMemoryManager = MemoryManager;
+        gLogger = Logger;
         ICollision* Result = new Collision();
         return Result;
     }
@@ -47,6 +49,28 @@ extern "C"
             delete (*System);
             (*System) = nullptr;
         }
+        gLogger = nullptr;
         gMemoryManager = nullptr;
+        fclose(COLLISION_CHANNEL_File);
     }
+}
+
+void* operator new(ptr_size Size)
+{
+    return gMemoryManager->Allocate(Size);
+}
+
+void* operator new[](ptr_size Size)
+{
+    return gMemoryManager->Allocate(Size);
+}
+
+void operator delete(void* Pointer)
+{
+    gMemoryManager->Free(Pointer);
+}
+
+void operator delete[](void* Pointer)
+{
+    gMemoryManager->Free(Pointer);
 }

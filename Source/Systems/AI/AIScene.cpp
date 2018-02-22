@@ -1,17 +1,15 @@
 /* ========================================================================
    $Creator: Armand Karambasis $
    ======================================================================== */
-
 AIScene::AIScene()
 {
-    m_ObjectPool = gMemoryManager->GetPool(GetType());
-    m_ObjectPool->CreatePool(sizeof(AIObject), NUMBER_OF_OBJECTS);
+    m_ObjectPool.Initialize(NUMBER_OF_OBJECTS);
 }
 
 IAIObject* AIScene::CreateObject()
 {
     //TODO(JJ): Object pool
-    AIObject* Object = new AIObject();
+    AIObject* Object = new(&m_ObjectPool) AIObject();
     Object->Create();
     return Object;
 }
@@ -23,7 +21,7 @@ void AIScene::DestroyObject(IAIObject* Object)
     {
         AIObject* RealObject = (AIObject*)Object;
         RealObject->Destroy();
-        delete RealObject;        
+        AIObject::operator delete(RealObject, &m_ObjectPool);        
     }
 }
 
@@ -45,5 +43,9 @@ ITask* AIScene::GetTask()
 AIScene::~AIScene()
 {
     //TODO(JJ): Destroy all valid objects first
-    m_ObjectPool->DestroyPool();
+    for(auto& Object : m_ObjectPool)
+    {
+        Object.Destroy();
+    }
+    m_ObjectPool.Destroy();
 }

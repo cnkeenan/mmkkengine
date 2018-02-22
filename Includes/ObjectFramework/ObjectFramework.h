@@ -14,10 +14,12 @@
 #include <Utility/AtomicTypes.h>
 #include <Utility/Macro.h>
 #include <Utility/Libs.h>
-#include <Utility/Pool.h>
+#include <Utility/ObjectPool.h>
+#include <Utility/Delegate.h>
 
 
 #include <Interfaces/Systems/ISystem.h>
+#include <Interfaces/Managers/IMemoryManager.h>
 
 #include "UScene.h"
 #include "ObjectConstructor.h"
@@ -67,6 +69,10 @@
 #include <Interfaces/Systems/Widget/IWidgetObject.h>
 #include <Interfaces/Systems/Widget/IWidgetTask.h>
 
+
+//NOTE(EVERYONE): if the framework needs anything from the engine (like the managers) pass it in this
+//function
+OBJECTFRAMEWORK_API void InitializeFramework(IMemoryManager* MemoryManager);
 
 #define OBJECTFRAMEWORK_H
 #endif

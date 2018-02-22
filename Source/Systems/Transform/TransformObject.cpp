@@ -21,14 +21,16 @@ void TransformObject::BeginPlay()
 {
 }
 
-void* TransformObject::operator new(size_t Size)
+void* TransformObject::operator new(size_t Size, void* Pointer)
 {
-    return gMemoryManager->GetPool(ESystemType::TRANSFORM)->Allocate();    
+    TObjectPool<TransformObject>* ObjectPool = (TObjectPool<TransformObject>*)Pointer;
+    return ObjectPool->Create();    
 }
 
-void TransformObject::operator delete(void* Object)
+void TransformObject::operator delete(void* Object, void* Pointer)
 {
-    gMemoryManager->GetPool(ESystemType::TRANSFORM)->Free(Object);
+    TObjectPool<TransformObject>* ObjectPool = (TObjectPool<TransformObject>*)Pointer;
+    ObjectPool->Free((TransformObject*)Object);        
 }
 
 void TransformObject::Tick(float DeltaTime)
